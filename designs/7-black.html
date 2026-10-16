@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>案7 ブラック×ピンク</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* 案7：ナイトレースの黒。白文字とショッキングピンクの2色だけで、斜めのカットで疾走感。文字は大きく、コントラストは強く */
+:root{--bg:#0a0a0c;--s1:#151519;--s2:#1f1f25;--ink:#fff;--ink2:#b7b7c2;--line:#2a2a32;--pink:#ff2d95;--pink2:#ff6bb5}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",sans-serif;font-size:16px;line-height:1.7}
+.num{font-family:"Saira Condensed",sans-serif;font-weight:800}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+.hero{position:relative;overflow:hidden}
+.hero img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;max-height:78vh}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(transparent,var(--bg))}
+.band{position:relative;z-index:1;margin-top:-56px;background:var(--pink);color:#fff;padding:14px 16px 16px;clip-path:polygon(0 14px,100% 0,100% 100%,0 100%)}
+.band .row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;max-width:720px;margin:0 auto}
+.band .d{font-size:64px;line-height:.85}
+.band .d small{font-size:22px;margin-left:6px}
+.band .cd{text-align:right;font-weight:700;font-size:14px;line-height:1.3}
+.band .cd .num{display:block;font-size:40px;line-height:1}
+.place{padding:14px 0 4px;color:var(--ink2);font-size:14px}
+.place b{color:var(--ink);font-size:17px;display:block}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)}
+nav a{flex:1;text-align:center;min-height:46px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:var(--ink2);text-decoration:none;background:var(--s1);transform:skewX(-12deg)}
+nav a span{transform:skewX(12deg)}
+nav a.on{background:var(--pink);color:#fff}
+h2{margin:34px 0 12px;font-size:24px;font-weight:900;line-height:1.3}
+h2 .num{color:var(--pink);font-size:18px;display:block;letter-spacing:.04em}
+.tt{list-style:none;margin:0;padding:0}
+.tt li{display:grid;grid-template-columns:4.4em 1fr;gap:12px;align-items:center;padding:12px 14px;background:var(--s1);margin-bottom:4px}
+.tt .t{font-size:26px;line-height:1}
+.tt .g{display:block;font-size:13px;color:var(--ink2)}
+.tt li.sp{background:linear-gradient(90deg,rgba(255,45,149,.22),var(--s1) 70%);box-shadow:inset 4px 0 0 var(--pink)}
+.tt li.sp .t{color:var(--pink2)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.duo div{background:var(--s1);padding:16px}
+.duo .no{font-size:32px;line-height:1;color:var(--pink)}
+.duo h3{margin:6px 0 4px;font-size:18px}
+.duo p{margin:0;color:var(--ink2);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips span{border:1.5px solid var(--pink);color:var(--pink2);font-weight:700;font-size:13px;padding:4px 10px}
+.vs{position:relative;background:var(--s2);padding:20px 16px;overflow:hidden}
+.vs::before{content:"VS";position:absolute;right:-6px;top:-26px;font-family:"Saira Condensed";font-weight:800;font-size:150px;color:rgba(255,45,149,.18);line-height:1}
+.vs h3{position:relative;margin:0;font-size:24px}
+.vs h3 .num{color:var(--pink)}
+.vs p{position:relative;margin:6px 0 0}
+.vs small{position:relative;color:var(--ink2)}
+.res{background:var(--s1)}
+.res .cap{padding:10px 14px;font-weight:700;font-size:14px;color:var(--ink2);border-bottom:1px solid var(--line)}
+.res .r{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.res .m{font-size:30px;line-height:1}
+.pb{background:var(--pink);color:#fff;font-family:"Saira Condensed";font-weight:800;font-size:13px;padding:1px 6px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.btn{display:flex;align-items:center;justify-content:center;min-height:58px;margin-top:12px;background:var(--pink);color:#fff;font-weight:900;font-size:18px;text-decoration:none;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+.btn.o{background:var(--s2);color:#fff}
+footer{color:var(--ink2);font-size:12px;text-align:center;padding:28px 0 44px}
+@media(max-width:520px){.duo{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="hero"><img src="../assets/hero.jpg" alt="年末チーム内記録会2026"></header>
+<div class="band"><div class="row"><div class="d num">12.20<small>SUN</small></div><div class="cd">記録会まで<span class="num">64日</span></div></div></div>
+<div class="wrap">
+  <div class="place"><b>秦野カルチャーパーク陸上競技場</b>参加費 1,000円（当日現金）・雨天予備日 12/27</div>
+  <nav><a class="on" href="#"><span>大会案内</span></a><a href="#"><span>スタート＆結果</span></a><a href="#"><span>得点表</span></a></nav>
+
+  <h2><span class="num">TIME TABLE</span>タイムテーブル</h2>
+  <ul class="tt">
+    <li><span class="t num">8:00</span><span>全体ウォーミングアップ</span></li>
+    <li><span class="t num">10:00</span><span>50m<span class="g">小学3年生以下</span></span></li>
+    <li><span class="t num">10:20</span><span>100m<span class="g">小学4年生以上</span></span></li>
+    <li><span class="t num">11:00</span><span>走り幅跳び</span></li>
+    <li class="sp"><span class="t num">12:00</span><span><b>VSタクちゃん 1000m</b></span></li>
+    <li><span class="t num">13:30</span><span>100m<span class="g">小学3年生以下</span></span></li>
+    <li><span class="t num">13:50</span><span>200m<span class="g">小学4年生以上</span></span></li>
+    <li><span class="t num">14:30</span><span>走り高跳び</span></li>
+    <li class="sp"><span class="t num">16:00</span><span><b>チーム対抗＆保護者リレー</b></span></li>
+    <li><span class="t num">16:30</span><span>結果発表</span></li>
+  </ul>
+
+  <h2><span class="num">ENTRY</span>参加部門</h2>
+  <div class="duo">
+    <div><span class="no num">01</span><h3>チーム対抗の部</h3><p>全員が4種目に出場し、チームと個人で得点を競う。事前練習1回以上。</p></div>
+    <div><span class="no num">02</span><h3>オープン参加の部</h3><p>出たい種目だけ。記録計測のみ（表彰なし）。</p></div>
+  </div>
+  <div class="chips"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
+
+  <h2><span class="num">SPECIAL</span>昼休み特別企画</h2>
+  <div class="vs"><h3>タクちゃんと <span class="num">1000m</span> 勝負</h3><p>大学生コーチとガチンコレース。選手・保護者を当日募集、参加無料。</p><small>※参加者0人でもタクちゃんは出走します（笑）</small></div>
+
+  <h2><span class="num">RESULT</span>結果</h2>
+  <div class="res"><div class="cap">50m　小1 男子（例）</div>
+    <div class="r"><span>いしい みなと</span><span><span class="dot" style="background:#d9a400"></span>黄</span><span class="m num">10.75 <span class="pb">PB</span></span></div>
+    <div class="r"><span>あおき れい</span><span><span class="dot" style="background:#8a55c9"></span>紫</span><span class="m num">10.92</span></div></div>
+
+  <a class="btn" href="#">参加を申し込む</a>
+  <a class="btn o" href="#">開催要項（PDF）</a>
+  <footer>HAPPINESS AC 2026</footer>
+</div>
+</body>
+</html>
