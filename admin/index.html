@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>チーム内記録会</title>
+<title>管理者｜年末チーム内記録会2026</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -239,12 +239,41 @@ details[open]>summary{margin-bottom:10px}
   body{background:#fff;color:#000}
   .card{break-inside:avoid}
 }
+
+/* ---------- 管理者ゲート ---------- */
+html.locked body > :not(#gate){display:none!important}
+#gate{display:none}
+html.locked #gate{display:grid;place-items:center;min-height:100vh;min-height:100dvh;padding:24px 16px;background:var(--board);color:var(--board-ink)}
+.gate-card{width:100%;max-width:340px;text-align:center}
+.gate-card .eyebrow{font-family:var(--font-num);letter-spacing:.2em;color:var(--board-muted);font-size:13px}
+.gate-card h1{font-size:22px;margin:6px 0 20px}
+.gate-card input{width:100%;font-family:var(--font-num);font-size:32px;letter-spacing:.4em;text-align:center;padding:10px;border-radius:10px;border:1px solid var(--board-muted);background:var(--board-2);color:var(--board-ink)}
+.gate-card button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;background:#d4ff2a;color:#0b1420;font-weight:700;font-size:16px;cursor:pointer}
+.gate-card .err{min-height:1.6em;margin-top:10px;color:#ff8fb8;font-size:14px}
+.gate-card a{display:inline-block;margin-top:18px;color:var(--board-muted);font-size:13px}
+.admin-bar{display:flex;gap:12px;align-items:center;margin-left:auto;font-size:13px}
+.admin-bar a,.admin-bar button{color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
 </style>
+<script>
+/* 管理者ゲート：このタブでパスコードを通すまで画面を隠す */
+try{if(sessionStorage.getItem('kirokuAdmin.ok')!=='1')document.documentElement.classList.add('locked');}catch(e){document.documentElement.classList.add('locked');}
+</script>
 </head>
 <body>
+<div id="gate">
+  <form class="gate-card" id="gateForm" autocomplete="off">
+    <p class="eyebrow">ADMIN</p>
+    <h1>管理者ログイン</h1>
+    <input type="password" id="gatePass" inputmode="numeric" placeholder="パスコード" aria-label="パスコード" required>
+    <button type="submit">ログイン</button>
+    <p class="err" id="gateErr" role="alert"></p>
+    <a href="../">← 特設サイトへもどる</a>
+  </form>
+</div>
 <div class="wrap head">
   <h1 id="meetName">チーム内記録会</h1>
   <p class="date" id="meetDate"></p>
+  <div class="admin-bar"><a href="../">特設サイト</a><button type="button" id="logoutBtn">ログアウト</button></div>
 </div>
 <div class="dock">
   <div class="wrap"><div class="board" id="board" aria-label="チーム得点"></div></div>
@@ -864,6 +893,15 @@ function viewData(){
         <textarea id="restoreText" rows="4" placeholder="バックアップの中身（{ で始まる文字）を貼り付け"></textarea>
         <div class="btn-row" style="margin-top:8px"><button type="button" class="btn" data-act="restoreText">貼り付けた内容で復元</button></div></details></div>
 
+    <div class="card"><h2>管理者パスコードの変更</h2>
+      <p class="hint" style="margin-block:6px 10px">この端末のブラウザで使うパスコードを変えます（4〜12けたの数字）。</p>
+      <div class="inline">
+        <label class="field" for="passCur">今のパスコード<input type="password" id="passCur" inputmode="numeric" autocomplete="off" style="width:10em"></label>
+        <label class="field" for="passNew">新しいパスコード<input type="password" id="passNew" inputmode="numeric" autocomplete="off" style="width:10em"></label>
+        <label class="field" for="passNew2">もう一度<input type="password" id="passNew2" inputmode="numeric" autocomplete="off" style="width:10em"></label>
+      </div>
+      <div class="btn-row" style="margin-top:10px"><button type="button" class="btn primary" id="passChange">パスコードを変更</button></div></div>
+
     <div class="card"><h2>はじめからやり直す</h2>
       <div class="btn-row" style="margin-top:10px"><button type="button" class="btn" data-act="loadSample">仮データ（35人）を読み込む</button>
         <button type="button" class="btn danger" data-act="resetAll">すべてのデータを消す</button></div></div>
@@ -1116,6 +1154,45 @@ document.addEventListener('keydown',e=>{
 if(location.hash&&VIEWS[location.hash.slice(1)])state.ui.tab=location.hash.slice(1);
 render();
 save();
+</script>
+<script>
+'use strict';
+/* ---------- 管理者ゲート ----------
+   パスコードはSHA-256のハッシュで比べる。変更後のハッシュはこの端末のlocalStorageに保存。
+   公開サイト上の簡易ロックで、データ自体はこの端末のブラウザにしかない */
+(()=>{
+  const DEFAULT_HASH='8795ad5e78c86d89daf2506527dda2de6fe73f5a61d8e96ee7f71ccab91204f0';
+  const HASH_KEY='kirokuAdmin.passHash', OK_KEY='kirokuAdmin.ok';
+  const g=id=>document.getElementById(id);
+  const hash=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kiroku2026:'+s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+  const norm=s=>s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).trim();
+  const stored=()=>{try{return localStorage.getItem(HASH_KEY)||DEFAULT_HASH;}catch(e){return DEFAULT_HASH;}};
+  let fails=0;
+  g('gateForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const v=norm(g('gatePass').value);
+    if(await hash(v)===stored()){
+      try{sessionStorage.setItem(OK_KEY,'1');}catch(_){}
+      document.documentElement.classList.remove('locked');g('gatePass').value='';g('gateErr').textContent='';fails=0;
+    }else{
+      fails++;g('gatePass').value='';g('gateErr').textContent='パスコードがちがいます';
+      if(fails>=5){const b=g('gateForm').querySelector('button');b.disabled=true;g('gateErr').textContent='しばらく待ってからもう一度どうぞ';setTimeout(()=>{b.disabled=false;g('gateErr').textContent='';},fails*3000);}
+    }
+  });
+  g('logoutBtn').addEventListener('click',()=>{try{sessionStorage.removeItem(OK_KEY);}catch(_){}document.documentElement.classList.add('locked');g('gatePass').focus();});
+  document.addEventListener('click',async e=>{
+    if(!e.target.closest('#passChange'))return;
+    const cur=norm(g('passCur').value), nw=norm(g('passNew').value), nw2=norm(g('passNew2').value);
+    const say=m=>{const t=document.getElementById('toast');if(t&&typeof toast==='function')toast(m);else alert(m);};
+    if(await hash(cur)!==stored())return say('今のパスコードがちがいます');
+    if(!/^\d{4,12}$/.test(nw))return say('新しいパスコードは4〜12けたの数字にしてください');
+    if(nw!==nw2)return say('新しいパスコードが一致しません');
+    try{localStorage.setItem(HASH_KEY,await hash(nw));}catch(_){return say('この端末では保存できませんでした');}
+    g('passCur').value=g('passNew').value=g('passNew2').value='';
+    say('パスコードを変更しました');
+  });
+  if(document.documentElement.classList.contains('locked'))g('gatePass').focus();
+})();
 </script>
 </body>
 </html>
