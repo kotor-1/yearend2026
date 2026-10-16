@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>チーム内記録会</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* レイアウト：1カラムの作業画面。上部に電光掲示板ふうのチーム得点とタブを固定し、その下にタブごとの作業面を置く */
+:root{
+  --bg:#f2f4f6; --surface:#ffffff; --surface-2:#e9edf1; --ink:#16202a; --ink-2:#465462; --muted:#6f7d8a; --line:#d7dde3;
+  --accent:#1f4f8f; --accent-ink:#ffffff; --accent-soft:#e2ebf7;
+  --board:#122030; --board-2:#1b2c3f; --board-ink:#f3f7fb; --board-muted:#93a6ba;
+  --pb:#c2410c; --pb-soft:#fdede4;
+  --gold:#b88a14; --silver:#7d8a97; --bronze:#a5653a; --medal-ink:#ffffff;
+  --danger:#b42318; --danger-soft:#fdeceb; --ok:#1b7a43;
+  --font-ui:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
+  --font-num:"Barlow Condensed","BIZ UDPGothic","Arial Narrow",sans-serif;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1319; --surface:#151e27; --surface-2:#1c2731; --ink:#e5ebf0; --ink-2:#b3bfca; --muted:#8594a2; --line:#283541;
+    --accent:#8db4ec; --accent-ink:#0d1319; --accent-soft:#1b2a3c;
+    --board:#09111a; --board-2:#132131; --board-ink:#f3f7fb; --board-muted:#8fa3b8;
+    --pb:#fb8b57; --pb-soft:#3a2317;
+    --gold:#d9ae3f; --silver:#a3b0bd; --bronze:#cf8a59; --medal-ink:#0d1319;
+    --danger:#f97066; --danger-soft:#3a1d1b; --ok:#4cc38a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1319; --surface:#151e27; --surface-2:#1c2731; --ink:#e5ebf0; --ink-2:#b3bfca; --muted:#8594a2; --line:#283541;
+  --accent:#8db4ec; --accent-ink:#0d1319; --accent-soft:#1b2a3c;
+  --board:#09111a; --board-2:#132131; --board-ink:#f3f7fb; --board-muted:#8fa3b8;
+  --pb:#fb8b57; --pb-soft:#3a2317;
+  --gold:#d9ae3f; --silver:#a3b0bd; --bronze:#cf8a59; --medal-ink:#0d1319;
+  --danger:#f97066; --danger-soft:#3a1d1b; --ok:#4cc38a;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.6}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.3}
+h2{font-size:17px}
+h3{font-size:15px}
+small{font-size:.8em}
+p{margin:0}
+
+/* ---------- ヘッダー ---------- */
+.head{padding-block:14px 8px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.head h1{font-size:20px;letter-spacing:.02em}
+.head .date{color:var(--muted);font-size:13px}
+.dock{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+@media (max-height:540px){.dock{position:static}}
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,118px),1fr));gap:2px;background:var(--board);border-radius:10px;padding:4px;margin-bottom:6px}
+.bcell{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;min-width:0;background:var(--board-2)}
+.bcell .bwho{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.bcell .bname{color:var(--board-muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bcell .bpts{color:var(--board-ink);font-family:var(--font-num);font-weight:600;font-size:25px;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.bcell .brank{margin-left:auto;color:var(--board-muted);font-family:var(--font-num);font-size:15px;font-weight:600;white-space:nowrap}
+.bcell .brank.top{color:var(--gold)}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs button{flex:1 0 auto;border:0;background:none;padding:8px 12px 9px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs .ts{display:none}
+@media (max-width:520px){.tabs button{padding-inline:6px}.tabs .tl{display:none}.tabs .ts{display:inline}}
+.tag{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;background:var(--tc,var(--surface-2));color:var(--tk,var(--muted));font-size:12px;font-weight:700;flex:none;line-height:1}
+.tag.none{background:var(--surface-2);color:var(--muted);border:1px dashed var(--line)}
+
+/* ---------- 共通部品 ---------- */
+main{padding-block:16px 64px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-width:0}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.card-head h2 small{color:var(--muted);font-weight:400;margin-left:6px}
+.lead{color:var(--ink-2);font-size:14px;max-width:62ch}
+.hint{color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.danger.solid{background:var(--danger);color:var(--surface)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-2)}
+.field input,.field select{font-size:15px}
+input[type="text"],input:not([type]),select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
+textarea{width:100%;font-size:13px;line-height:1.5;font-family:ui-monospace,Menlo,monospace}
+input.bad{border-color:var(--danger);background:var(--danger-soft)}
+.tscroll{overflow-x:auto;margin-inline:-4px;padding-inline:4px}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+td.r,th.r{text-align:right}
+.dim{color:var(--muted)}
+.empty{padding:28px 12px;text-align:center;color:var(--muted)}
+
+/* ---------- 記録入力 ---------- */
+.segs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--surface-2);padding:4px;border-radius:11px}
+.seg{border:0;background:none;border-radius:8px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.2;font-weight:700;color:var(--ink-2)}
+.seg small{font-family:var(--font-num);font-weight:500;color:var(--muted);font-size:13px}
+.seg.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 6px;font-size:13px;cursor:pointer}
+.chip.all{padding-left:12px}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.chip .tag{width:18px;height:18px;font-size:10px;border-radius:999px}
+.sel{font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.sheet{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.row{display:grid;align-items:center;column-gap:10px;row-gap:6px;padding:10px 12px;border-top:1px solid var(--line);
+  grid-template-columns:22px minmax(0,1fr) auto auto;
+  grid-template-areas:"tag who who pbv" ". inp nmb pts" ". gain gain gain"}
+.row:first-child{border-top:0}
+.row>.tag{grid-area:tag}
+.row .who{grid-area:who;display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.row .who .nm{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .who .meta{font-size:12px;color:var(--muted)}
+.row .pbv{grid-area:pbv;text-align:right;font-family:var(--font-num);font-size:17px;line-height:1.2;color:var(--ink-2)}
+.row .pbv .lbl{display:block;font-family:var(--font-ui);font-size:10px;color:var(--muted);letter-spacing:.05em}
+.row .inp{grid-area:inp;display:flex;align-items:center;gap:6px;min-width:0}
+.row .inp input{width:100%;max-width:9em;font-family:var(--font-num);font-size:22px;font-weight:600;padding:4px 10px;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.row .inp .unit{font-size:12px;color:var(--muted)}
+.row .nmbtn{grid-area:nmb;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:var(--ink-2)}
+.row .nmbtn.on{background:var(--ink-2);color:var(--surface);border-color:var(--ink-2)}
+.row .pts{grid-area:pts;text-align:right;min-width:4.2em;line-height:1}
+.row .pts b{font-family:var(--font-num);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
+.row .pts small{color:var(--muted);margin-left:2px}
+.row .gain{grid-area:gain;font-size:13px;display:flex;align-items:center;gap:6px;min-height:1.2em}
+.row .gain:empty{display:none}
+.row.absent{opacity:.5}
+.pbtag{display:inline-block;background:var(--pb);color:var(--surface);font-family:var(--font-num);font-weight:700;font-size:13px;letter-spacing:.06em;padding:0 6px;border-radius:4px;line-height:1.5}
+.up{color:var(--pb);font-weight:700;font-variant-numeric:tabular-nums}
+@media (min-width:760px){
+  .row{grid-template-columns:22px minmax(9em,1.3fr) 6.5em minmax(8em,1fr) auto 5.2em 9.5em;grid-template-areas:"tag who pbv inp nmb pts gain";padding:8px 14px}
+  .row .gain{justify-content:flex-start}
+  .row .gain:empty{display:flex}
+}
+
+/* ---------- 順位・表彰 ---------- */
+.awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.awards .card h2{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.awards .card .sub{font-size:12px;color:var(--muted);margin-bottom:10px}
+.medals{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.medal{display:grid;grid-template-columns:34px 22px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.mbadge{display:grid;place-items:center;width:34px;height:34px;border-radius:999px;font-family:var(--font-num);font-weight:700;font-size:19px;color:var(--medal-ink);background:var(--muted)}
+.medal.r1 .mbadge{background:var(--gold)}
+.medal.r2 .mbadge{background:var(--silver)}
+.medal.r3 .mbadge{background:var(--bronze)}
+.mname{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.mname b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mname small{color:var(--muted)}
+.mval{font-family:var(--font-num);font-size:24px;font-weight:700;text-align:right;line-height:1;font-variant-numeric:tabular-nums}
+.mval small{font-family:var(--font-ui);font-size:11px;color:var(--muted);font-weight:400;margin-left:2px}
+.bars{display:flex;flex-direction:column;gap:2px}
+.bar-row{display:grid;grid-template-columns:2.6em 22px minmax(3em,6em) minmax(0,1fr) 4.6em;align-items:center;gap:8px;padding:5px 0}
+.br-rank{font-family:var(--font-num);font-weight:700;font-size:17px}
+.br-name{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.br-track{height:16px;position:relative}
+.br-fill{position:absolute;inset:0 auto 0 0;background:var(--tc);border-radius:0 4px 4px 0;min-width:2px}
+.br-val{font-family:var(--font-num);font-size:20px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.br-val small{font-family:var(--font-ui);font-size:10px;color:var(--muted);font-weight:400}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.res td .rec{display:block;font-family:var(--font-num);font-size:14px;color:var(--muted);line-height:1.1}
+.res td .p{font-family:var(--font-num);font-size:18px;font-weight:600;line-height:1.1}
+.res td.tot{font-family:var(--font-num);font-size:20px;font-weight:700}
+.res .rk{font-family:var(--font-num);font-size:18px;font-weight:700;width:3em}
+.res .who b{display:block;white-space:nowrap}
+.res .who small{color:var(--muted);white-space:nowrap}
+.res tr.out td{color:var(--muted)}
+.ribbon{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.toggle{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.toggle input{margin-top:4px;width:18px;height:18px;flex:none;accent-color:var(--accent)}
+.toggle span small{display:block;color:var(--muted);font-size:12px}
+
+/* ---------- 選手・チーム ---------- */
+.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px;margin-block:12px}
+.team-ed{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px}
+.team-ed input[type="color"]{width:38px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface);cursor:pointer}
+.team-ed .tstat{grid-column:2;font-size:12px;color:var(--muted)}
+.roster td{padding:5px 4px}
+.roster input,.roster select{padding:5px 7px;font-size:14px}
+.roster input.nmi{width:9.5em}
+.roster input.pbi{width:5.2em;font-family:var(--font-num);font-size:16px}
+.roster th.sticky,.roster td.sticky{position:sticky;left:0;background:var(--surface);z-index:1}
+.roster input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent)}
+.del{border:1px solid var(--line);background:none;border-radius:7px;padding:4px 9px;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.del.armed{background:var(--danger);color:var(--surface);border-color:var(--danger)}
+details>summary{cursor:pointer;font-weight:700;font-size:14px;padding-block:4px}
+details[open]>summary{margin-bottom:10px}
+.errs{font-size:13px;color:var(--danger);margin:6px 0 0;padding-left:1.2em}
+
+/* ---------- 得点表 ---------- */
+.formula{display:grid;gap:10px;margin-block:12px}
+.formula div{background:var(--surface-2);border-radius:10px;padding:10px 14px}
+.formula b{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:2px}
+.formula code{font-family:var(--font-ui);font-size:15px;font-weight:700}
+.fair{margin:10px 0 0;padding-left:1.3em;font-size:14px;color:var(--ink-2);max-width:68ch}
+.fair li+li{margin-top:4px}
+.score-tbl th,.score-tbl td{text-align:right;padding:5px 9px;white-space:nowrap}
+.score-tbl td{font-family:var(--font-num);font-size:16px;font-variant-numeric:tabular-nums}
+.score-tbl tbody th{font-family:var(--font-num);font-size:16px;color:var(--ink)}
+.score-tbl tr.base td,.score-tbl tr.base th{background:var(--accent-soft);font-weight:700}
+.calc{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.calc-out{display:flex;align-items:baseline;gap:10px;margin-top:12px;min-height:44px}
+.calc-out b{font-family:var(--font-num);font-size:40px;line-height:1}
+.std-tbl input{width:4.6em;font-family:var(--font-num);font-size:15px;padding:4px 6px;text-align:right}
+.std-tbl td,.std-tbl th{padding:4px 6px}
+.coef-row{display:flex;flex-wrap:wrap;gap:12px;margin-block:8px 14px}
+.coef-row input{width:4.2em;text-align:right}
+
+/* ---------- データ ---------- */
+.settings{display:flex;flex-direction:column;gap:14px}
+.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.sample-bar{background:var(--accent-soft);color:var(--ink);border-bottom:1px solid var(--line)}
+.sample-bar .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-block:8px;font-size:13px}
+
+/* ---------- モーダル・トースト ---------- */
+.modal{position:fixed;inset:0;background:rgba(8,14,20,.5);display:grid;place-items:center;padding:16px;z-index:50}
+.modal-card{background:var(--surface);border-radius:14px;padding:20px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.modal-card p{white-space:pre-line;margin-bottom:16px;font-size:15px}
+.modal-card .btn-row{justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+@media print{
+  .dock .tabs,.sample-bar,.no-print,.toast{display:none!important}
+  .dock{position:static;border:0}
+  body{background:#fff;color:#000}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap head">
+  <h1 id="meetName">チーム内記録会</h1>
+  <p class="date" id="meetDate"></p>
+</div>
+<div class="dock">
+  <div class="wrap"><div class="board" id="board" aria-label="チーム得点"></div></div>
+  <nav class="wrap tabs" id="tabs" role="tablist" aria-label="画面の切り替え"></nav>
+</div>
+<div id="sampleBar"></div>
+<main class="wrap" id="view"></main>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalMsg">
+  <div class="modal-card">
+    <p id="modalMsg"></p>
+    <div class="btn-row"><button class="btn" id="modalCancel" type="button">やめる</button><button class="btn primary" id="modalOk" type="button">OK</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* ---------- 種目・学年・基準 ---------- */
+const EVENTS=[
+  {key:'m100',name:'100m',type:'run', min:9,  max:40},
+  {key:'m200',name:'200m',type:'run', min:19, max:100},
+  {key:'hj',  name:'走高跳',type:'jump',min:0.3,max:2.6,cm:3},
+  {key:'lj',  name:'走幅跳',type:'jump',min:0.5,max:9.5,cm:10}
+];
+const EV=Object.fromEntries(EVENTS.map(e=>[e.key,e]));
+const GRADES=['小1','小2','小3','小4','小5','小6','中1','中2','中3','高校以上'];
+const SEX={m:'男子',f:'女子'};
+/* 学年・性別ごとの基準記録（＝500点）。クラブで練習している子の平均くらいを目安に設定。得点表タブで編集できる */
+const DEFAULT_STD={
+  m:{m100:[19.0,18.0,17.2,16.4,15.7,15.0,14.3,13.6,13.1,12.4],
+     m200:[40.7,38.5,36.5,34.8,33.0,31.5,29.7,28.3,27.0,25.4],
+     hj:  [0.70,0.80,0.88,0.95,1.03,1.10,1.20,1.32,1.42,1.55],
+     lj:  [2.20,2.50,2.80,3.10,3.40,3.70,4.10,4.60,5.00,5.60]},
+  f:{m100:[19.4,18.4,17.6,16.8,16.1,15.6,15.2,14.8,14.6,14.0],
+     m200:[41.5,39.4,37.3,35.6,33.8,32.8,31.6,30.8,30.4,29.2],
+     hj:  [0.68,0.77,0.85,0.92,0.99,1.05,1.12,1.18,1.22,1.30],
+     lj:  [2.10,2.40,2.65,2.90,3.15,3.40,3.65,3.85,4.00,4.30]}
+};
+/* 種目係数：基準を1%上回ったときの点数÷10。記録のばらつき（伸び幅）が小さい種目ほど大きくして、種目間の価値をそろえる */
+const DEFAULT_COEF={m100:1.4,m200:1.2,hj:1.0,lj:0.8};
+const TEAM_PRESET=[['赤','#d64545'],['青','#2f6fd6'],['黄','#d9a400'],['緑','#2e9e5b'],['紫','#8a55c9'],['橙','#ee7a1f']];
+const DEFAULT_SETTINGS={sizeAdjust:true,pbBonus:false,pbBonusPts:50,noDouble:true};
+const DEFAULT_UI={tab:'input',ev:'m100',filter:'all',sort:'team',tblSex:'m',tblEv:'m100',calcSex:'m',calcGrade:5,calcEv:'m100',calcVal:''};
+const TABS=[['input','記録入力','入力'],['rank','順位・表彰','順位'],['roster','選手・チーム','選手'],['table','得点表','得点表'],['data','設定・データ','設定']];
+const STORE_KEY='teamKirokukai.v1';
+
+/* ---------- 得点の計算 ---------- */
+// 基準比：走る種目は速さ（基準タイム÷記録）、跳ぶ種目は距離（記録÷基準記録）
+function ratioOf(ek,v,std){return EV[ek].type==='run'?std/v:v/std;}
+// 得点 = 500 + 1000 × 種目係数 × (基準比 − 1)　小数点以下切り捨て・0点未満は0点
+function scoreOf(ek,v,std,coef){return Math.max(0,Math.floor(500+1000*coef*(ratioOf(ek,v,std)-1)+1e-9));}
+// その得点に届く最も遅いタイム／最も短い記録
+function needFor(ek,pts,std,coef){
+  const r=1+(pts-500)/(1000*coef);
+  if(r<=0)return null;
+  return EV[ek].type==='run'?Math.floor(std/r*100+1e-9)/100:Math.ceil(std*r*100-1e-9)/100;
+}
+// 自己ベスト更新率(%)：走る種目は速さの伸び、跳ぶ種目は距離の伸び
+function improveRate(ek,v,pb){return EV[ek].type==='run'?(pb/v-1)*100:(v/pb-1)*100;}
+
+/* ---------- 記録の読み取りと表示 ---------- */
+function normalizeText(s){
+  return String(s??'').replace(/[０-９Ａ-Ｚａ-ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
+    .replace(/[．。]/g,'.').replace(/：/g,':').replace(/\s+/g,'').toLowerCase();
+}
+function parseMark(ek,raw,allowNM=true){
+  const s=normalizeText(raw), e=EV[ek];
+  if(!s)return{empty:true};
+  if(/^(nm|x|×|f|-|ー|なし|記録なし|ファウル)$/.test(s)){
+    return allowNM?{value:'NM'}:{error:'自己ベストは数字で入力してください'};
+  }
+  let v=null, m;
+  if(e.type==='run'){
+    if((m=s.match(/^(\d+):(\d{1,2}(?:\.\d+)?)$/)))v=+m[1]*60+ +m[2];
+    else if(/^\d+(\.\d+)?秒?$/.test(s))v=parseFloat(s);
+    else if((m=s.match(/^(\d+)(?:秒|")(\d{1,2})$/)))v=+m[1]+ +m[2].padEnd(2,'0')/100;
+  }else{
+    if((m=s.match(/^(\d+(?:\.\d+)?)cm$/)))v=+m[1]/100;
+    else if((m=s.match(/^(\d+)m(\d{1,2})?$/)))v=+m[1]+(m[2]?+m[2].padEnd(2,'0')/100:0);
+    else if(/^\d+(\.\d+)?m?$/.test(s)){v=parseFloat(s);if(v>=e.cm)v=v/100;}
+  }
+  if(v==null||!isFinite(v))return{error:'数字で入力してください（例 '+(e.type==='run'?'15.32':'3.85')+'）'};
+  v=Math.round(v*100)/100;
+  if(v<e.min||v>e.max)return{error:e.name+'の記録としては範囲外です（'+fmtMark(ek,e.min)+'〜'+fmtMark(ek,e.max)+'）'};
+  return{value:v};
+}
+function fmtMark(ek,v){
+  if(v==='NM')return'記録なし';
+  if(typeof v!=='number')return'';
+  if(EV[ek].type==='run'){
+    const dec=Math.round(v*100)%10===0?1:2;
+    if(v>=60){const mm=Math.floor(v/60);return mm+':'+(v-mm*60).toFixed(dec).padStart(dec+3,'0');}
+    return v.toFixed(dec);
+  }
+  return v.toFixed(2);
+}
+const unitOf=ek=>EV[ek].type==='run'?'秒':'m';
+const fmtSigned=(n,d=2)=>(n>0?'+':n<0?'−':'±')+Math.abs(n).toFixed(d);
+const fmtInt=n=>Math.round(n).toLocaleString('ja-JP');
+
+/* ---------- 状態 ---------- */
+const clone=o=>JSON.parse(JSON.stringify(o));
+const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
+function uid(){return'a'+Math.random().toString(36).slice(2,9);}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function blankMarks(){return{m100:null,m200:null,hj:null,lj:null};}
+function blankAthlete(){return{id:uid(),name:'',sex:'m',grade:5,team:'',absent:false,pb:blankMarks(),rec:blankMarks()};}
+function freshState(){
+  return{v:1,meet:{name:'チーム内記録会',date:todayStr()},teamCount:5,
+    teams:TEAM_PRESET.map(([n,c],i)=>({id:'t'+(i+1),name:n+'チーム',color:c})),
+    athletes:[],std:clone(DEFAULT_STD),coef:{...DEFAULT_COEF},settings:{...DEFAULT_SETTINGS},sample:false,ui:{...DEFAULT_UI}};
+}
+function cleanMark(ek,v,allowNM){
+  if(v==='NM')return allowNM?'NM':null;
+  if(typeof v==='number'&&isFinite(v)&&v>=EV[ek].min&&v<=EV[ek].max)return Math.round(v*100)/100;
+  return null;
+}
+// 読み込んだデータ（保存分・バックアップ）を検査して正しい形にそろえる
+function sanitize(raw){
+  if(!raw||typeof raw!=='object'||!Array.isArray(raw.athletes))throw new Error('このアプリのバックアップではないようです');
+  const s=freshState();
+  if(raw.meet&&typeof raw.meet==='object'){
+    if(typeof raw.meet.name==='string')s.meet.name=raw.meet.name.slice(0,60);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(raw.meet.date))s.meet.date=raw.meet.date;
+  }
+  if(Number.isInteger(raw.teamCount))s.teamCount=clamp(raw.teamCount,2,6);
+  if(Array.isArray(raw.teams))raw.teams.slice(0,6).forEach((t,i)=>{
+    if(!t||typeof t!=='object')return;
+    if(typeof t.name==='string'&&t.name.trim())s.teams[i].name=t.name.slice(0,12);
+    if(/^#[0-9a-f]{6}$/i.test(t.color))s.teams[i].color=t.color;
+  });
+  const ids=new Set(s.teams.map(t=>t.id)), seen=new Set();
+  s.athletes=raw.athletes.filter(a=>a&&typeof a==='object').slice(0,500).map(a=>{
+    const b=blankAthlete();
+    if(typeof a.id==='string'&&/^[\w-]{1,24}$/.test(a.id)&&!seen.has(a.id))b.id=a.id;
+    seen.add(b.id);
+    b.name=String(a.name??'').slice(0,30);
+    b.sex=a.sex==='f'?'f':'m';
+    b.grade=Number.isInteger(a.grade)?clamp(a.grade,0,GRADES.length-1):5;
+    b.team=ids.has(a.team)?a.team:'';
+    b.absent=!!a.absent;
+    for(const e of EVENTS){b.pb[e.key]=cleanMark(e.key,a.pb?.[e.key],false);b.rec[e.key]=cleanMark(e.key,a.rec?.[e.key],true);}
+    return b;
+  });
+  for(const sx of['m','f'])for(const e of EVENTS)GRADES.forEach((g,i)=>{
+    const v=raw.std?.[sx]?.[e.key]?.[i];
+    if(typeof v==='number'&&v>=e.min&&v<=e.max)s.std[sx][e.key][i]=v;
+  });
+  for(const e of EVENTS){const c=raw.coef?.[e.key];if(typeof c==='number'&&c>=0.2&&c<=3)s.coef[e.key]=c;}
+  const st=raw.settings||{};
+  for(const k of['sizeAdjust','pbBonus','noDouble'])if(typeof st[k]==='boolean')s.settings[k]=st[k];
+  if(Number.isInteger(st.pbBonusPts))s.settings.pbBonusPts=clamp(st.pbBonusPts,0,500);
+  s.sample=!!raw.sample;
+  if(Number.isInteger(raw.sampleVer))s.sampleVer=raw.sampleVer;
+  if(raw.ui&&typeof raw.ui==='object'){
+    const u=raw.ui;
+    if(TABS.some(t=>t[0]===u.tab))s.ui.tab=u.tab;
+    for(const k of['ev','tblEv','calcEv'])if(EV[u[k]])s.ui[k]=u[k];
+    for(const k of['tblSex','calcSex'])if(u[k]==='m'||u[k]==='f')s.ui[k]=u[k];
+    if(['team','grade','name','order'].includes(u.sort))s.ui.sort=u.sort;
+    if(u.filter==='all'||ids.has(u.filter))s.ui.filter=u.filter;
+    if(Number.isInteger(u.calcGrade))s.ui.calcGrade=clamp(u.calcGrade,0,GRADES.length-1);
+  }
+  return s;
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);if(!raw)return null;
+    const s=sanitize(JSON.parse(raw));
+    return s.sample&&s.sampleVer!==SAMPLE_VER?null:s;
+  }catch(e){return null;}
+}
+let saveTimer=0;
+function save(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}catch(e){}},200);}
+
+/* ---------- 仮データ（テスト用） ---------- */
+// 中身を変えたら番号を上げる。保存済みの仮データが新しい内容に置きかわる（本番データは対象外）
+const SAMPLE_VER=3;
+function makeSample(){
+  const s=freshState(); s.sample=true; s.sampleVer=SAMPLE_VER; s.teamCount=5;
+  // [名前, 性別, 学年(0=小1), 自己ベスト[100m,200m,走高跳,走幅跳], 今日の記録[同じ順]]
+  // null は未登録、'NM' は記録なし。PB更新・自己ベスト以下・初記録・記録なしがひと通り出るようにしてある
+  const people=[
+    ['山本 陽翔','m',5,[14.20,29.90,1.20,4.05],[14.05,30.10,1.25,4.12]],
+    ['佐藤 結衣','f',4,[15.60,32.80,1.05,3.35],[15.48,32.40,1.05,3.41]],
+    ['高橋 蓮',  'm',3,[16.80,36.20,0.90,2.95],[16.35,35.40,0.95,3.08]],
+    ['伊藤 美桜','f',6,[14.70,30.50,1.20,3.95],[14.78,30.62,1.15,3.98]],
+    ['渡辺 湊',  'm',7,[12.80,26.70,1.45,5.20],[12.71,26.45,1.45,5.33]],
+    ['中村 心春','f',5,[16.20,34.60,1.00,3.10],[15.90,33.70,1.05,3.22]],
+    ['小林 悠真','m',2,[17.60,null,0.85,2.70],[17.38,37.20,0.85,2.78]],
+    ['加藤 さくら','f',3,[18.10,38.90,0.85,2.55],[17.62,37.80,'NM',2.71]],
+    ['吉田 颯',  'm',4,[15.30,32.10,1.10,3.62],[15.25,32.35,1.10,3.70]],
+    ['山田 陽葵','f',2,[16.90,35.60,0.95,2.95],[16.95,35.40,0.95,3.02]],
+    ['松本 大和', 'm',5,[14.08,28.92,1.15,4.15],[14.30,28.49,1.20,4.29]],
+    ['井上 凛',  'f',4,[15.66,33.16,1.00,3.13],[15.27,33.02,1.05,3.10]],
+    ['木村 樹',  'm',5,[16.03,34.58,1.00,3.17],[15.41,34.77,1.05,3.38]],
+    ['林 芽依',  'f',7,[16.50,34.84,1.00,3.25],[16.53,33.17,1.00,3.47]],
+    ['清水 律',  'm',3,[16.19,35.27,0.95,3.00],[16.26,33.74,'NM',3.19]],
+    ['斎藤 杏',  'f',5,[17.22,37.46,0.90,2.98],[16.67,36.12,0.90,3.03]],
+    ['山口 蒼',  'm',1,[16.18,34.25,0.90,2.98],[16.14,33.81,0.90,2.93]],
+    ['森 結菜',  'f',1,[20.13,43.82,0.70,2.11],[19.44,42.27,0.70,2.27]],
+    ['池田 悠人', 'm',4,[16.02,33.32,0.95,3.33],[16.02,31.80,0.95,3.53]],
+    ['橋本 陽菜', 'f',3,[16.90,35.43,0.95,2.88],[16.71,35.36,0.90,2.94]],
+    ['阿部 朝陽', 'm',6,[13.48,28.01,1.35,4.54],[13.59,27.84,1.35,4.55]],
+    ['石川 紬',  'f',2,[17.10,35.93,0.90,2.76],[17.30,35.91,0.90,2.81]],
+    ['山下 碧',  'm',2,[18.06,38.56,0.85,2.57],[17.50,38.49,0.85,2.74]],
+    ['中島 葵',  'f',6,[16.47,36.05,1.00,3.12],[16.40,35.39,1.05,3.35]],
+    ['石井 湊斗', 'm',0,[19.26,42.57,0.70,2.21],[19.19,41.30,'NM',2.33]],
+    ['小川 澪',  'f',0,[20.96,46.56,0.60,1.83],[20.42,44.27,0.60,1.84]],
+    ['前田 奏太', 'm',8,[13.26,28.34,1.40,4.60],[12.90,27.03,1.45,4.86]],
+    ['岡田 莉子', 'f',5,[14.56,30.44,1.15,3.72],[14.35,30.33,1.20,3.87]],
+    ['長谷川 海翔','m',3,[17.38,38.03,0.90,2.69],[16.75,37.14,0.90,2.82]],
+    ['藤田 花',  'f',7,[13.92,28.34,1.30,4.41],[14.15,28.14,1.30,4.50]],
+    ['後藤 新',  'm',4,[15.90,33.74,1.00,3.22],[15.44,32.44,1.00,'NM']],
+    ['近藤 美月', 'f',2,[17.81,36.88,0.80,2.58],[17.38,36.02,0.85,2.69]],
+    ['村上 晴',  'm',6,[14.95,32.30,1.10,3.58],[14.90,32.58,1.15,3.78]],
+    ['遠藤 千尋', 'f',4,[15.08,31.47,1.05,3.43],[14.89,31.76,1.05,3.55]],
+    ['青木 怜',  'm',1,[16.54,34.15,0.90,2.81],[16.32,33.15,0.95,2.79]]
+  ];
+  people.forEach(([name,sex,grade,pb,rec])=>{
+    const a=blankAthlete(); Object.assign(a,{name,sex,grade});
+    EVENTS.forEach((e,i)=>{a.pb[e.key]=pb[i];a.rec[e.key]=rec[i];});
+    s.athletes.push(a);
+  });
+  autoSplit(s);
+  return s;
+}
+
+/* ---------- 集計 ---------- */
+const activeTeams=(s=state)=>s.teams.slice(0,s.teamCount);
+const teamById=id=>activeTeams().find(t=>t.id===id)||null;
+const athleteById=id=>state.athletes.find(a=>a.id===id);
+const stdFor=(a,ek,s=state)=>s.std[a.sex][ek][a.grade];
+function predOf(a,s=state){
+  // 自己ベストから見た予想得点。自己ベストがない種目は基準（500点）として扱う
+  return EVENTS.reduce((sum,e)=>sum+(typeof a.pb[e.key]==='number'?scoreOf(e.key,a.pb[e.key],stdFor(a,e.key,s),s.coef[e.key]):500),0);
+}
+function evalAthlete(a){
+  const r={a,ev:{},total:0,done:0,pbScore:0,pbCount:0};
+  for(const e of EVENTS){
+    const k=e.key, rec=a.rec[k], pb=a.pb[k], coef=state.coef[k];
+    const o={rec,pb,pts:null,rate:null,adj:null,isPB:false,first:false};
+    if(typeof rec==='number'){o.pts=scoreOf(k,rec,stdFor(a,k),coef);r.done++;}
+    else if(rec==='NM'){o.pts=0;r.done++;}
+    if(typeof rec==='number'&&typeof pb==='number'){
+      o.rate=improveRate(k,rec,pb); o.adj=o.rate*coef;
+      const rc=Math.round(rec*100), pc=Math.round(pb*100);
+      o.isPB=e.type==='run'?rc<pc:rc>pc;
+      if(o.isPB){r.pbScore+=o.adj;r.pbCount++;}
+    }else if(typeof rec==='number')o.first=true;
+    r.total+=o.pts||0;
+    r.ev[k]=o;
+  }
+  r.pbScore=Math.round(r.pbScore*100)/100;
+  return r;
+}
+function assignRank(list,same,key){list.forEach((x,i)=>{x[key]=i>0&&same(list[i-1],x)?list[i-1][key]:i+1;});}
+const cmpName=(p,q)=>p.a.name.localeCompare(q.a.name,'ja');
+function compute(){
+  const evals=state.athletes.map(evalAthlete);
+  const present=evals.filter(x=>!x.a.absent);
+  const scored=present.filter(x=>x.done>0).sort((p,q)=>q.total-p.total||cmpName(p,q));
+  assignRank(scored,(p,q)=>p.total===q.total,'scoreRank');
+  const pbAll=present.filter(x=>x.pbCount>0).sort((p,q)=>q.pbScore-p.pbScore||q.pbCount-p.pbCount||cmpName(p,q));
+  const pbElig=state.settings.noDouble?pbAll.filter(x=>!(x.scoreRank<=3)):pbAll;
+  assignRank(pbElig,(p,q)=>p.pbScore===q.pbScore&&p.pbCount===q.pbCount,'pbRank');
+  const st=state.settings;
+  const teams=activeTeams().map(t=>{
+    const m=present.filter(x=>x.a.team===t.id);
+    const raw=m.reduce((s,x)=>s+x.total,0), pbc=m.reduce((s,x)=>s+x.pbCount,0);
+    const bonus=st.pbBonus?pbc*st.pbBonusPts:0, sum=raw+bonus;
+    const ev={}; for(const e of EVENTS)ev[e.key]=m.reduce((s,x)=>s+(x.ev[e.key].pts||0),0);
+    return{...t,members:m,n:m.length,raw,pbc,bonus,sum,avg:m.length?sum/m.length:0,ev};
+  });
+  const maxN=Math.max(0,...teams.map(t=>t.n)), uneven=teams.some(t=>t.n!==maxN);
+  // 人数がちがうときは「1人平均 × 最多チームの人数」でそろえる
+  teams.forEach(t=>{t.score=st.sizeAdjust&&uneven?Math.round(t.avg*maxN):t.sum;});
+  const ranked=[...teams].sort((p,q)=>q.score-p.score);
+  assignRank(ranked,(p,q)=>p.score===q.score,'rank');
+  return{evals,present,scored,pbAll,pbElig,teams,ranked,maxN,uneven};
+}
+
+/* ---------- チーム自動分け ---------- */
+// 予想得点の高い順にスネーク方式で配り、そのあと入れ替えで「平均点」と「男女比」の差を小さくする
+function autoSplit(s=state){
+  const n=s.teamCount, teams=activeTeams(s);
+  const pres=s.athletes.filter(a=>!a.absent).map(a=>({a,p:predOf(a,s),m:a.sex==='m'?1:0})).sort((x,y)=>y.p-x.p);
+  const groups=teams.map(()=>[]);
+  pres.forEach((x,i)=>{const r=Math.floor(i/n),c=i%n;groups[r%2===0?c:n-1-c].push(x);});
+  if(pres.length){
+    const mu=pres.reduce((t,x)=>t+x.p,0)/pres.length, mb=pres.reduce((t,x)=>t+x.m,0)/pres.length;
+    const sums=groups.map(g=>({p:g.reduce((t,x)=>t+x.p,0),m:g.reduce((t,x)=>t+x.m,0),n:g.length}));
+    const gc=s0=>s0.n?((s0.p/s0.n-mu)**2+40000*(s0.m/s0.n-mb)**2):0;
+    let improved=true, guard=0;
+    while(improved&&guard++<100){
+      improved=false;
+      for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)for(let a=0;a<groups[i].length;a++)for(let b=0;b<groups[j].length;b++){
+        const x=groups[i][a], y=groups[j][b];
+        const si={p:sums[i].p-x.p+y.p,m:sums[i].m-x.m+y.m,n:sums[i].n}, sj={p:sums[j].p-y.p+x.p,m:sums[j].m-y.m+x.m,n:sums[j].n};
+        if(gc(si)+gc(sj)<gc(sums[i])+gc(sums[j])-1e-6){groups[i][a]=y;groups[j][b]=x;sums[i]=si;sums[j]=sj;improved=true;}
+      }
+    }
+  }
+  groups.forEach((g,i)=>g.forEach(x=>{x.a.team=teams[i].id;}));
+  const counts=groups.map(g=>g.length);
+  s.athletes.filter(a=>a.absent).forEach(a=>{const i=counts.indexOf(Math.min(...counts));a.team=teams[i].id;counts[i]++;});
+  const avgs=groups.filter(g=>g.length).map(g=>g.reduce((t,x)=>t+x.p,0)/g.length);
+  return avgs.length?Math.round(Math.max(...avgs)-Math.min(...avgs)):0;
+}
+
+/* ---------- 表示の部品 ---------- */
+const $=(sel,root=document)=>root.querySelector(sel);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function inkOn(hex){
+  const n=parseInt(hex.slice(1),16), lin=c=>{c/=255;return c<=0.03928?c/12.92:((c+0.055)/1.055)**2.4;};
+  const L=0.2126*lin(n>>16&255)+0.7152*lin(n>>8&255)+0.0722*lin(n&255);
+  return L>0.28?'#14181d':'#ffffff';
+}
+function tagHTML(t){
+  if(!t)return'<span class="tag none" title="未所属">–</span>';
+  return`<span class="tag" style="--tc:${t.color};--tk:${inkOn(t.color)}" title="${esc(t.name)}">${esc([...t.name][0]||'')}</span>`;
+}
+function fmtDate(s){
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');if(!m)return'';
+  const d=new Date(+m[1],+m[2]-1,+m[3]);
+  return`${+m[1]}年${+m[2]}月${+m[3]}日（${'日月火水木金土'[d.getDay()]}）`;
+}
+const metaOf=a=>`${GRADES[a.grade]} ${SEX[a.sex]}`;
+
+/* ---------- 画面 ---------- */
+let state=loadState()||makeSample();
+const recErr=new Set();
+
+function render(){
+  $('#meetName').textContent=state.meet.name||'チーム内記録会';
+  $('#meetDate').textContent=fmtDate(state.meet.date);
+  document.title=state.meet.name||'チーム内記録会';
+  const C=compute();
+  renderBoard(C);
+  $('#tabs').innerHTML=TABS.map(([k,l,sl])=>`<button type="button" role="tab" data-act="tab" data-tab="${k}" aria-selected="${state.ui.tab===k}" aria-label="${l}"><span class="tl">${l}</span><span class="ts">${sl}</span></button>`).join('');
+  $('#sampleBar').innerHTML=state.sample?`<div class="sample-bar"><div class="wrap"><span>いま表示しているのは<b>テスト用の仮データ</b>です（架空の${state.athletes.length}人）。記録を書きかえて動きを確かめてください。</span><button class="btn" data-act="exitSample" type="button">仮データを消して本番を始める</button></div></div>`:'';
+  $('#view').innerHTML=VIEWS[state.ui.tab](C);
+}
+function renderBoard(C=compute()){
+  $('#board').innerHTML=C.teams.map(t=>`<div class="bcell" title="${esc(t.name)} ${t.n}人">
+    ${tagHTML(t)}<div class="bwho"><span class="bname">${esc(t.name)}</span><span class="bpts">${fmtInt(t.score)}</span></div>
+    <span class="brank${t.rank===1&&t.score>0?' top':''}">${t.score>0?t.rank+'位':''}</span></div>`).join('');
+}
+
+/* 記録入力 */
+function viewInput(C){
+  const ek=state.ui.ev, e=EV[ek], f=state.ui.filter;
+  const segs=EVENTS.map(ev=>`<button type="button" class="seg${ev.key===ek?' on':''}" data-act="ev" data-ev="${ev.key}" aria-pressed="${ev.key===ek}"><span>${ev.name}</span><small data-count="${ev.key}">${countDone(C,ev.key)}</small></button>`).join('');
+  const chips=`<button type="button" class="chip all${f==='all'?' on':''}" data-act="filter" data-id="all" aria-pressed="${f==='all'}">全員</button>`+
+    activeTeams().map(t=>`<button type="button" class="chip${f===t.id?' on':''}" data-act="filter" data-id="${t.id}" aria-pressed="${f===t.id}">${tagHTML(t)}${esc(t.name)}</button>`).join('');
+  let list=C.evals.filter(x=>f==='all'||x.a.team===f);
+  list=sortEvals(list,state.ui.sort);
+  list=list.filter(x=>!x.a.absent).concat(list.filter(x=>x.a.absent));
+  const sortOpts=[['team','チーム順'],['grade','学年順'],['name','名前順'],['order','登録順']].map(([v,l])=>`<option value="${v}"${state.ui.sort===v?' selected':''}>${l}</option>`).join('');
+  return`<section class="stack">
+    <div class="segs" role="group" aria-label="種目">${segs}</div>
+    <div class="toolbar"><div class="chips">${chips}</div>
+      <label class="sel" for="sortSel">並び順 <select id="sortSel" data-ch="sort">${sortOpts}</select></label></div>
+    <p class="hint">${e.type==='run'?'タイムを秒で入力（例 15.32 ／ 1分を超えるときは 62.5 または 1:02.5）':'記録をmで入力（例 3.85 ／ cmで 385 と入れてもOK）'}。「なし」は記録なし（0点）。Enterで次の人へ進みます。</p>
+    ${list.length?`<ol class="sheet" id="sheet">${list.map(x=>rowHTML(x,ek)).join('')}</ol>`
+      :`<div class="sheet empty">選手がまだいません。「選手・チーム」タブで登録してください。</div>`}
+  </section>`;
+}
+function countDone(C,ek){const p=C.present;return p.filter(x=>x.a.rec[ek]!=null).length+'/'+p.length;}
+function sortEvals(list,mode){
+  const order=new Map(state.athletes.map((a,i)=>[a.id,i]));
+  const tIdx=id=>{const i=activeTeams().findIndex(t=>t.id===id);return i<0?99:i;};
+  const by={team:(p,q)=>tIdx(p.a.team)-tIdx(q.a.team)||p.a.grade-q.a.grade||cmpName(p,q),
+    grade:(p,q)=>p.a.grade-q.a.grade||p.a.sex.localeCompare(q.a.sex)||cmpName(p,q),
+    name:cmpName, order:(p,q)=>order.get(p.a.id)-order.get(q.a.id)};
+  return[...list].sort(by[mode]||by.team);
+}
+function rowHTML(x,ek){
+  const a=x.a, o=x.ev[ek], e=EV[ek], t=teamById(a.team);
+  const val=o.rec==='NM'?'NM':fmtMark(ek,o.rec);
+  return`<li class="row${a.absent?' absent':''}" data-id="${a.id}">
+    ${tagHTML(t)}
+    <div class="who"><span class="nm">${esc(a.name||'（名前なし）')}</span><span class="meta">${metaOf(a)}${a.absent?'・欠席':''}</span></div>
+    <div class="pbv"><span class="lbl">自己ベスト</span>${typeof o.pb==='number'?fmtMark(ek,o.pb):'—'}</div>
+    <div class="inp"><input type="text" id="rec-${a.id}-${ek}" data-in="rec" data-ch="rec" value="${esc(val)}" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="${e.type==='run'?'15.32':'3.85'}" aria-label="${esc(a.name)} ${e.name}の記録"${a.absent?' disabled':''}><span class="unit">${unitOf(ek)}</span></div>
+    <button type="button" class="nmbtn${o.rec==='NM'?' on':''}" data-act="nm" aria-pressed="${o.rec==='NM'}" title="記録なし（ファウル・失敗）"${a.absent?' disabled':''}>なし</button>
+    <div class="pts" data-cell="pts">${ptsHTML(o,recErr.has(a.id+ek))}</div>
+    <div class="gain" data-cell="gain">${gainHTML(o,ek)}</div>
+  </li>`;
+}
+function ptsHTML(o,err){
+  if(err)return'<span class="dim" title="入力を確認してください">？</span>';
+  if(o.pts==null)return'<span class="dim">—</span>';
+  return`<b>${o.pts}</b><small>点</small>`;
+}
+function gainHTML(o,ek){
+  if(o.rec==='NM')return'<span class="dim">記録なし</span>';
+  if(o.isPB)return`<span class="pbtag">PB</span><span class="up" title="換算更新率 ${o.adj.toFixed(2)}（更新率 × 種目係数 ${state.coef[ek]}）">${fmtSigned(o.rate)}%</span>`;
+  if(o.rate!=null)return`<span class="dim">自己ベスト比 ${fmtSigned(o.rate)}%</span>`;
+  if(o.first)return'<span class="dim">初記録（自己ベスト未登録）</span>';
+  return'';
+}
+function refreshRow(li,a,ek){
+  const o=evalAthlete(a).ev[ek];
+  li.querySelector('[data-cell="pts"]').innerHTML=ptsHTML(o,recErr.has(a.id+ek));
+  li.querySelector('[data-cell="gain"]').innerHTML=gainHTML(o,ek);
+  const nb=li.querySelector('.nmbtn');nb.classList.toggle('on',o.rec==='NM');nb.setAttribute('aria-pressed',o.rec==='NM');
+}
+function refreshLive(){
+  const C=compute(); renderBoard(C);
+  document.querySelectorAll('[data-count]').forEach(el=>{el.textContent=countDone(C,el.dataset.count);});
+}
+
+/* 順位・表彰 */
+function viewRank(C){
+  const st=state.settings;
+  const maxV=Math.max(1,...C.ranked.map(t=>t.score));
+  const bars=C.ranked.map(t=>`<div class="bar-row" title="${esc(t.name)}：${fmtInt(t.score)}点（出場${t.n}人・平均${fmtInt(t.avg)}点）">
+      <span class="br-rank">${t.rank}位</span>${tagHTML(t)}<span class="br-name">${esc(t.name)}</span>
+      <span class="br-track"><span class="br-fill" style="width:${(t.score/maxV*100).toFixed(1)}%;--tc:${t.color}"></span></span>
+      <span class="br-val">${fmtInt(t.score)}<small>点</small></span></div>`).join('');
+  const teamNote=C.uneven&&st.sizeAdjust?`<p class="note">人数がちがうため「1人平均 × ${C.maxN}人」で比べています（設定で切り替え可）。</p>`:'';
+  const top3=C.scored.filter(x=>x.scoreRank<=3);
+  const pbTop=C.pbElig.filter(x=>x.pbRank<=3);
+  const medal=(x,rank,val,unit)=>`<li class="medal r${rank}"><span class="mbadge">${rank}</span>${tagHTML(teamById(x.a.team))}
+    <span class="mname"><b>${esc(x.a.name)}</b><small>${metaOf(x.a)}</small></span><span class="mval">${val}<small>${unit}</small></span></li>`;
+  const pbTotalCount=C.present.reduce((s,x)=>s+x.pbCount,0);
+  const showBonus=st.pbBonus;
+  return`<section class="stack">
+    <div class="awards">
+      <div class="card"><h2>チーム総合</h2><p class="sub">メンバーの得点の合計${showBonus?`＋自己ベスト更新ボーナス（1回${st.pbBonusPts}点）`:''}</p>
+        <div class="bars">${bars}</div>${teamNote}</div>
+      <div class="card"><h2>総合得点賞</h2><p class="sub">得点表による4種目の合計点</p>
+        ${top3.length?`<ol class="medals">${top3.map(x=>medal(x,x.scoreRank,fmtInt(x.total),'点')).join('')}</ol>`:'<p class="empty">記録が入ると表示されます</p>'}</div>
+      <div class="card"><h2>自己ベスト更新率賞</h2><p class="sub">換算更新率の合計${st.noDouble?'（総合得点賞の入賞者はのぞく）':''}</p>
+        ${pbTop.length?`<ol class="medals">${pbTop.map(x=>medal(x,x.pbRank,x.pbScore.toFixed(2),'%')).join('')}</ol>`:'<p class="empty">自己ベストを更新した人が出ると表示されます</p>'}</div>
+    </div>
+    <div class="card no-print"><div class="inline" style="justify-content:space-between">
+      <label class="toggle"><input type="checkbox" id="setNoDouble" data-ch="setting" data-key="noDouble"${st.noDouble?' checked':''}>
+        <span>W受賞なしにする<small>総合得点賞の入賞者を自己ベスト更新率賞の対象から外し、表彰される人数を増やします</small></span></label>
+      <button type="button" class="btn" data-act="print">印刷する</button></div></div>
+
+    <div class="card"><div class="card-head"><h2>チーム別の内訳</h2></div>
+      <div class="tscroll"><table class="res"><thead><tr><th>順位</th><th>チーム</th><th class="r">出場</th>${EVENTS.map(e=>`<th class="r">${e.name}</th>`).join('')}
+        <th class="r">PB数</th>${showBonus?'<th class="r">ボーナス</th>':''}<th class="r">合計</th><th class="r">1人平均</th><th class="r">チーム得点</th></tr></thead>
+      <tbody>${C.ranked.map(t=>`<tr><td class="rk">${t.rank}</td><td><span style="display:inline-flex;gap:8px;align-items:center">${tagHTML(t)}<b>${esc(t.name)}</b></span></td>
+        <td class="r num">${t.n}</td>${EVENTS.map(e=>`<td class="r"><span class="p">${fmtInt(t.ev[e.key])}</span></td>`).join('')}
+        <td class="r num">${t.pbc}</td>${showBonus?`<td class="r num">${fmtInt(t.bonus)}</td>`:''}<td class="r num">${fmtInt(t.sum)}</td><td class="r num">${fmtInt(t.avg)}</td><td class="r tot">${fmtInt(t.score)}</td></tr>`).join('')}</tbody></table></div>
+      <p class="note">今日の自己ベスト更新：のべ ${pbTotalCount} 回</p></div>
+
+    <div class="card"><div class="card-head"><h2>個人総合得点 <small>${C.scored.length}人</small></h2></div>
+      ${C.scored.length?`<div class="tscroll"><table class="res"><thead><tr><th>順位</th><th>名前</th>${EVENTS.map(e=>`<th class="r">${e.name}</th>`).join('')}<th class="r">合計</th></tr></thead>
+      <tbody>${C.scored.map(x=>`<tr><td class="rk">${x.scoreRank}</td><td class="who"><span style="display:flex;gap:8px;align-items:center">${tagHTML(teamById(x.a.team))}<span><b>${esc(x.a.name)}</b><small>${metaOf(x.a)}</small></span></span></td>
+        ${EVENTS.map(e=>{const o=x.ev[e.key];return`<td class="r">${o.pts==null?'<span class="dim">—</span>':`<span class="p">${o.pts}</span><span class="rec">${fmtMark(e.key,o.rec)}${o.isPB?' <span class="up">PB</span>':''}</span>`}</td>`;}).join('')}
+        <td class="r tot">${fmtInt(x.total)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="empty">記録が入ると表示されます</p>'}</div>
+
+    <div class="card"><div class="card-head"><h2>自己ベスト更新率 <small>更新した人 ${C.pbAll.length}人</small></h2></div>
+      ${C.pbAll.length?`<div class="tscroll"><table class="res"><thead><tr><th>順位</th><th>名前</th>${EVENTS.map(e=>`<th class="r">${e.name}<br><small>更新率（換算）</small></th>`).join('')}<th class="r">PB数</th><th class="r">換算合計</th></tr></thead>
+      <tbody>${C.pbAll.map(x=>{const out=x.pbRank==null;return`<tr class="${out?'out':''}"><td class="rk">${out?'—':x.pbRank}</td>
+        <td class="who"><span style="display:flex;gap:8px;align-items:center">${tagHTML(teamById(x.a.team))}<span><b>${esc(x.a.name)}</b><small>${metaOf(x.a)}${out?' <span class="ribbon">総合得点賞</span>':''}</small></span></span></td>
+        ${EVENTS.map(e=>{const o=x.ev[e.key];if(o.rate==null)return'<td class="r dim">—</td>';return`<td class="r"><span class="p${o.isPB?' up':''}">${fmtSigned(o.rate)}%</span><span class="rec">${o.isPB?'（'+o.adj.toFixed(2)+'）':'加算なし'}</span></td>`;}).join('')}
+        <td class="r num">${x.pbCount}</td><td class="r tot">${x.pbScore.toFixed(2)}</td></tr>`;}).join('')}</tbody></table></div>`:'<p class="empty">自己ベストを更新した人が出ると表示されます</p>'}
+      <p class="note">換算更新率 = 更新率 × 種目係数。自己ベストを上回った種目だけを合計します。同点のときは更新した種目数が多い人が上位です。</p></div>
+  </section>`;
+}
+
+/* 選手・チーム */
+function viewRoster(C){
+  const n=state.athletes.length;
+  const gradeOpts=g=>GRADES.map((l,i)=>`<option value="${i}"${g===i?' selected':''}>${l}</option>`).join('');
+  const teamOpts=id=>`<option value="">未所属</option>`+activeTeams().map(t=>`<option value="${t.id}"${id===t.id?' selected':''}>${esc(t.name)}</option>`).join('');
+  const rows=state.athletes.map(a=>`<tr data-id="${a.id}">
+    <td class="sticky"><input type="text" class="nmi" id="nm-${a.id}" data-in="name" value="${esc(a.name)}" placeholder="名前" aria-label="名前"></td>
+    <td><select id="sx-${a.id}" data-ch="sex" aria-label="性別"><option value="m"${a.sex==='m'?' selected':''}>男子</option><option value="f"${a.sex==='f'?' selected':''}>女子</option></select></td>
+    <td><select id="gr-${a.id}" data-ch="grade" aria-label="学年">${gradeOpts(a.grade)}</select></td>
+    <td><select id="tm-${a.id}" data-ch="team" aria-label="チーム">${teamOpts(a.team)}</select></td>
+    ${EVENTS.map(e=>`<td><input type="text" class="pbi" id="pb-${a.id}-${e.key}" data-ch="pb" data-ev="${e.key}" value="${esc(fmtMark(e.key,a.pb[e.key]))}" inputmode="decimal" autocomplete="off" aria-label="${e.name}の自己ベスト"></td>`).join('')}
+    <td style="text-align:center"><input type="checkbox" id="ab-${a.id}" data-ch="absent" aria-label="欠席"${a.absent?' checked':''}></td>
+    <td><button type="button" class="del" data-act="del">削除</button></td></tr>`).join('');
+  return`<section class="stack">
+    <div class="card" id="teamCard">${teamCardHTML(C)}</div>
+    <div class="card">
+      <div class="card-head"><h2>選手一覧 <small>${n}人</small></h2><button type="button" class="btn" data-act="add">＋ 選手を追加</button></div>
+      <p class="hint" style="margin-bottom:8px">自己ベストは今シーズン（同じ学年）の記録がおすすめです。走る種目は秒、跳ぶ種目はm（cmでも可）。空欄の種目は更新率の対象外になります。</p>
+      ${n?`<div class="tscroll"><table class="roster"><thead><tr><th class="sticky">名前</th><th>性別</th><th>学年</th><th>チーム</th>${EVENTS.map(e=>`<th>${e.name}<br><small>自己ベスト</small></th>`).join('')}<th>欠席</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+        :'<p class="empty">まだ選手がいません。「＋ 選手を追加」か、下の「まとめて登録」から入れてください。</p>'}
+      <details class="bulk" style="margin-top:14px"${n?'':' open'}><summary>まとめて登録（表計算ソフトから貼り付け）</summary>
+        <p class="hint">1行に1人。<b>名前, 性別, 学年, 100m, 200m, 走高跳, 走幅跳</b> の順に、カンマかタブで区切ります。自己ベストは空欄でもかまいません。</p>
+        <textarea id="bulkText" rows="5" placeholder="山田 太郎, 男, 小5, 15.8, 33.4, 1.05, 3.62&#10;鈴木 花子, 女, 中1, 15.1, , 1.10, 3.80"></textarea>
+        <div class="btn-row" style="margin-top:8px"><button type="button" class="btn primary" data-act="bulk">追加する</button></div>
+        <div id="bulkMsg"></div>
+      </details>
+    </div>
+  </section>`;
+}
+function teamCardHTML(C){
+  const cnt=Object.fromEntries(activeTeams().map(t=>[t.id,{n:0,p:0}]));
+  state.athletes.forEach(a=>{if(!a.absent&&cnt[a.team]){cnt[a.team].n++;cnt[a.team].p+=predOf(a);}});
+  const none=state.athletes.filter(a=>!a.absent&&!cnt[a.team]).length;
+  return`<div class="card-head"><h2>チーム設定</h2>
+      <label class="sel" for="teamCount">チーム数 <select id="teamCount" data-ch="teamCount">${[2,3,4,5,6].map(k=>`<option value="${k}"${state.teamCount===k?' selected':''}>${k}チーム</option>`).join('')}</select></label></div>
+    <div class="teams-grid">${activeTeams().map((t,i)=>`<div class="team-ed">
+      <input type="color" id="tc-${t.id}" data-ch="teamColor" data-i="${i}" value="${t.color}" aria-label="${esc(t.name)}の色">
+      <input type="text" id="tn-${t.id}" data-in="teamName" data-i="${i}" value="${esc(t.name)}" maxlength="12" aria-label="チーム名">
+      <span class="tstat">${cnt[t.id].n}人・予想平均 ${cnt[t.id].n?fmtInt(cnt[t.id].p/cnt[t.id].n):'—'}点</span></div>`).join('')}</div>
+    ${none?`<p class="hint" style="margin-bottom:8px">未所属の選手が ${none} 人います（チーム得点に入りません）。</p>`:''}
+    <div class="inline"><button type="button" class="btn primary" data-act="split">バランスよく自動で分ける</button>
+      <p class="hint" style="flex:1;min-width:16em">自己ベストから出した予想得点の平均と、男女の人数がそろうように分けます。あとから一覧のチーム欄で手直しできます。</p></div>`;
+}
+
+/* 得点表 */
+function viewTable(){
+  const u=state.ui, sx=u.tblSex, ek=u.tblEv, e=EV[ek], coef=state.coef[ek];
+  const pts=[];for(let p=900;p>=200;p-=50)pts.push(p);
+  const segSex=['m','f'].map(k=>`<button type="button" class="chip all${sx===k?' on':''}" data-act="tblSex" data-v="${k}" aria-pressed="${sx===k}">${SEX[k]}</button>`).join('');
+  const segEv=EVENTS.map(x=>`<button type="button" class="chip all${ek===x.key?' on':''}" data-act="tblEv" data-v="${x.key}" aria-pressed="${ek===x.key}">${x.name}</button>`).join('');
+  const sel=(id,ch,opts,v)=>`<select id="${id}" data-ch="${ch}">${opts.map(([k,l])=>`<option value="${k}"${String(v)===String(k)?' selected':''}>${l}</option>`).join('')}</select>`;
+  const stdTable=sx2=>`<table class="std-tbl"><thead><tr><th>${SEX[sx2]}</th>${EVENTS.map(x=>`<th class="r">${x.name}<br><small>${unitOf(x.key)}</small></th>`).join('')}</tr></thead><tbody>
+    ${GRADES.map((g,gi)=>`<tr><th>${g}</th>${EVENTS.map(x=>`<td class="r"><input type="text" id="std-${sx2}-${x.key}-${gi}" data-ch="std" data-sx="${sx2}" data-ev="${x.key}" data-g="${gi}" value="${fmtMark(x.key,state.std[sx2][x.key][gi])}" inputmode="decimal" aria-label="${g}${SEX[sx2]} ${x.name}の基準記録"></td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  return`<section class="stack">
+    <div class="card">
+      <h2>得点のしくみ</h2>
+      <p class="lead" style="margin-top:6px">学年・性別ごとに決めた<b>基準記録を500点</b>とし、基準をどれだけ上回ったか（％）で点数が決まります。どの学年の子も、どの種目でも、同じように点が取れるように作っています。</p>
+      <div class="formula">
+        <div><b>走る種目（100m・200m）</b><code>得点 ＝ 500 ＋ 1000 × 種目係数 ×（基準タイム ÷ 記録 − 1）</code></div>
+        <div><b>跳ぶ種目（走高跳・走幅跳）</b><code>得点 ＝ 500 ＋ 1000 × 種目係数 ×（記録 ÷ 基準記録 − 1）</code></div>
+        <div><b>自己ベスト更新率</b><code>更新率 ＝（自己ベスト ÷ 記録 − 1）× 100　※跳ぶ種目は（記録 ÷ 自己ベスト − 1）× 100</code><br>
+          <code>換算更新率 ＝ 更新率 × 種目係数　→　自己ベストを上回った種目の合計で順位</code></div>
+      </div>
+      <div class="tscroll"><table style="max-width:560px"><thead><tr><th>種目</th><th class="r">種目係数</th><th class="r">基準を1%上回ると</th></tr></thead><tbody>
+        ${EVENTS.map(x=>`<tr><td>${x.name}</td><td class="r num">${state.coef[x.key].toFixed(1)}</td><td class="r num">＋${Math.round(state.coef[x.key]*10)}点</td></tr>`).join('')}</tbody></table></div>
+      <ul class="fair">
+        <li><b>学年・性別の差をなくす</b>：自分の学年・性別の基準とくらべるので、低学年や女子も高学年男子と同じように点が取れます。</li>
+        <li><b>種目の差をなくす</b>：100mの1%と走幅跳の1%では重みがちがいます（走幅跳のほうが記録の差が大きく出る）。種目係数でその差をそろえています。</li>
+        <li><b>走る種目は「速さ」でくらべる</b>：タイムが大きく遅れても点が急に下がりすぎないので、ゆっくりな子も0点になりにくくなります。</li>
+        <li><b>更新率は自分とのくらべっこ</b>：記録の高い低いに関係なく、自己ベストを大きく伸ばした子が表彰されます。種目係数をかけるので、どの種目で伸ばしても同じ価値です。</li>
+      </ul>
+      <p class="note">例：小6男子の100m（基準15.0秒）で14.0秒なら 500 ＋ 1000 × 1.4 ×（15.0 ÷ 14.0 − 1）＝ 600点。自己ベスト16.00秒の子が15.60秒を出せば、更新率 2.56% × 1.4 ＝ 換算 3.59。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>得点表（早見表）</h2></div>
+      <div class="toolbar" style="margin-bottom:10px"><div class="chips">${segSex}</div><div class="chips">${segEv}</div></div>
+      <p class="hint" style="margin-bottom:8px">${SEX[sx]}・${e.name}：表の記録${e.type==='run'?'より速ければ（以内なら）':'以上なら'}その得点。色のついた行が基準記録（500点）です。</p>
+      <div class="tscroll"><table class="score-tbl"><thead><tr><th>得点</th>${GRADES.map(g=>`<th>${g}</th>`).join('')}</tr></thead>
+        <tbody>${pts.map(p=>`<tr class="${p===500?'base':''}"><th>${p}</th>${GRADES.map((g,gi)=>{const v=needFor(ek,p,state.std[sx][ek][gi],coef);return`<td>${v==null||v<e.min||v>e.max?'—':fmtMark(ek,v)}</td>`;}).join('')}</tr>`).join('')}</tbody></table></div>
+    </div>
+
+    <div class="card">
+      <h2>記録から得点を計算</h2>
+      <div class="calc" style="margin-top:10px">
+        <label class="field" for="calcSex">性別${sel('calcSex','calc',[['m','男子'],['f','女子']],u.calcSex)}</label>
+        <label class="field" for="calcGrade">学年${sel('calcGrade','calc',GRADES.map((g,i)=>[i,g]),u.calcGrade)}</label>
+        <label class="field" for="calcEv">種目${sel('calcEv','calc',EVENTS.map(x=>[x.key,x.name]),u.calcEv)}</label>
+        <label class="field" for="calcVal">記録<input type="text" id="calcVal" data-in="calcVal" value="${esc(u.calcVal)}" inputmode="decimal" autocomplete="off" style="width:7em" placeholder="${EV[u.calcEv].type==='run'?'15.32':'3.85'}"></label>
+      </div>
+      <div class="calc-out" id="calcOut">${calcOutHTML()}</div>
+    </div>
+
+    <div class="card">
+      <details><summary>基準記録（500点）と種目係数を編集する</summary>
+        <p class="hint">チームの実態に合わせて変えられます。基準記録はその学年・性別の「平均的な記録」を入れてください。変更はすぐに全部の得点へ反映されます。</p>
+        <div class="coef-row">${EVENTS.map(x=>`<label class="field" for="coef-${x.key}">${x.name}の係数<input type="text" id="coef-${x.key}" data-ch="coef" data-ev="${x.key}" value="${state.coef[x.key]}" inputmode="decimal"></label>`).join('')}</div>
+        <div class="tscroll">${stdTable('m')}</div>
+        <div class="tscroll" style="margin-top:12px">${stdTable('f')}</div>
+        <div class="btn-row" style="margin-top:12px"><button type="button" class="btn danger" data-act="resetStd">初期値にもどす</button></div>
+      </details>
+    </div>
+  </section>`;
+}
+function calcOutHTML(){
+  const u=state.ui, ek=u.calcEv;
+  if(!u.calcVal)return'<span class="hint">記録を入れると、ここに得点が出ます</span>';
+  const r=parseMark(ek,u.calcVal,false);
+  if(r.error)return`<span class="hint">${esc(r.error)}</span>`;
+  const std=state.std[u.calcSex][ek][u.calcGrade], p=scoreOf(ek,r.value,std,state.coef[ek]);
+  const ratio=ratioOf(ek,r.value,std)*100;
+  const next=Math.floor(p/50)*50+50, nv=needFor(ek,next,std,state.coef[ek]);
+  return`<b class="num">${p}</b><span>点</span><span class="hint">基準 ${fmtMark(ek,std)}${unitOf(ek)} の ${ratio.toFixed(1)}%${nv!=null?`・${next}点まで ${fmtMark(ek,nv)}${unitOf(ek)}`:''}</span>`;
+}
+
+/* 設定・データ */
+function viewData(){
+  const st=state.settings;
+  return`<section class="stack">
+    <div class="card"><h2>記録会の情報</h2>
+      <div class="inline" style="margin-top:10px">
+        <label class="field" for="meetNameIn">記録会の名前<input type="text" id="meetNameIn" data-in="meet" data-key="name" value="${esc(state.meet.name)}" maxlength="60" style="width:18em;max-width:100%"></label>
+        <label class="field" for="meetDateIn">日付<input type="date" id="meetDateIn" data-ch="meet" data-key="date" value="${esc(state.meet.date)}" style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px"></label>
+      </div></div>
+
+    <div class="card settings"><h2>チーム得点・表彰のルール</h2>
+      <label class="toggle"><input type="checkbox" id="setSize" data-ch="setting" data-key="sizeAdjust"${st.sizeAdjust?' checked':''}>
+        <span>チームの人数差を補正する<small>人数がちがうときは「1人平均 × 最多チームの人数」でチーム得点を出します。人数が同じなら合計のままです。</small></span></label>
+      <label class="toggle"><input type="checkbox" id="setBonus" data-ch="setting" data-key="pbBonus"${st.pbBonus?' checked':''}>
+        <span>自己ベスト更新ボーナスをチーム得点に加える<small>自己ベストを1種目更新するごとにチームへ加点します。記録が低い子もチームに大きく貢献できます。</small></span></label>
+      <label class="field" for="setBonusPts" style="margin-left:28px;max-width:12em">ボーナス（1回あたり）<input type="number" id="setBonusPts" data-ch="setting" data-key="pbBonusPts" value="${st.pbBonusPts}" min="0" max="500" step="10"></label>
+      <label class="toggle"><input type="checkbox" id="setNoDouble2" data-ch="setting" data-key="noDouble"${st.noDouble?' checked':''}>
+        <span>W受賞なしにする<small>総合得点賞の入賞者は、自己ベスト更新率賞の対象から外します。</small></span></label>
+    </div>
+
+    <div class="card"><h2>記録会が終わったら</h2>
+      <p class="hint" style="margin-block:6px 10px">次回にそなえて、今日の記録を自己ベストに反映できます。先にバックアップを取っておくと安心です。</p>
+      <div class="btn-row"><button type="button" class="btn" data-act="applyPB">今日の記録を自己ベストに反映</button>
+        <button type="button" class="btn danger" data-act="clearRec">今日の記録をすべて消す</button></div></div>
+
+    <div class="card"><h2>結果の書き出し</h2>
+      <p class="hint" style="margin-block:6px 10px">個人・チームの結果をCSV（Excelで開ける形式）で書き出します。</p>
+      <div class="btn-row"><button type="button" class="btn" data-act="csvSave">CSVファイルを保存</button><button type="button" class="btn" data-act="csvCopy">CSVをコピー</button></div></div>
+
+    <div class="card"><h2>バックアップと復元</h2>
+      <p class="hint" style="margin-block:6px 10px">データはこの端末のブラウザに自動保存されます。別の端末へ移すときや念のための控えに、バックアップを使ってください。</p>
+      <div class="btn-row"><button type="button" class="btn" data-act="backupSave">バックアップを保存</button><button type="button" class="btn" data-act="backupCopy">バックアップをコピー</button>
+        <label class="btn" for="restoreFile" style="cursor:pointer">ファイルから復元<input type="file" id="restoreFile" data-ch="restoreFile" accept=".json,application/json" hidden></label></div>
+      <details style="margin-top:12px"><summary>貼り付けて復元する</summary>
+        <textarea id="restoreText" rows="4" placeholder="バックアップの中身（{ で始まる文字）を貼り付け"></textarea>
+        <div class="btn-row" style="margin-top:8px"><button type="button" class="btn" data-act="restoreText">貼り付けた内容で復元</button></div></details></div>
+
+    <div class="card"><h2>はじめからやり直す</h2>
+      <div class="btn-row" style="margin-top:10px"><button type="button" class="btn" data-act="loadSample">仮データ（35人）を読み込む</button>
+        <button type="button" class="btn danger" data-act="resetAll">すべてのデータを消す</button></div></div>
+  </section>`;
+}
+const VIEWS={input:viewInput,rank:viewRank,roster:viewRoster,table:viewTable,data:viewData};
+
+/* ---------- 書き出し ---------- */
+function csvText(){
+  const C=compute(), q=v=>{const s=String(v??'');return/[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+  const lines=[];
+  lines.push([state.meet.name,state.meet.date].map(q).join(','));
+  lines.push('');
+  lines.push(['総合順位','名前','性別','学年','チーム',...EVENTS.flatMap(e=>[e.name+'記録',e.name+'得点',e.name+'更新率%']),'合計得点','換算更新率合計','PB数','更新率賞順位'].map(q).join(','));
+  const rows=[...C.scored,...C.present.filter(x=>x.done===0)];
+  rows.forEach(x=>{const a=x.a;lines.push([x.scoreRank??'',a.name,SEX[a.sex],GRADES[a.grade],teamById(a.team)?.name??'未所属',
+    ...EVENTS.flatMap(e=>{const o=x.ev[e.key];return[fmtMark(e.key,o.rec),o.pts??'',o.rate==null?'':o.rate.toFixed(2)];}),
+    x.total,x.pbScore.toFixed(2),x.pbCount,x.pbRank??''].map(q).join(','));});
+  lines.push('');
+  lines.push(['チーム順位','チーム','出場人数',...EVENTS.map(e=>e.name),'PB数','ボーナス','合計','1人平均','チーム得点'].map(q).join(','));
+  C.ranked.forEach(t=>lines.push([t.rank,t.name,t.n,...EVENTS.map(e=>t.ev[e.key]),t.pbc,t.bonus,t.sum,Math.round(t.avg),t.score].map(q).join(',')));
+  return'﻿'+lines.join('\r\n');
+}
+function backupText(){return JSON.stringify(state);}
+function stamp(){return(state.meet.date||todayStr()).replace(/-/g,'');}
+function saveFile(name,text,type){
+  try{
+    const url=URL.createObjectURL(new Blob([text],{type}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    toast('「'+name+'」を保存しました');
+  }catch(e){toast('保存できませんでした。コピーを使ってください');}
+}
+async function copyText(text,label){
+  try{await navigator.clipboard.writeText(text);toast(label+'をコピーしました');}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand('copy');}catch(_){}
+    ta.remove();toast(ok?label+'をコピーしました':'コピーできませんでした');
+  }
+}
+
+/* ---------- 確認ダイアログ・お知らせ ---------- */
+function ask(msg,okLabel='実行する',danger=false){
+  return new Promise(res=>{
+    const m=$('#modal'),ok=$('#modalOk'),cancel=$('#modalCancel');
+    $('#modalMsg').textContent=msg; ok.textContent=okLabel;
+    ok.className='btn '+(danger?'danger solid':'primary');
+    m.hidden=false; ok.focus();
+    const done=v=>{m.hidden=true;ok.onclick=cancel.onclick=m.onclick=null;document.removeEventListener('keydown',key);res(v);};
+    const key=e=>{if(e.key==='Escape')done(false);};
+    ok.onclick=()=>done(true); cancel.onclick=()=>done(false);
+    m.onclick=e=>{if(e.target===m)done(false);};
+    document.addEventListener('keydown',key);
+  });
+}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ---------- 操作 ---------- */
+function setTab(tab){state.ui.tab=tab;save();render();window.scrollTo(0,0);}
+const CLICK={
+  tab:b=>setTab(b.dataset.tab),
+  ev:b=>{state.ui.ev=b.dataset.ev;save();render();},
+  filter:b=>{state.ui.filter=b.dataset.id;save();render();},
+  nm:b=>{
+    const li=b.closest('.row'),a=athleteById(li.dataset.id),ek=state.ui.ev;
+    a.rec[ek]=a.rec[ek]==='NM'?null:'NM'; recErr.delete(a.id+ek);
+    const inp=li.querySelector('input');inp.value=a.rec[ek]==='NM'?'NM':'';inp.classList.remove('bad');
+    save();refreshRow(li,a,ek);refreshLive();
+  },
+  tblSex:b=>{state.ui.tblSex=b.dataset.v;save();render();},
+  tblEv:b=>{state.ui.tblEv=b.dataset.v;save();render();},
+  print:()=>window.print(),
+  add:()=>{
+    const a=blankAthlete(), last=state.athletes[state.athletes.length-1];
+    if(last){a.grade=last.grade;a.sex=last.sex;}
+    state.athletes.push(a);save();render();
+    const el=document.getElementById('nm-'+a.id);if(el){el.focus();el.scrollIntoView({block:'center'});}
+  },
+  del:b=>{
+    if(!b.classList.contains('armed')){
+      b.classList.add('armed');b.textContent='本当に削除';
+      setTimeout(()=>{if(b.isConnected){b.classList.remove('armed');b.textContent='削除';}},3000);return;
+    }
+    const id=b.closest('tr').dataset.id;state.athletes=state.athletes.filter(a=>a.id!==id);save();render();toast('削除しました');
+  },
+  bulk:()=>{
+    const {ok,errors}=parseBulk($('#bulkText').value);
+    if(ok.length){state.athletes.push(...ok);save();render();toast(ok.length+'人を追加しました');}
+    const msg=$('#bulkMsg');
+    if(msg&&errors.length)msg.innerHTML=`<ul class="errs">${errors.slice(0,8).map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`;
+    if(!ok.length&&!errors.length)toast('貼り付ける内容がありません');
+  },
+  split:async()=>{
+    const assigned=state.athletes.some(a=>a.team);
+    if(assigned&&!await ask(`いまのチーム分けを上書きして、${state.teamCount}チームに自動で分けます。`,'分ける'))return;
+    const gap=autoSplit();save();render();toast(`${state.teamCount}チームに分けました（予想平均点の差 ${gap}点）`);
+  },
+  resetStd:async()=>{
+    if(!await ask('基準記録と種目係数を初期値にもどします。','もどす',true))return;
+    state.std=clone(DEFAULT_STD);state.coef={...DEFAULT_COEF};save();render();toast('初期値にもどしました');
+  },
+  applyPB:async()=>{
+    let n=0;state.athletes.forEach(a=>EVENTS.forEach(e=>{const r=a.rec[e.key],p=a.pb[e.key];if(typeof r==='number'&&(typeof p!=='number'||(e.type==='run'?r<p:r>p)))n++;}));
+    if(!n){toast('自己ベストを上回った記録はありません');return;}
+    if(!await ask(`今日の記録のうち、自己ベストを上回った ${n} 件（初記録をふくむ）を自己ベストに書き換えます。\n書き換えると今日の更新率は0になります。表彰が終わってから実行してください。`,'書き換える'))return;
+    state.athletes.forEach(a=>EVENTS.forEach(e=>{const r=a.rec[e.key],p=a.pb[e.key];if(typeof r==='number'&&(typeof p!=='number'||(e.type==='run'?r<p:r>p)))a.pb[e.key]=r;}));
+    save();render();toast(n+'件の自己ベストを更新しました');
+  },
+  clearRec:async()=>{
+    if(!await ask('今日の記録（4種目すべて）を消します。選手と自己ベストは残ります。','消す',true))return;
+    state.athletes.forEach(a=>{a.rec=blankMarks();});recErr.clear();save();render();toast('今日の記録を消しました');
+  },
+  csvSave:()=>saveFile(`記録会結果_${stamp()}.csv`,csvText(),'text/csv'),
+  csvCopy:()=>copyText(csvText(),'CSV'),
+  backupSave:()=>saveFile(`記録会バックアップ_${stamp()}.json`,backupText(),'application/json'),
+  backupCopy:()=>copyText(backupText(),'バックアップ'),
+  restoreText:()=>restoreFrom($('#restoreText').value),
+  loadSample:async()=>{
+    if(state.athletes.length&&!state.sample&&!await ask('いまのデータを消して、テスト用の仮データ（35人）を読み込みます。','読み込む',true))return;
+    state=makeSample();save();render();toast('仮データを読み込みました');
+  },
+  resetAll:async()=>{
+    if(!await ask('選手・記録・設定をすべて消します。元にはもどせません。','すべて消す',true))return;
+    state=freshState();state.ui.tab='roster';save();render();toast('すべて消しました');
+  },
+  exitSample:async()=>{
+    if(!await ask('仮データの選手と記録を消して、空の状態から始めます。チーム名・得点表の設定はそのまま使えます。','始める'))return;
+    state.athletes=[];state.sample=false;state.ui.tab='roster';state.ui.filter='all';recErr.clear();save();render();
+  }
+};
+async function restoreFrom(text){
+  let s;
+  try{s=sanitize(JSON.parse(text));}catch(e){toast('復元できませんでした：'+(e instanceof SyntaxError?'内容が読み取れません':e.message));return;}
+  if(!await ask(`バックアップ（選手 ${s.athletes.length}人）で、いまのデータを置きかえます。`,'復元する',true))return;
+  state=s;state.sample=false;recErr.clear();save();render();toast('復元しました');
+}
+function parseBulk(text){
+  const ok=[],errors=[];
+  String(text||'').split(/\r?\n/).forEach((line,i)=>{
+    if(!line.trim())return;
+    const c=line.split(/\t|,|，|、/).map(x=>x.trim());
+    if(i===0&&/名前|氏名/.test(c[0]))return;
+    const a=blankAthlete(), no=`${i+1}行目`;
+    a.name=c[0].slice(0,30);
+    if(!a.name){errors.push(no+'：名前がありません');return;}
+    const sx=normalizeText(c[1]);
+    if(/^(男|男子|m|male|boy)$/.test(sx))a.sex='m';
+    else if(/^(女|女子|f|female|girl)$/.test(sx))a.sex='f';
+    else{errors.push(`${no}（${a.name}）：性別は「男」か「女」で入れてください`);return;}
+    const g=parseGrade(c[2]);
+    if(g==null){errors.push(`${no}（${a.name}）：学年は「小5」「中1」のように入れてください`);return;}
+    a.grade=g;
+    let bad=false;
+    EVENTS.forEach((e,j)=>{const r=parseMark(e.key,c[3+j]??'',false);if(r.error){bad=true;errors.push(`${no}（${a.name}）${e.name}：${r.error}`);}else if(!r.empty)a.pb[e.key]=r.value;});
+    if(!bad)ok.push(a);
+  });
+  return{ok,errors};
+}
+function parseGrade(raw){
+  const s=normalizeText(raw).replace(/学年|年生|年/g,'');
+  let m;
+  if((m=s.match(/^(?:小|小学|小学校|e)?([1-6])$/)))return+m[1]-1;
+  if((m=s.match(/^(?:中|中学|中学校|j)([1-3])$/)))return+m[1]+5;
+  if(/^(高|高校|一般|大学|大人|社会人)/.test(s))return 9;
+  return null;
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');
+  if(b&&CLICK[b.dataset.act]){e.preventDefault();CLICK[b.dataset.act](b,e);}
+});
+document.addEventListener('input',e=>{
+  const t=e.target, k=t.dataset.in;if(!k)return;
+  if(k==='rec'){
+    const li=t.closest('.row'),a=athleteById(li.dataset.id),ek=state.ui.ev,r=parseMark(ek,t.value);
+    a.rec[ek]=r.value??null; recErr.delete(a.id+ek); t.classList.remove('bad');
+    save();refreshRow(li,a,ek);refreshLive();
+  }else if(k==='name'){
+    athleteById(t.closest('tr').dataset.id).name=t.value.slice(0,30);save();
+  }else if(k==='teamName'){
+    state.teams[+t.dataset.i].name=t.value.slice(0,12)||TEAM_PRESET[+t.dataset.i][0]+'チーム';save();renderBoard();
+  }else if(k==='meet'){
+    state.meet.name=t.value.slice(0,60);save();$('#meetName').textContent=state.meet.name||'チーム内記録会';document.title=state.meet.name||'チーム内記録会';
+  }else if(k==='calcVal'){
+    state.ui.calcVal=t.value;save();$('#calcOut').innerHTML=calcOutHTML();
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target, k=t.dataset.ch;if(!k)return;
+  const row=t.closest('tr[data-id]'), a=row?athleteById(row.dataset.id):null;
+  switch(k){
+    case'rec':{
+      const li=t.closest('.row'),ath=athleteById(li.dataset.id),ek=state.ui.ev,r=parseMark(ek,t.value);
+      if(r.error){recErr.add(ath.id+ek);t.classList.add('bad');toast(r.error);}
+      else{recErr.delete(ath.id+ek);t.classList.remove('bad');t.value=r.value==='NM'?'NM':fmtMark(ek,r.value??null);}
+      refreshRow(li,ath,ek);break;}
+    case'sort':state.ui.sort=t.value;save();render();break;
+    case'sex':a.sex=t.value==='f'?'f':'m';save();refreshRosterSide();break;
+    case'grade':a.grade=clamp(+t.value,0,GRADES.length-1);save();refreshRosterSide();break;
+    case'team':a.team=teamById(t.value)?t.value:'';save();refreshRosterSide();break;
+    case'absent':a.absent=t.checked;save();refreshRosterSide();break;
+    case'pb':{
+      const ek=t.dataset.ev,r=parseMark(ek,t.value,false);
+      if(r.error){t.classList.add('bad');toast(r.error);return;}
+      t.classList.remove('bad');a.pb[ek]=r.empty?null:r.value;t.value=fmtMark(ek,a.pb[ek]);save();refreshRosterSide();break;}
+    case'teamCount':{
+      state.teamCount=clamp(+t.value,2,6);
+      if(!teamById(state.ui.filter))state.ui.filter='all';
+      save();render();
+      const off=state.athletes.filter(x=>x.team&&!teamById(x.team)).length;
+      if(off)toast(`${off}人が未所属になりました。自動で分け直すか、一覧で選んでください`);
+      break;}
+    case'teamColor':if(/^#[0-9a-f]{6}$/i.test(t.value)){state.teams[+t.dataset.i].color=t.value;save();render();}break;
+    case'setting':{
+      const key=t.dataset.key;
+      if(key==='pbBonusPts')state.settings.pbBonusPts=clamp(Math.round(+t.value||0),0,500);
+      else state.settings[key]=t.checked;
+      save();render();break;}
+    case'meet':if(/^\d{4}-\d{2}-\d{2}$/.test(t.value)){state.meet.date=t.value;save();$('#meetDate').textContent=fmtDate(t.value);}break;
+    case'calc':{
+      state.ui[{calcSex:'calcSex',calcGrade:'calcGrade',calcEv:'calcEv'}[t.id]]=t.id==='calcGrade'?+t.value:t.value;
+      save();$('#calcOut').innerHTML=calcOutHTML();
+      if(t.id==='calcEv')$('#calcVal').placeholder=EV[t.value].type==='run'?'15.32':'3.85';
+      break;}
+    case'std':{
+      const {sx,ev,g}=t.dataset,r=parseMark(ev,t.value,false);
+      if(r.error||r.empty){t.classList.add('bad');toast(r.error||'基準記録は空欄にできません');return;}
+      t.classList.remove('bad');state.std[sx][ev][+g]=r.value;t.value=fmtMark(ev,r.value);save();refreshLive();
+      toast(`${GRADES[+g]}${SEX[sx]} ${EV[ev].name}の基準を ${fmtMark(ev,r.value)}${unitOf(ev)} にしました`);break;}
+    case'coef':{
+      const v=Math.round(parseFloat(normalizeText(t.value))*100)/100;
+      if(!(v>=0.2&&v<=3)){t.classList.add('bad');toast('係数は0.2〜3の数で入れてください');return;}
+      state.coef[t.dataset.ev]=v;save();render();toast(EV[t.dataset.ev].name+'の係数を '+v+' にしました');break;}
+    case'restoreFile':{
+      const f=t.files&&t.files[0];if(!f)return;
+      f.text().then(restoreFrom).catch(()=>toast('ファイルを読み込めませんでした'));t.value='';break;}
+  }
+});
+function refreshRosterSide(){const C=compute();renderBoard(C);const tc=$('#teamCard');if(tc)tc.innerHTML=teamCardHTML(C);}
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'||e.target.dataset.in!=='rec'||e.isComposing)return;
+  e.preventDefault();
+  const all=[...document.querySelectorAll('#sheet input[data-in="rec"]:not(:disabled)')];
+  const next=all[all.indexOf(e.target)+1];
+  e.target.dispatchEvent(new Event('change',{bubbles:true}));
+  if(next){next.focus();next.select();}else e.target.blur();
+});
+
+if(location.hash&&VIEWS[location.hash.slice(1)])state.ui.tab=location.hash.slice(1);
+render();
+save();
+</script>
+</body>
+</html>

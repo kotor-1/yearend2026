@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>年末チーム内記録会2026</title>
+<meta name="description" content="年末チーム内記録会2026の特設サイト。種目・表彰・得点のしくみと、当日使う記録会アプリへの入口。">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* 記録会アプリ（app/index.html）と同じ色・書体。上に電光掲示板ふうのヒーロー、その下に案内を縦に並べる */
+:root{
+  --bg:#f2f4f6; --surface:#ffffff; --surface-2:#e9edf1; --ink:#16202a; --ink-2:#465462; --muted:#6f7d8a; --line:#d7dde3;
+  --accent:#1f4f8f; --accent-ink:#ffffff; --accent-soft:#e2ebf7;
+  --board:#122030; --board-2:#1b2c3f; --board-ink:#f3f7fb; --board-muted:#93a6ba;
+  --pb:#c2410c; --pb-soft:#fdede4;
+  --gold:#b88a14; --silver:#7d8a97; --bronze:#a5653a; --medal-ink:#ffffff;
+  --font-ui:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
+  --font-num:"Barlow Condensed","BIZ UDPGothic","Arial Narrow",sans-serif;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1319; --surface:#151e27; --surface-2:#1c2731; --ink:#e5ebf0; --ink-2:#b3bfca; --muted:#8594a2; --line:#283541;
+    --accent:#8db4ec; --accent-ink:#0d1319; --accent-soft:#1b2a3c;
+    --board:#09111a; --board-2:#132131; --board-ink:#f3f7fb; --board-muted:#8fa3b8;
+    --pb:#fb8b57; --pb-soft:#3a2317;
+    --gold:#d9ae3f; --silver:#a3b0bd; --bronze:#cf8a59; --medal-ink:#0d1319;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1319; --surface:#151e27; --surface-2:#1c2731; --ink:#e5ebf0; --ink-2:#b3bfca; --muted:#8594a2; --line:#283541;
+  --accent:#8db4ec; --accent-ink:#0d1319; --accent-soft:#1b2a3c;
+  --board:#09111a; --board-2:#132131; --board-ink:#f3f7fb; --board-muted:#8fa3b8;
+  --pb:#fb8b57; --pb-soft:#3a2317;
+  --gold:#d9ae3f; --silver:#a3b0bd; --bronze:#cf8a59; --medal-ink:#0d1319;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.7}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-inline:16px}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.3}
+p{margin:0}
+
+/* ---------- ヒーロー ---------- */
+.hero{background:var(--board);color:var(--board-ink);padding-block:40px 32px}
+.hero .eyebrow{font-family:var(--font-num);letter-spacing:.2em;color:var(--board-muted);font-size:14px}
+.hero h1{font-size:clamp(28px,7vw,44px);margin-top:6px}
+.hero h1 .num{font-size:1.15em;margin-left:.15em}
+.hero .lead{margin-top:12px;color:var(--board-muted);max-width:36em}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:20px}
+.meta div{display:flex;flex-direction:column}
+.meta dt{font-size:12px;color:var(--board-muted)}
+.meta dd{margin:0;font-weight:700}
+.tbd{color:var(--board-muted);font-weight:400}
+.events{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:24px}
+.ev{background:var(--board-2);border-radius:10px;padding:12px 10px;text-align:center}
+.ev .n{font-family:var(--font-num);font-size:26px;font-weight:700;line-height:1}
+.ev .j{font-size:18px;font-weight:700;line-height:1.45}
+.ev small{display:block;color:var(--board-muted);font-size:11px;margin-top:4px}
+.cta{display:inline-flex;align-items:center;gap:8px;margin-top:24px;background:var(--accent-soft);color:var(--accent);
+  font-weight:700;text-decoration:none;padding:12px 20px;border-radius:999px}
+:root:not([data-theme="dark"]) .hero .cta{background:#fff;color:#1f4f8f}
+.cta:hover{filter:brightness(1.05)}
+
+/* ---------- 目次 ---------- */
+.toc{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.toc ul{list-style:none;margin:0 auto;padding:0 16px;display:flex;gap:4px;overflow-x:auto;max-width:880px;scrollbar-width:none}
+.toc a{display:block;white-space:nowrap;padding:10px 10px;color:var(--ink-2);text-decoration:none;font-size:14px}
+.toc a:hover{color:var(--accent)}
+
+/* ---------- セクション ---------- */
+main section{padding-block:32px 8px;scroll-margin-top:44px}
+section > h2{font-size:21px;display:flex;align-items:baseline;gap:10px}
+section > h2 .num{color:var(--accent);font-size:18px}
+section > .sub{color:var(--ink-2);margin-top:6px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-top:14px}
+.card h3{font-size:16px;margin-bottom:6px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.grid3 .card{margin-top:0}
+.award .badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-bottom:8px}
+.award.pb .badge{background:var(--pb-soft);color:var(--pb)}
+.medals{display:flex;gap:6px;margin-top:10px}
+.medal{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-num);font-weight:700;color:var(--medal-ink);font-size:14px}
+.g{background:var(--gold)}.s{background:var(--silver)}.b{background:var(--bronze)}
+.award p{color:var(--ink-2);font-size:14px}
+
+.formula{background:var(--surface-2);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;overflow-x:auto}
+.formula b{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.formula code{font-family:var(--font-ui)}
+ul.notes{margin:10px 0 0;padding-left:1.2em;color:var(--ink-2);font-size:14px}
+ul.notes li+li{margin-top:2px}
+
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:700}
+th:first-child,td:first-child{text-align:left}
+td.num{font-size:16px}
+.scroll{overflow-x:auto;margin-inline:-16px;padding-inline:16px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px;margin-bottom:10px}
+.seg button{border:0;background:none;padding:5px 16px;border-radius:999px;cursor:pointer;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgb(0 0 0 / .12)}
+
+/* ---------- 得点電卓 ---------- */
+.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.calc label{min-width:0;display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:4px}
+.calc select,.calc input{width:100%;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:16px}
+.result{display:flex;align-items:baseline;gap:12px;margin-top:14px;flex-wrap:wrap}
+.result .pts{font-family:var(--font-num);font-size:48px;font-weight:700;line-height:1;color:var(--accent)}
+.result .pts small{font-size:18px;margin-left:2px}
+.result .hint{color:var(--ink-2);font-size:14px}
+
+.steps{list-style:none;margin:14px 0 0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 14px 40px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;font-family:var(--font-num);font-weight:700}
+.steps li b{display:block}
+.steps li span{color:var(--ink-2);font-size:14px}
+
+footer{padding-block:32px 40px;color:var(--muted);font-size:13px;text-align:center}
+footer a{color:var(--accent)}
+
+@media (max-width:640px){
+  .grid3{grid-template-columns:1fr}
+  .calc{grid-template-columns:1fr 1fr}
+  .events{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">TEAM RECORD MEET</p>
+    <h1>年末チーム内記録会<span class="num">2026</span></h1>
+    <p class="lead">全員が4種目に出て、チームの合計得点と、自分の記録の伸びを競う記録会です。記録の速い・遅いだけでなく、自己ベストをどれだけ伸ばせたかも表彰します。</p>
+    <dl class="meta">
+      <div><dt>日にち</dt><dd class="tbd">調整中</dd></div>
+      <div><dt>場所</dt><dd class="tbd">調整中</dd></div>
+      <div><dt>チーム</dt><dd>5チーム対抗</dd></div>
+    </dl>
+    <div class="events" aria-label="種目">
+      <div class="ev"><div class="n">100m</div><small>走</small></div>
+      <div class="ev"><div class="n">200m</div><small>走</small></div>
+      <div class="ev"><div class="j">走高跳</div><small>跳</small></div>
+      <div class="ev"><div class="j">走幅跳</div><small>跳</small></div>
+    </div>
+    <a class="cta" href="app/">記録会アプリをひらく →</a>
+  </div>
+</header>
+
+<nav class="toc" aria-label="目次">
+  <ul>
+    <li><a href="#awards">表彰</a></li>
+    <li><a href="#score">得点のしくみ</a></li>
+    <li><a href="#calc">得点を計算</a></li>
+    <li><a href="#pb">自己ベスト更新率</a></li>
+    <li><a href="#team">チーム得点</a></li>
+    <li><a href="#flow">当日の流れ</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+  <section id="awards">
+    <h2><span class="num">01</span>表彰</h2>
+    <p class="sub">表彰は3つ。チームで勝つことも、自分の記録を伸ばすことも、どちらも讃えます。</p>
+    <div class="grid3">
+      <div class="card award">
+        <span class="badge">チーム</span>
+        <h3>チーム総合</h3>
+        <p>チームのメンバーの得点を合計して競います。</p>
+      </div>
+      <div class="card award">
+        <span class="badge">個人</span>
+        <h3>総合得点賞</h3>
+        <p>得点表による4種目の合計点で決めます。</p>
+        <div class="medals" aria-label="3位まで"><span class="medal g">1</span><span class="medal s">2</span><span class="medal b">3</span></div>
+      </div>
+      <div class="card award pb">
+        <span class="badge">個人</span>
+        <h3>自己ベスト更新率賞</h3>
+        <p>記録の高い低いではなく、自分の自己ベストをどれだけ伸ばしたかで決めます。</p>
+        <div class="medals" aria-label="3位まで"><span class="medal g">1</span><span class="medal s">2</span><span class="medal b">3</span></div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li>総合得点賞の3位以内に入った人は、更新率賞の対象から外れます（W受賞なし）。表彰される人は最大6人です。</li>
+    </ul>
+  </section>
+
+  <section id="score">
+    <h2><span class="num">02</span>得点のしくみ</h2>
+    <p class="sub">学年・性別ごとの「基準記録」を500点として、基準をどれだけ上回ったかで点数が決まります。小学1年生も高校生も、同じものさしで比べられます。</p>
+    <div class="card">
+      <div class="formula"><b>走る種目（100m・200m）</b><code>得点 = 500 + 1000 × 種目係数 × (基準タイム ÷ 記録 − 1)</code></div>
+      <div class="formula"><b>跳ぶ種目（走高跳・走幅跳）</b><code>得点 = 500 + 1000 × 種目係数 × (記録 ÷ 基準記録 − 1)</code></div>
+      <ul class="notes">
+        <li>小数点以下は切り捨て。マイナスになるときは0点。</li>
+        <li>記録なし（NM・ファウルなど）は、その種目0点。</li>
+        <li>個人の総合得点は4種目の合計（基準どおりなら 500点 × 4 = 2,000点）。</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>種目係数</h3>
+      <p class="sub" style="color:var(--ink-2);font-size:14px">記録の差の出やすさは種目でちがうので、その差をそろえるための数字です。</p>
+      <table>
+        <thead><tr><th>種目</th><th>係数</th><th>基準を1%上回ると</th></tr></thead>
+        <tbody id="coefBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>基準記録（＝500点）</h3>
+      <p style="color:var(--ink-2);font-size:14px">クラブで練習している子の平均くらいが目安です。走る種目は秒、跳ぶ種目はm。</p>
+      <div class="seg" role="group" aria-label="性別" style="margin-top:10px">
+        <button type="button" data-sex="m" aria-pressed="true">男子</button>
+        <button type="button" data-sex="f" aria-pressed="false">女子</button>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>学年</th><th>100m</th><th>200m</th><th>走高跳</th><th>走幅跳</th></tr></thead>
+          <tbody id="stdBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>計算例</h3>
+      <ul class="notes" style="margin-top:0">
+        <li>小6男子・100m（基準15.0秒）で14.0秒 → 500 + 1000 × 1.4 × (15.0 ÷ 14.0 − 1) = <b>600点</b></li>
+        <li>小5女子・走幅跳（基準3.15m）で3.50m → 500 + 1000 × 0.8 × (3.50 ÷ 3.15 − 1) = <b>588点</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="calc">
+    <h2><span class="num">03</span>得点を計算してみよう</h2>
+    <p class="sub">自己ベストを入れると、今の力で何点くらいになるかがわかります。</p>
+    <div class="card">
+      <div class="calc">
+        <label>性別<select id="cSex"><option value="m">男子</option><option value="f">女子</option></select></label>
+        <label>学年<select id="cGrade"></select></label>
+        <label>種目<select id="cEv"></select></label>
+        <label><span id="cUnit">記録（秒）</span><input id="cVal" inputmode="decimal" autocomplete="off" placeholder="例 15.0"></label>
+      </div>
+      <div class="result" aria-live="polite">
+        <span class="pts" id="cPts">—</span>
+        <span class="hint" id="cHint">記録を入れてください</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="pb">
+    <h2><span class="num">04</span>自己ベスト更新率</h2>
+    <p class="sub">どれだけ自分を超えられたか。速い子も、始めたばかりの子も、同じように表彰をねらえます。</p>
+    <div class="card">
+      <div class="formula"><b>更新率（%）</b><code>走る種目 = (自己ベスト ÷ 記録 − 1) × 100</code><br><code>跳ぶ種目 = (記録 ÷ 自己ベスト − 1) × 100</code></div>
+      <div class="formula"><b>更新率賞のスコア</b><code>自己ベストを上回った種目の (更新率 × 種目係数) の合計</code></div>
+      <ul class="notes">
+        <li>足すのは自己ベストを上回った種目だけ。下回ってもマイナスにはなりません。</li>
+        <li>自己ベストが空欄の種目は「初記録」として更新率の対象外（得点はつきます）。</li>
+        <li>同点のときは、自己ベストを更新した種目数が多い人が上位。</li>
+        <li>例：自己ベスト16.00秒の子が100mで15.60秒 → 更新率2.56%、換算 2.56 × 1.4 = <b>3.59</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="team">
+    <h2><span class="num">05</span>チーム得点</h2>
+    <p class="sub">チームの全員が、1点ずつ積み上げます。</p>
+    <div class="card">
+      <div class="formula"><b>チーム得点</b><code>出場メンバーの総合得点の合計</code></div>
+      <ul class="notes">
+        <li>チームの人数がちがうときは「1人平均 × 一番多いチームの人数」で比べます。</li>
+        <li>欠席の人は、チーム得点にも個人の順位にも入りません。</li>
+        <li>チームは自己ベストから出した予想得点と男女の割合がそろうように分けています。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="flow">
+    <h2><span class="num">06</span>当日の流れ</h2>
+    <p class="sub">記録はその場でアプリに入力し、得点と順位がすぐに出ます。</p>
+    <ol class="steps">
+      <li><b>受付・チーム発表</b><span>5チームに分かれて集合します。</span></li>
+      <li><b>4種目に出場</b><span>100m・200m・走高跳・走幅跳。記録が出たらすぐ入力。</span></li>
+      <li><b>集計</b><span>チーム順位と個人の得点・更新率がその場で計算されます。</span></li>
+      <li><b>表彰</b><span>チーム総合、総合得点賞、自己ベスト更新率賞。</span></li>
+    </ol>
+  </section>
+
+</main>
+
+<footer>
+  <p>年末チーム内記録会2026 ／ <a href="app/">記録会アプリ</a></p>
+</footer>
+
+<script>
+'use strict';
+// 記録会アプリ（app/index.html）の初期値と同じ基準・係数・計算式
+const EVENTS=[
+  {key:'m100',name:'100m',type:'run'},
+  {key:'m200',name:'200m',type:'run'},
+  {key:'hj',name:'走高跳',type:'jump'},
+  {key:'lj',name:'走幅跳',type:'jump'}
+];
+const GRADES=['小1','小2','小3','小4','小5','小6','中1','中2','中3','高校以上'];
+const STD={
+  m:{m100:[19.0,18.0,17.2,16.4,15.7,15.0,14.3,13.6,13.1,12.4],
+     m200:[40.7,38.5,36.5,34.8,33.0,31.5,29.7,28.3,27.0,25.4],
+     hj:  [0.70,0.80,0.88,0.95,1.03,1.10,1.20,1.32,1.42,1.55],
+     lj:  [2.20,2.50,2.80,3.10,3.40,3.70,4.10,4.60,5.00,5.60]},
+  f:{m100:[19.4,18.4,17.6,16.8,16.1,15.6,15.2,14.8,14.6,14.0],
+     m200:[41.5,39.4,37.3,35.6,33.8,32.8,31.6,30.8,30.4,29.2],
+     hj:  [0.68,0.77,0.85,0.92,0.99,1.05,1.12,1.18,1.22,1.30],
+     lj:  [2.10,2.40,2.65,2.90,3.15,3.40,3.65,3.85,4.00,4.30]}
+};
+const COEF={m100:1.4,m200:1.2,hj:1.0,lj:0.8};
+const $=id=>document.getElementById(id);
+const fmt=(ek,v)=>EVENTS.find(e=>e.key===ek).type==='run'?v.toFixed(1):v.toFixed(2);
+
+function scoreOf(ek,v,std){
+  const run=EVENTS.find(e=>e.key===ek).type==='run';
+  const ratio=run?std/v:v/std;
+  return Math.max(0,Math.floor(500+1000*COEF[ek]*(ratio-1)+1e-9));
+}
+
+$('coefBody').innerHTML=EVENTS.map(e=>`<tr><td>${e.name}</td><td class="num">${COEF[e.key].toFixed(1)}</td><td class="num">+${Math.round(COEF[e.key]*10)}点</td></tr>`).join('');
+
+function renderStd(sex){
+  $('stdBody').innerHTML=GRADES.map((g,i)=>`<tr><td>${g}</td>${EVENTS.map(e=>`<td class="num">${fmt(e.key,STD[sex][e.key][i])}</td>`).join('')}</tr>`).join('');
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sex===sex));
+}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>renderStd(b.dataset.sex)));
+renderStd('m');
+
+// 電卓：全角数字、「1:02.5」「15秒32」「385cm」「3m85」なども受け付ける
+$('cGrade').innerHTML=GRADES.map((g,i)=>`<option value="${i}"${i===5?' selected':''}>${g}</option>`).join('');
+$('cEv').innerHTML=EVENTS.map(e=>`<option value="${e.key}">${e.name}</option>`).join('');
+function parse(ek,raw){
+  let s=raw.replace(/[０-９．：]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/\s/g,'');
+  if(!s)return null;
+  if(EVENTS.find(e=>e.key===ek).type==='run'){
+    let m;
+    if((m=s.match(/^(\d+):(\d+(?:\.\d+)?)$/)))return +m[1]*60+ +m[2];
+    if((m=s.match(/^(\d+)秒(\d+)$/)))return +(m[1]+'.'+m[2]);
+    s=s.replace(/秒$/,'');
+    return /^\d+(\.\d+)?$/.test(s)?+s:NaN;
+  }
+  let m;
+  if((m=s.match(/^(\d+)m(\d+)$/)))return +m[1]+ +m[2].padEnd(2,'0').slice(0,2)/100;
+  if((m=s.match(/^(\d+(?:\.\d+)?)cm$/)))return +m[1]/100;
+  s=s.replace(/m$/,'');
+  if(!/^\d+(\.\d+)?$/.test(s))return NaN;
+  const v=+s;return v>=20?v/100:v;
+}
+function calc(){
+  const sex=$('cSex').value,gi=+$('cGrade').value,ek=$('cEv').value;
+  const run=EVENTS.find(e=>e.key===ek).type==='run';
+  const std=STD[sex][ek][gi];
+  $('cUnit').textContent=run?'記録（秒）':'記録（m）';
+  $('cVal').placeholder='例 '+fmt(ek,std);
+  const v=parse(ek,$('cVal').value);
+  if(v===null){$('cPts').textContent='—';$('cHint').textContent=`基準記録 ${fmt(ek,std)}${run?'秒':'m'} で500点`;return;}
+  if(!(v>0)){$('cPts').textContent='—';$('cHint').textContent='数字で入れてください';return;}
+  const p=scoreOf(ek,v,std);
+  $('cPts').innerHTML=`${p}<small>点</small>`;
+  $('cHint').textContent=`基準 ${fmt(ek,std)}${run?'秒':'m'}（500点）と比べて ${p>=500?'+':''}${p-500}点`;
+}
+['cSex','cGrade','cEv'].forEach(id=>$(id).addEventListener('change',calc));
+$('cVal').addEventListener('input',calc);
+calc();
+</script>
+</body>
+</html>
