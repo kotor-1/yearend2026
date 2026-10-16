@@ -63,6 +63,9 @@ p{margin:0}
 .dock{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
 @media (max-height:540px){.dock{position:static}}
 .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,118px),1fr));gap:2px;background:var(--board);border-radius:10px;padding:4px;margin-bottom:6px}
+.ev-awards{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.ev-awards h3{margin-bottom:6px}
+.na{color:var(--muted);text-align:center}
 .bcell{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;min-width:0;background:var(--board-2)}
 .bcell .bwho{display:flex;flex-direction:column;min-width:0;line-height:1.15}
 .bcell .bname{color:var(--board-muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -105,7 +108,7 @@ td.r,th.r{text-align:right}
 .empty{padding:28px 12px;text-align:center;color:var(--muted)}
 
 /* ---------- 記録入力 ---------- */
-.segs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--surface-2);padding:4px;border-radius:11px}
+.segs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:var(--surface-2);padding:4px;border-radius:11px}
 .seg{border:0;background:none;border-radius:8px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.2;font-weight:700;color:var(--ink-2)}
 .seg small{font-family:var(--font-num);font-weight:500;color:var(--muted);font-size:13px}
 .seg.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
@@ -294,6 +297,7 @@ try{if(sessionStorage.getItem('kirokuAdmin.ok')!=='1')document.documentElement.c
 'use strict';
 /* ---------- 種目・学年・基準 ---------- */
 const EVENTS=[
+  {key:'m50', name:'50m', type:'run', min:5,  max:25},
   {key:'m100',name:'100m',type:'run', min:9,  max:40},
   {key:'m200',name:'200m',type:'run', min:19, max:100},
   {key:'hj',  name:'走高跳',type:'jump',min:0.3,max:2.6,cm:3},
@@ -302,19 +306,27 @@ const EVENTS=[
 const EV=Object.fromEntries(EVENTS.map(e=>[e.key,e]));
 const GRADES=['小1','小2','小3','小4','小5','小6','中1','中2','中3','高校以上'];
 const SEX={m:'男子',f:'女子'};
+/* 学年ごとの実施種目：小1〜小3は 50m・100m・走高跳・走幅跳、小4以上は 100m・200m・走高跳・走幅跳 */
+const LOWER_EVS=['m50','m100','hj','lj'], UPPER_EVS=['m100','m200','hj','lj'];
+const evsForGrade=g=>g<=2?LOWER_EVS:UPPER_EVS;
+const evsFor=a=>evsForGrade(a.grade);
+const takes=(a,ek)=>evsFor(a).includes(ek);
 /* 学年・性別ごとの基準記録（＝500点）。クラブで練習している子の平均くらいを目安に設定。得点表タブで編集できる */
 const DEFAULT_STD={
-  m:{m100:[19.0,18.0,17.2,16.4,15.7,15.0,14.3,13.6,13.1,12.4],
+  m:{m50: [10.6,10.1,9.6,9.2,8.8,8.4,8.0,7.6,7.3,6.9],
+     m100:[19.0,18.0,17.2,16.4,15.7,15.0,14.3,13.6,13.1,12.4],
      m200:[40.7,38.5,36.5,34.8,33.0,31.5,29.7,28.3,27.0,25.4],
      hj:  [0.70,0.80,0.88,0.95,1.03,1.10,1.20,1.32,1.42,1.55],
      lj:  [2.20,2.50,2.80,3.10,3.40,3.70,4.10,4.60,5.00,5.60]},
-  f:{m100:[19.4,18.4,17.6,16.8,16.1,15.6,15.2,14.8,14.6,14.0],
+  f:{m50: [10.9,10.3,9.9,9.4,9.0,8.7,8.5,8.3,8.2,7.8],
+     m100:[19.4,18.4,17.6,16.8,16.1,15.6,15.2,14.8,14.6,14.0],
      m200:[41.5,39.4,37.3,35.6,33.8,32.8,31.6,30.8,30.4,29.2],
      hj:  [0.68,0.77,0.85,0.92,0.99,1.05,1.12,1.18,1.22,1.30],
      lj:  [2.10,2.40,2.65,2.90,3.15,3.40,3.65,3.85,4.00,4.30]}
 };
-/* 種目係数：基準を1%上回ったときの点数÷10。記録のばらつき（伸び幅）が小さい種目ほど大きくして、種目間の価値をそろえる */
-const DEFAULT_COEF={m100:1.4,m200:1.2,hj:1.0,lj:0.8};
+/* 種目係数：基準を1%上回ったときの点数÷10。記録のばらつき（伸び幅）が小さい種目ほど大きくして、種目間の価値をそろえる
+   50mの基準は100mの基準の約0.56倍（同じ力の子の50mと100mの比）。50mは100mより記録の差が出にくいので係数は1.5 */
+const DEFAULT_COEF={m50:1.5,m100:1.4,m200:1.2,hj:1.0,lj:0.8};
 const TEAM_PRESET=[['赤','#d64545'],['青','#2f6fd6'],['黄','#d9a400'],['緑','#2e9e5b'],['紫','#8a55c9'],['橙','#ee7a1f']];
 const DEFAULT_SETTINGS={sizeAdjust:true,pbBonus:false,pbBonusPts:50,noDouble:true};
 const DEFAULT_UI={tab:'input',ev:'m100',filter:'all',sort:'team',tblSex:'m',tblEv:'m100',calcSex:'m',calcGrade:5,calcEv:'m100',calcVal:''};
@@ -380,8 +392,8 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 function uid(){return'a'+Math.random().toString(36).slice(2,9);}
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function blankMarks(){return{m100:null,m200:null,hj:null,lj:null};}
-function blankAthlete(){return{id:uid(),name:'',sex:'m',grade:5,team:'',absent:false,pb:blankMarks(),rec:blankMarks()};}
+function blankMarks(){return{m50:null,m100:null,m200:null,hj:null,lj:null};}
+function blankAthlete(){return{id:uid(),name:'',kana:'',sex:'m',grade:5,team:'',absent:false,pb:blankMarks(),rec:blankMarks()};}
 function freshState(){
   return{v:1,meet:{name:'チーム内記録会',date:todayStr()},teamCount:5,
     teams:TEAM_PRESET.map(([n,c],i)=>({id:'t'+(i+1),name:n+'チーム',color:c})),
@@ -412,6 +424,7 @@ function sanitize(raw){
     if(typeof a.id==='string'&&/^[\w-]{1,24}$/.test(a.id)&&!seen.has(a.id))b.id=a.id;
     seen.add(b.id);
     b.name=String(a.name??'').slice(0,30);
+    b.kana=String(a.kana??'').slice(0,30);
     b.sex=a.sex==='f'?'f':'m';
     b.grade=Number.isInteger(a.grade)?clamp(a.grade,0,GRADES.length-1):5;
     b.team=ids.has(a.team)?a.team:'';
@@ -451,8 +464,45 @@ let saveTimer=0;
 function save(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}catch(e){}},200);}
 
 /* ---------- 仮データ（テスト用） ---------- */
+const SAMPLE_KANA={
+  '山本 陽翔':'やまもと はると',
+  '佐藤 結衣':'さとう ゆい',
+  '高橋 蓮':'たかはし れん',
+  '伊藤 美桜':'いとう みお',
+  '渡辺 湊':'わたなべ みなと',
+  '中村 心春':'なかむら こはる',
+  '小林 悠真':'こばやし ゆうま',
+  '加藤 さくら':'かとう さくら',
+  '吉田 颯':'よしだ はやて',
+  '山田 陽葵':'やまだ ひまり',
+  '松本 大和':'まつもと やまと',
+  '井上 凛':'いのうえ りん',
+  '木村 樹':'きむら いつき',
+  '林 芽依':'はやし めい',
+  '清水 律':'しみず りつ',
+  '斎藤 杏':'さいとう あん',
+  '山口 蒼':'やまぐち あおい',
+  '森 結菜':'もり ゆいな',
+  '池田 悠人':'いけだ ゆうと',
+  '橋本 陽菜':'はしもと ひな',
+  '阿部 朝陽':'あべ あさひ',
+  '石川 紬':'いしかわ つむぎ',
+  '山下 碧':'やました あお',
+  '中島 葵':'なかじま あおい',
+  '石井 湊斗':'いしい みなと',
+  '小川 澪':'おがわ みお',
+  '前田 奏太':'まえだ かなた',
+  '岡田 莉子':'おかだ りこ',
+  '長谷川 海翔':'はせがわ かいと',
+  '藤田 花':'ふじた はな',
+  '後藤 新':'ごとう あらた',
+  '近藤 美月':'こんどう みづき',
+  '村上 晴':'むらかみ はる',
+  '遠藤 千尋':'えんどう ちひろ',
+  '青木 怜':'あおき れい'
+};
 // 中身を変えたら番号を上げる。保存済みの仮データが新しい内容に置きかわる（本番データは対象外）
-const SAMPLE_VER=3;
+const SAMPLE_VER=4;
 function makeSample(){
   const s=freshState(); s.sample=true; s.sampleVer=SAMPLE_VER; s.teamCount=5;
   // [名前, 性別, 学年(0=小1), 自己ベスト[100m,200m,走高跳,走幅跳], 今日の記録[同じ順]]
@@ -496,7 +546,13 @@ function makeSample(){
   ];
   people.forEach(([name,sex,grade,pb,rec])=>{
     const a=blankAthlete(); Object.assign(a,{name,sex,grade});
-    EVENTS.forEach((e,i)=>{a.pb[e.key]=pb[i];a.rec[e.key]=rec[i];});
+    UPPER_EVS.forEach((k,i)=>{a.pb[k]=pb[i];a.rec[k]=rec[i];});
+    a.kana=SAMPLE_KANA[name]||'';
+    if(grade<=2){
+      // 小1〜小3は200mのかわりに50m（100mの記録から仮に作る）
+      const to50=v=>typeof v==='number'?Math.round(v*0.56*100)/100:v;
+      a.pb.m50=to50(pb[0]);a.rec.m50=to50(rec[0]);a.pb.m200=a.rec.m200=null;
+    }
     s.athletes.push(a);
   });
   autoSplit(s);
@@ -510,12 +566,13 @@ const athleteById=id=>state.athletes.find(a=>a.id===id);
 const stdFor=(a,ek,s=state)=>s.std[a.sex][ek][a.grade];
 function predOf(a,s=state){
   // 自己ベストから見た予想得点。自己ベストがない種目は基準（500点）として扱う
-  return EVENTS.reduce((sum,e)=>sum+(typeof a.pb[e.key]==='number'?scoreOf(e.key,a.pb[e.key],stdFor(a,e.key,s),s.coef[e.key]):500),0);
+  return evsFor(a).reduce((sum,k)=>sum+(typeof a.pb[k]==='number'?scoreOf(k,a.pb[k],stdFor(a,k,s),s.coef[k]):500),0);
 }
 function evalAthlete(a){
   const r={a,ev:{},total:0,done:0,pbScore:0,pbCount:0};
   for(const e of EVENTS){
     const k=e.key, rec=a.rec[k], pb=a.pb[k], coef=state.coef[k];
+    if(!takes(a,k)){r.ev[k]={na:true,rec:null,pb:null,pts:null,rate:null,adj:null,isPB:false,first:false};continue;}
     const o={rec,pb,pts:null,rate:null,adj:null,isPB:false,first:false};
     if(typeof rec==='number'){o.pts=scoreOf(k,rec,stdFor(a,k),coef);r.done++;}
     else if(rec==='NM'){o.pts=0;r.done++;}
@@ -554,7 +611,15 @@ function compute(){
   teams.forEach(t=>{t.score=st.sizeAdjust&&uneven?Math.round(t.avg*maxN):t.sum;});
   const ranked=[...teams].sort((p,q)=>q.score-p.score);
   assignRank(ranked,(p,q)=>p.score===q.score,'rank');
-  return{evals,present,scored,pbAll,pbElig,teams,ranked,maxN,uneven};
+  // 種目別自己ベスト更新率：その種目で自己ベストを更新した人を更新率の高い順に
+  const evPB={};
+  for(const e of EVENTS){
+    const l=present.filter(x=>x.ev[e.key].isPB).sort((p,q)=>q.ev[e.key].rate-p.ev[e.key].rate||cmpName(p,q));
+    const rk=l.map(x=>({x,rate:x.ev[e.key].rate}));
+    assignRank(rk,(p,q)=>Math.abs(p.rate-q.rate)<1e-9,'rank');
+    evPB[e.key]=rk;
+  }
+  return{evals,present,scored,pbAll,pbElig,teams,ranked,maxN,uneven,evPB};
 }
 
 /* ---------- チーム自動分け ---------- */
@@ -630,7 +695,7 @@ function viewInput(C){
   const segs=EVENTS.map(ev=>`<button type="button" class="seg${ev.key===ek?' on':''}" data-act="ev" data-ev="${ev.key}" aria-pressed="${ev.key===ek}"><span>${ev.name}</span><small data-count="${ev.key}">${countDone(C,ev.key)}</small></button>`).join('');
   const chips=`<button type="button" class="chip all${f==='all'?' on':''}" data-act="filter" data-id="all" aria-pressed="${f==='all'}">全員</button>`+
     activeTeams().map(t=>`<button type="button" class="chip${f===t.id?' on':''}" data-act="filter" data-id="${t.id}" aria-pressed="${f===t.id}">${tagHTML(t)}${esc(t.name)}</button>`).join('');
-  let list=C.evals.filter(x=>f==='all'||x.a.team===f);
+  let list=C.evals.filter(x=>(f==='all'||x.a.team===f)&&takes(x.a,ek));
   list=sortEvals(list,state.ui.sort);
   list=list.filter(x=>!x.a.absent).concat(list.filter(x=>x.a.absent));
   const sortOpts=[['team','チーム順'],['grade','学年順'],['name','名前順'],['order','登録順']].map(([v,l])=>`<option value="${v}"${state.ui.sort===v?' selected':''}>${l}</option>`).join('');
@@ -640,10 +705,10 @@ function viewInput(C){
       <label class="sel" for="sortSel">並び順 <select id="sortSel" data-ch="sort">${sortOpts}</select></label></div>
     <p class="hint">${e.type==='run'?'タイムを秒で入力（例 15.32 ／ 1分を超えるときは 62.5 または 1:02.5）':'記録をmで入力（例 3.85 ／ cmで 385 と入れてもOK）'}。「なし」は記録なし（0点）。Enterで次の人へ進みます。</p>
     ${list.length?`<ol class="sheet" id="sheet">${list.map(x=>rowHTML(x,ek)).join('')}</ol>`
-      :`<div class="sheet empty">選手がまだいません。「選手・チーム」タブで登録してください。</div>`}
+      :`<div class="sheet empty">${state.athletes.length?`${e.name}に出る選手がいません（${ek==='m50'?'50mは小1〜小3':ek==='m200'?'200mは小4以上':''}）。`:'選手がまだいません。「選手・チーム」タブで登録してください。'}</div>`}
   </section>`;
 }
-function countDone(C,ek){const p=C.present;return p.filter(x=>x.a.rec[ek]!=null).length+'/'+p.length;}
+function countDone(C,ek){const p=C.present.filter(x=>takes(x.a,ek));return p.filter(x=>x.a.rec[ek]!=null).length+'/'+p.length;}
 function sortEvals(list,mode){
   const order=new Map(state.athletes.map((a,i)=>[a.id,i]));
   const tIdx=id=>{const i=activeTeams().findIndex(t=>t.id===id);return i<0?99:i;};
@@ -705,16 +770,19 @@ function viewRank(C){
   const showBonus=st.pbBonus;
   return`<section class="stack">
     <div class="awards">
-      <div class="card"><h2>チーム総合</h2><p class="sub">メンバーの得点の合計${showBonus?`＋自己ベスト更新ボーナス（1回${st.pbBonusPts}点）`:''}</p>
+      <div class="card"><h2>チーム優勝</h2><p class="sub">メンバーの得点の合計${showBonus?`＋自己ベスト更新ボーナス（1回${st.pbBonusPts}点）`:''}</p>
         <div class="bars">${bars}</div>${teamNote}</div>
-      <div class="card"><h2>総合得点賞</h2><p class="sub">得点表による4種目の合計点</p>
+      <div class="card"><h2>個人優勝</h2><p class="sub">得点表による4種目の合計点</p>
         ${top3.length?`<ol class="medals">${top3.map(x=>medal(x,x.scoreRank,fmtInt(x.total),'点')).join('')}</ol>`:'<p class="empty">記録が入ると表示されます</p>'}</div>
-      <div class="card"><h2>自己ベスト更新率賞</h2><p class="sub">換算更新率の合計${st.noDouble?'（総合得点賞の入賞者はのぞく）':''}</p>
+      <div class="card"><h2>自己ベスト優勝</h2><p class="sub">換算更新率の合計${st.noDouble?'（個人優勝の3位までの人はのぞく）':''}</p>
         ${pbTop.length?`<ol class="medals">${pbTop.map(x=>medal(x,x.pbRank,x.pbScore.toFixed(2),'%')).join('')}</ol>`:'<p class="empty">自己ベストを更新した人が出ると表示されます</p>'}</div>
     </div>
+    <div class="card"><h2>種目別自己ベスト更新率優勝</h2><p class="sub">種目ごとに、自己ベストからの更新率（%）がいちばん大きい人</p>
+      <div class="awards ev-awards">${EVENTS.map(e=>{const l=C.evPB[e.key].filter(r=>r.rank<=3);
+        return`<div><h3>${e.name}</h3>${l.length?`<ol class="medals">${l.map(r=>medal(r.x,r.rank,fmtSigned(r.rate).replace('+',''),'%')).join('')}</ol>`:'<p class="empty">まだいません</p>'}</div>`;}).join('')}</div></div>
     <div class="card no-print"><div class="inline" style="justify-content:space-between">
       <label class="toggle"><input type="checkbox" id="setNoDouble" data-ch="setting" data-key="noDouble"${st.noDouble?' checked':''}>
-        <span>W受賞なしにする<small>総合得点賞の入賞者を自己ベスト更新率賞の対象から外し、表彰される人数を増やします</small></span></label>
+        <span>W受賞なしにする<small>個人優勝の3位までの人を自己ベスト優勝の対象から外し、表彰される人数を増やします</small></span></label>
       <button type="button" class="btn" data-act="print">印刷する</button></div></div>
 
     <div class="card"><div class="card-head"><h2>チーム別の内訳</h2></div>
@@ -734,7 +802,7 @@ function viewRank(C){
     <div class="card"><div class="card-head"><h2>自己ベスト更新率 <small>更新した人 ${C.pbAll.length}人</small></h2></div>
       ${C.pbAll.length?`<div class="tscroll"><table class="res"><thead><tr><th>順位</th><th>名前</th>${EVENTS.map(e=>`<th class="r">${e.name}<br><small>更新率（換算）</small></th>`).join('')}<th class="r">PB数</th><th class="r">換算合計</th></tr></thead>
       <tbody>${C.pbAll.map(x=>{const out=x.pbRank==null;return`<tr class="${out?'out':''}"><td class="rk">${out?'—':x.pbRank}</td>
-        <td class="who"><span style="display:flex;gap:8px;align-items:center">${tagHTML(teamById(x.a.team))}<span><b>${esc(x.a.name)}</b><small>${metaOf(x.a)}${out?' <span class="ribbon">総合得点賞</span>':''}</small></span></span></td>
+        <td class="who"><span style="display:flex;gap:8px;align-items:center">${tagHTML(teamById(x.a.team))}<span><b>${esc(x.a.name)}</b><small>${metaOf(x.a)}${out?' <span class="ribbon">個人優勝</span>':''}</small></span></span></td>
         ${EVENTS.map(e=>{const o=x.ev[e.key];if(o.rate==null)return'<td class="r dim">—</td>';return`<td class="r"><span class="p${o.isPB?' up':''}">${fmtSigned(o.rate)}%</span><span class="rec">${o.isPB?'（'+o.adj.toFixed(2)+'）':'加算なし'}</span></td>`;}).join('')}
         <td class="r num">${x.pbCount}</td><td class="r tot">${x.pbScore.toFixed(2)}</td></tr>`;}).join('')}</tbody></table></div>`:'<p class="empty">自己ベストを更新した人が出ると表示されます</p>'}
       <p class="note">換算更新率 = 更新率 × 種目係数。自己ベストを上回った種目だけを合計します。同点のときは更新した種目数が多い人が上位です。</p></div>
@@ -748,22 +816,23 @@ function viewRoster(C){
   const teamOpts=id=>`<option value="">未所属</option>`+activeTeams().map(t=>`<option value="${t.id}"${id===t.id?' selected':''}>${esc(t.name)}</option>`).join('');
   const rows=state.athletes.map(a=>`<tr data-id="${a.id}">
     <td class="sticky"><input type="text" class="nmi" id="nm-${a.id}" data-in="name" value="${esc(a.name)}" placeholder="名前" aria-label="名前"></td>
+    <td><input type="text" class="nmi${a.kana&&!isKana(a.kana)?' bad':''}" id="kn-${a.id}" data-in="kana" value="${esc(a.kana)}" placeholder="ひらがな" aria-label="よみ（ひらがな）"></td>
     <td><select id="sx-${a.id}" data-ch="sex" aria-label="性別"><option value="m"${a.sex==='m'?' selected':''}>男子</option><option value="f"${a.sex==='f'?' selected':''}>女子</option></select></td>
     <td><select id="gr-${a.id}" data-ch="grade" aria-label="学年">${gradeOpts(a.grade)}</select></td>
     <td><select id="tm-${a.id}" data-ch="team" aria-label="チーム">${teamOpts(a.team)}</select></td>
-    ${EVENTS.map(e=>`<td><input type="text" class="pbi" id="pb-${a.id}-${e.key}" data-ch="pb" data-ev="${e.key}" value="${esc(fmtMark(e.key,a.pb[e.key]))}" inputmode="decimal" autocomplete="off" aria-label="${e.name}の自己ベスト"></td>`).join('')}
+    ${EVENTS.map(e=>!takes(a,e.key)?'<td class="na" title="この学年は出ない種目">–</td>':`<td><input type="text" class="pbi" id="pb-${a.id}-${e.key}" data-ch="pb" data-ev="${e.key}" value="${esc(fmtMark(e.key,a.pb[e.key]))}" inputmode="decimal" autocomplete="off" aria-label="${e.name}の自己ベスト"></td>`).join('')}
     <td style="text-align:center"><input type="checkbox" id="ab-${a.id}" data-ch="absent" aria-label="欠席"${a.absent?' checked':''}></td>
     <td><button type="button" class="del" data-act="del">削除</button></td></tr>`).join('');
   return`<section class="stack">
     <div class="card" id="teamCard">${teamCardHTML(C)}</div>
     <div class="card">
       <div class="card-head"><h2>選手一覧 <small>${n}人</small></h2><button type="button" class="btn" data-act="add">＋ 選手を追加</button></div>
-      <p class="hint" style="margin-bottom:8px">自己ベストは今シーズン（同じ学年）の記録がおすすめです。走る種目は秒、跳ぶ種目はm（cmでも可）。空欄の種目は更新率の対象外になります。</p>
-      ${n?`<div class="tscroll"><table class="roster"><thead><tr><th class="sticky">名前</th><th>性別</th><th>学年</th><th>チーム</th>${EVENTS.map(e=>`<th>${e.name}<br><small>自己ベスト</small></th>`).join('')}<th>欠席</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+      <p class="hint" style="margin-bottom:8px"><b>よみ</b>はサイトのスタートリスト・結果に出る名前です（ひらがな）。50mは小1〜小3、200mは小4以上だけの種目です。自己ベストは今シーズン（同じ学年）の記録がおすすめです。走る種目は秒、跳ぶ種目はm（cmでも可）。空欄の種目は更新率の対象外になります。</p>
+      ${n?`<div class="tscroll"><table class="roster"><thead><tr><th class="sticky">名前</th><th>よみ<br><small>公開用・ひらがな</small></th><th>性別</th><th>学年</th><th>チーム</th>${EVENTS.map(e=>`<th>${e.name}<br><small>自己ベスト</small></th>`).join('')}<th>欠席</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
         :'<p class="empty">まだ選手がいません。「＋ 選手を追加」か、下の「まとめて登録」から入れてください。</p>'}
       <details class="bulk" style="margin-top:14px"${n?'':' open'}><summary>まとめて登録（表計算ソフトから貼り付け）</summary>
-        <p class="hint">1行に1人。<b>名前, 性別, 学年, 100m, 200m, 走高跳, 走幅跳</b> の順に、カンマかタブで区切ります。自己ベストは空欄でもかまいません。</p>
-        <textarea id="bulkText" rows="5" placeholder="山田 太郎, 男, 小5, 15.8, 33.4, 1.05, 3.62&#10;鈴木 花子, 女, 中1, 15.1, , 1.10, 3.80"></textarea>
+        <p class="hint">1行に1人。<b>名前, よみ, 性別, 学年, 50m, 100m, 200m, 走高跳, 走幅跳</b> の順に、カンマかタブで区切ります。自己ベストは空欄でもかまいません（出ない種目も空欄に）。よみを省いた古い形（名前, 性別, 学年, 100m, 200m, 走高跳, 走幅跳）も読めます。</p>
+        <textarea id="bulkText" rows="5" placeholder="山田 太郎, やまだ たろう, 男, 小5, , 15.8, 33.4, 1.05, 3.62&#10;鈴木 花子, すずき はなこ, 女, 小2, 10.4, 18.6, , 0.75, 2.40"></textarea>
         <div class="btn-row" style="margin-top:8px"><button type="button" class="btn primary" data-act="bulk">追加する</button></div>
         <div id="bulkMsg"></div>
       </details>
@@ -799,13 +868,14 @@ function viewTable(){
       <h2>得点のしくみ</h2>
       <p class="lead" style="margin-top:6px">学年・性別ごとに決めた<b>基準記録を500点</b>とし、基準をどれだけ上回ったか（％）で点数が決まります。どの学年の子も、どの種目でも、同じように点が取れるように作っています。</p>
       <div class="formula">
-        <div><b>走る種目（100m・200m）</b><code>得点 ＝ 500 ＋ 1000 × 種目係数 ×（基準タイム ÷ 記録 − 1）</code></div>
+        <div><b>走る種目（50m・100m・200m）</b><code>得点 ＝ 500 ＋ 1000 × 種目係数 ×（基準タイム ÷ 記録 − 1）</code></div>
         <div><b>跳ぶ種目（走高跳・走幅跳）</b><code>得点 ＝ 500 ＋ 1000 × 種目係数 ×（記録 ÷ 基準記録 − 1）</code></div>
         <div><b>自己ベスト更新率</b><code>更新率 ＝（自己ベスト ÷ 記録 − 1）× 100　※跳ぶ種目は（記録 ÷ 自己ベスト − 1）× 100</code><br>
           <code>換算更新率 ＝ 更新率 × 種目係数　→　自己ベストを上回った種目の合計で順位</code></div>
       </div>
       <div class="tscroll"><table style="max-width:560px"><thead><tr><th>種目</th><th class="r">種目係数</th><th class="r">基準を1%上回ると</th></tr></thead><tbody>
         ${EVENTS.map(x=>`<tr><td>${x.name}</td><td class="r num">${state.coef[x.key].toFixed(1)}</td><td class="r num">＋${Math.round(state.coef[x.key]*10)}点</td></tr>`).join('')}</tbody></table></div>
+      <p class="hint" style="margin-top:10px">小1〜小3は 50m・100m・走高跳・走幅跳、小4以上は 100m・200m・走高跳・走幅跳 の4種目です。どちらも1種目500点が基準なので、合計の重みは同じです。</p>
       <ul class="fair">
         <li><b>学年・性別の差をなくす</b>：自分の学年・性別の基準とくらべるので、低学年や女子も高学年男子と同じように点が取れます。</li>
         <li><b>種目の差をなくす</b>：100mの1%と走幅跳の1%では重みがちがいます（走幅跳のほうが記録の差が大きく出る）。種目係数でその差をそろえています。</li>
@@ -885,6 +955,11 @@ function viewData(){
       <p class="hint" style="margin-block:6px 10px">個人・チームの結果をCSV（Excelで開ける形式）で書き出します。</p>
       <div class="btn-row"><button type="button" class="btn" data-act="csvSave">CSVファイルを保存</button><button type="button" class="btn" data-act="csvCopy">CSVをコピー</button></div></div>
 
+    <div class="card"><h2>サイトに公開するデータ</h2>
+      <p class="hint" style="margin-block:6px 10px">特設サイトの「スタートリスト＆結果」用のファイルを作ります。名前は<b>よみ（ひらがな）</b>だけを使い、合計得点・順位・自己ベストの記録は入れません（更新したらPBの印だけ付きます）。保存したファイルをGitHubの <code>data/</code> フォルダに同じ名前で上書きアップロードすると、サイトに出ます。</p>
+      <div class="btn-row"><button type="button" class="btn" data-act="pubStart">スタートリスト（startlist.json）</button><button type="button" class="btn" data-act="pubResult">結果（results.json）</button></div>
+      <div id="pubMsg"></div></div>
+
     <div class="card"><h2>バックアップと復元</h2>
       <p class="hint" style="margin-block:6px 10px">データはこの端末のブラウザに自動保存されます。別の端末へ移すときや念のための控えに、バックアップを使ってください。</p>
       <div class="btn-row"><button type="button" class="btn" data-act="backupSave">バックアップを保存</button><button type="button" class="btn" data-act="backupCopy">バックアップをコピー</button>
@@ -915,9 +990,9 @@ function csvText(){
   const lines=[];
   lines.push([state.meet.name,state.meet.date].map(q).join(','));
   lines.push('');
-  lines.push(['総合順位','名前','性別','学年','チーム',...EVENTS.flatMap(e=>[e.name+'記録',e.name+'得点',e.name+'更新率%']),'合計得点','換算更新率合計','PB数','更新率賞順位'].map(q).join(','));
+  lines.push(['総合順位','名前','よみ','性別','学年','チーム',...EVENTS.flatMap(e=>[e.name+'記録',e.name+'得点',e.name+'更新率%']),'合計得点','換算更新率合計','PB数','更新率賞順位'].map(q).join(','));
   const rows=[...C.scored,...C.present.filter(x=>x.done===0)];
-  rows.forEach(x=>{const a=x.a;lines.push([x.scoreRank??'',a.name,SEX[a.sex],GRADES[a.grade],teamById(a.team)?.name??'未所属',
+  rows.forEach(x=>{const a=x.a;lines.push([x.scoreRank??'',a.name,a.kana,SEX[a.sex],GRADES[a.grade],teamById(a.team)?.name??'未所属',
     ...EVENTS.flatMap(e=>{const o=x.ev[e.key];return[fmtMark(e.key,o.rec),o.pts??'',o.rate==null?'':o.rate.toFixed(2)];}),
     x.total,x.pbScore.toFixed(2),x.pbCount,x.pbRank??''].map(q).join(','));});
   lines.push('');
@@ -926,6 +1001,54 @@ function csvText(){
   return'﻿'+lines.join('\r\n');
 }
 function backupText(){return JSON.stringify(state);}
+/* 公開用データ：サイトの種目IDに合わせ、学年・性別ごとの組に分ける */
+const isKana=s=>/^[\u3041-\u309f\u30fc\s　]+$/.test(s||'');
+function pubIdOf(a,ek){
+  if(ek==='m50')return'u3-50';
+  if(ek==='m100')return a.grade<=2?'u3-100':'o4-100';
+  if(ek==='m200')return'o4-200';
+  return ek;
+}
+function pubCheck(){
+  const bad=state.athletes.filter(a=>!a.absent&&!isKana(a.kana));
+  if(!bad.length)return true;
+  const m=$('#pubMsg');
+  if(m)m.innerHTML=`<ul class="errs"><li>よみ（ひらがな）が入っていない、またはひらがな以外がまじっている選手が ${bad.length}人います：${bad.slice(0,8).map(a=>esc(a.name||'（名前なし）')).join('、')}${bad.length>8?' ほか':''}</li><li>「選手・チーム」タブのよみ欄を直してから、もう一度書き出してください。</li></ul>`;
+  toast('よみ（ひらがな）を確認してください');
+  return false;
+}
+function pubStamp(){const d=new Date();return`${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
+function pubGroups(withRec){
+  const C=compute(), byId={};
+  const grpName=a=>`${GRADES[a.grade]} ${SEX[a.sex]}`;
+  C.present.forEach(x=>evsFor(x.a).forEach(ek=>{
+    const id=pubIdOf(x.a,ek);
+    (byId[id]=byId[id]||{id,groups:{}});
+    const g=grpName(x.a), t=teamById(x.a.team), o=x.ev[ek];
+    const row={name:x.a.kana.trim(),team:t?t.name:'',color:t?t.color:'',_g:x.a.grade,_s:x.a.sex};
+    if(withRec){
+      if(o.rec==null)return;
+      row.mark=o.rec==='NM'?'記録なし':fmtMark(ek,o.rec);row._v=o.rec==='NM'?null:o.rec;row._run=EV[ek].type==='run';
+      if(o.isPB)row.pb=true;
+    }
+    (byId[id].groups[g]=byId[id].groups[g]||[]).push(row);
+  }));
+  return Object.values(byId).map(ev=>{
+    const gs=Object.entries(ev.groups).sort((p,q)=>p[1][0]._g-q[1][0]._g||p[1][0]._s.localeCompare(q[1][0]._s));
+    return{id:ev.id,heats:gs.map(([name,rows])=>{
+      if(withRec)rows.sort((p,q)=>p._v==null?1:q._v==null?-1:p._run?p._v-q._v:q._v-p._v);
+      else rows.sort((p,q)=>p.name.localeCompare(q.name,'ja'));
+      return{name,entries:rows.map(({_g,_s,_v,_run,...r})=>r)};
+    })};
+  });
+}
+function pubStartText(){return JSON.stringify({updated:pubStamp(),events:pubGroups(false)},null,1);}
+function pubResultText(){
+  const total={};
+  compute().present.forEach(x=>evsFor(x.a).forEach(ek=>{const id=pubIdOf(x.a,ek);total[id]=(total[id]||0)+1;}));
+  const evs=pubGroups(true).map(ev=>{const n=ev.heats.reduce((s,h)=>s+h.entries.length,0);return{id:ev.id,final:n>=total[ev.id],groups:ev.heats.map(h=>({name:h.name,rows:h.entries}))};}).filter(ev=>ev.groups.some(g=>g.rows.length));
+  return JSON.stringify({updated:pubStamp(),events:evs},null,1);
+}
 function stamp(){return(state.meet.date||todayStr()).replace(/-/g,'');}
 function saveFile(name,text,type){
   try{
@@ -1015,6 +1138,8 @@ const CLICK={
     if(!await ask('今日の記録（4種目すべて）を消します。選手と自己ベストは残ります。','消す',true))return;
     state.athletes.forEach(a=>{a.rec=blankMarks();});recErr.clear();save();render();toast('今日の記録を消しました');
   },
+  pubStart:()=>{if(pubCheck()){$('#pubMsg').innerHTML='';saveFile('startlist.json',pubStartText(),'application/json');}},
+  pubResult:()=>{if(pubCheck()){$('#pubMsg').innerHTML='';saveFile('results.json',pubResultText(),'application/json');}},
   csvSave:()=>saveFile(`記録会結果_${stamp()}.csv`,csvText(),'text/csv'),
   csvCopy:()=>copyText(csvText(),'CSV'),
   backupSave:()=>saveFile(`記録会バックアップ_${stamp()}.json`,backupText(),'application/json'),
@@ -1048,6 +1173,9 @@ function parseBulk(text){
     const a=blankAthlete(), no=`${i+1}行目`;
     a.name=c[0].slice(0,30);
     if(!a.name){errors.push(no+'：名前がありません');return;}
+    // 2列目が性別なら古い形（よみ・50mなし）
+    const oldForm=/^(男|男子|女|女子|m|f|male|female|boy|girl)$/.test(normalizeText(c[1]));
+    if(!oldForm){a.kana=(c[1]||'').slice(0,30);c.splice(1,1);}
     const sx=normalizeText(c[1]);
     if(/^(男|男子|m|male|boy)$/.test(sx))a.sex='m';
     else if(/^(女|女子|f|female|girl)$/.test(sx))a.sex='f';
@@ -1056,7 +1184,7 @@ function parseBulk(text){
     if(g==null){errors.push(`${no}（${a.name}）：学年は「小5」「中1」のように入れてください`);return;}
     a.grade=g;
     let bad=false;
-    EVENTS.forEach((e,j)=>{const r=parseMark(e.key,c[3+j]??'',false);if(r.error){bad=true;errors.push(`${no}（${a.name}）${e.name}：${r.error}`);}else if(!r.empty)a.pb[e.key]=r.value;});
+    (oldForm?UPPER_EVS:EVENTS.map(e=>e.key)).map(k=>EV[k]).forEach((e,j)=>{const r=parseMark(e.key,c[3+j]??'',false);if(r.error){bad=true;errors.push(`${no}（${a.name}）${e.name}：${r.error}`);}else if(!r.empty)a.pb[e.key]=r.value;});
     if(!bad)ok.push(a);
   });
   return{ok,errors};
@@ -1082,6 +1210,8 @@ document.addEventListener('input',e=>{
     save();refreshRow(li,a,ek);refreshLive();
   }else if(k==='name'){
     athleteById(t.closest('tr').dataset.id).name=t.value.slice(0,30);save();
+  }else if(k==='kana'){
+    athleteById(t.closest('tr').dataset.id).kana=t.value.slice(0,30);t.classList.toggle('bad',!!t.value&&!isKana(t.value));save();
   }else if(k==='teamName'){
     state.teams[+t.dataset.i].name=t.value.slice(0,12)||TEAM_PRESET[+t.dataset.i][0]+'チーム';save();renderBoard();
   }else if(k==='meet'){
@@ -1101,7 +1231,7 @@ document.addEventListener('change',e=>{
       refreshRow(li,ath,ek);break;}
     case'sort':state.ui.sort=t.value;save();render();break;
     case'sex':a.sex=t.value==='f'?'f':'m';save();refreshRosterSide();break;
-    case'grade':a.grade=clamp(+t.value,0,GRADES.length-1);save();refreshRosterSide();break;
+    case'grade':a.grade=clamp(+t.value,0,GRADES.length-1);save();render();break;
     case'team':a.team=teamById(t.value)?t.value:'';save();refreshRosterSide();break;
     case'absent':a.absent=t.checked;save();refreshRosterSide();break;
     case'pb':{
