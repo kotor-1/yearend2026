@@ -9,219 +9,217 @@
 <meta property="og:title" content="YEAR-END TEAM RECORD MEET 2026｜年末チーム内記録会">
 <meta property="og:description" content="12月20日（日）秦野カルチャーパーク陸上競技場">
 <meta property="og:image" content="assets/ogp.jpg">
-<meta name="theme-color" content="#0b1626">
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* 開催要項（PDF）と同じ配色：夜の競技場のネイビー、ライム、ピンク。上にキービジュアル、その下にタブで3つの画面を切り替える */
+/* 白地に黒文字。クラブカラーのショッキングピンクは「押せるもの」「いま大事なもの」だけに使う。
+   スマホは親指の届く下タブ、広い画面ではヘッダー下にタブ */
 :root{
-  --bg:#f3f5f8; --surface:#ffffff; --surface-2:#e8edf3; --ink:#111c2b; --ink-2:#44536a; --muted:#6c7a8e; --line:#d9e0e8;
-  --navy:#0b1626; --navy-2:#15243a; --navy-ink:#f3f6fa; --navy-muted:#93a3b8;
-  --lime:#d4ff2a; --lime-ink:#0b1626; --lime-soft:#f4fbd6; --lime-line:#c7ec2a;
-  --pink:#ff2e88; --pink-text:#d81b6a; --pink-soft:#ffe8f2;
-  --amber-soft:#fff6e6; --amber-line:#f3d9a4; --amber-ink:#8a5a00;
+  --bg:#ffffff; --ink:#0d0d0f; --ink2:#4a4a52; --muted:#6e6e78; --line:#e6e6ea; --soft:#f5f5f7;
+  --pink:#ff1a8c; --pink-t:#d4006f; --pink-soft:#ffe6f2; --on-pink:#ffffff; --bar:#0d0d0f; --on-bar:#ffffff;
   --font-ui:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
   --font-num:"Barlow Condensed","Noto Sans JP","Arial Narrow",sans-serif;
-  --radius:12px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#08101c; --surface:#111c2b; --surface-2:#18263a; --ink:#e8edf3; --ink-2:#b4c0cf; --muted:#8495aa; --line:#24344a;
-    --navy:#060c16; --navy-2:#132136;
-    --lime-soft:#1d2a10; --lime-line:#8fb01c;
-    --pink-text:#ff6aa8; --pink-soft:#3a1426;
-    --amber-soft:#2c2210; --amber-line:#5c4517; --amber-ink:#f2c46b;
+    --bg:#0c0c0f; --ink:#f4f4f6; --ink2:#c2c2cc; --muted:#9a9aa6; --line:#2a2a31; --soft:#17171c;
+    --pink:#ff3d9e; --pink-t:#ff6db6; --pink-soft:#3a1028; --bar:#f4f4f6; --on-bar:#0c0c0f;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#08101c; --surface:#111c2b; --surface-2:#18263a; --ink:#e8edf3; --ink-2:#b4c0cf; --muted:#8495aa; --line:#24344a;
-  --navy:#060c16; --navy-2:#132136;
-  --lime-soft:#1d2a10; --lime-line:#8fb01c;
-  --pink-text:#ff6aa8; --pink-soft:#3a1426;
-  --amber-soft:#2c2210; --amber-line:#5c4517; --amber-ink:#f2c46b;
+  --bg:#0c0c0f; --ink:#f4f4f6; --ink2:#c2c2cc; --muted:#9a9aa6; --line:#2a2a31; --soft:#17171c;
+  --pink:#ff3d9e; --pink-t:#ff6db6; --pink-soft:#3a1028; --bar:#f4f4f6; --on-bar:#0c0c0f;
   color-scheme:dark;
 }
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.75}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:16px;line-height:1.7;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 button,input,select{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
 [hidden]{display:none!important}
-.wrap{max-width:960px;margin:0 auto;padding-inline:16px}
-.num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
-h1,h2,h3{text-wrap:balance;margin:0;line-height:1.35}
-p{margin:0}
 a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
+.num{font-family:var(--font-num);font-style:italic;font-weight:800;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
 
-/* ---------- キービジュアル ---------- */
-.hero{background:var(--navy);color:var(--navy-ink)}
-.hero-in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:center;gap:32px;padding-block:24px 32px}
-.kv{display:block;width:100%;height:auto;aspect-ratio:1/1;border-radius:14px;object-fit:cover}
-.hero-text .eyebrow{display:flex;align-items:center;gap:8px;font-family:var(--font-num);letter-spacing:.18em;font-weight:700;color:var(--navy-muted);font-size:14px}
-.hero-text .eyebrow::before{content:"";width:10px;height:10px;background:var(--pink)}
-.hero-text h1{font-size:26px;font-weight:900;margin-top:10px}
-.facts{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:12px}
-.facts li{display:grid;grid-template-columns:5.5em 1fr;gap:8px;border-top:1px solid var(--navy-2);padding-top:12px}
-.facts .k{color:var(--navy-muted);font-size:13px}
-.facts .v{font-weight:700}
-.facts .v small{display:block;font-weight:400;color:var(--navy-muted);font-size:13px}
-.facts .big{font-family:var(--font-num);font-size:30px;line-height:1.1;letter-spacing:.01em}
-.cd{display:inline-block;margin-top:20px;background:var(--lime);color:var(--lime-ink);font-weight:900;border-radius:999px;padding:6px 16px;font-size:14px}
-.cd .num{font-size:22px;margin-inline:2px;font-weight:800}
+/* ---------- ヘッダー ---------- */
+.brand{display:flex;align-items:center;gap:8px;padding:14px 0;font-weight:900;font-size:14px}
+.brand i{width:22px;height:14px;background:var(--pink);transform:skewX(-20deg)}
+.kv{margin:0 -16px;aspect-ratio:16/10;overflow:hidden;background:#0b1626}
+.kv img{display:block;width:100%;height:100%;object-fit:cover;object-position:60% 30%}
+.title{margin-top:18px;font-size:clamp(26px,7.4vw,36px);font-weight:900}
+.title .num{color:var(--pink-t);font-size:1.15em}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:2px 16px;margin-top:14px;align-items:center}
+.meta .d{grid-row:span 2;font-size:60px;line-height:.9}
+.meta .d small{display:block;font-size:21px}
+.meta b{font-size:16px;line-height:1.45}
+.meta span{font-size:14px;color:var(--ink2);line-height:1.5}
+.count{display:flex;align-items:center;gap:10px;margin-top:16px;background:var(--bar);color:var(--on-bar);padding:10px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.count .num{font-size:36px;line-height:1;color:var(--pink)}
 
 /* ---------- タブ ---------- */
-.tabs{position:sticky;top:0;z-index:10;background:var(--navy);border-top:1px solid var(--navy-2)}
-.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-.tabs a{flex:1 0 auto;text-align:center;padding:12px 12px 10px;color:var(--navy-muted);text-decoration:none;font-weight:700;font-size:14px;border-bottom:3px solid transparent;white-space:nowrap}
-.tabs a[aria-current="page"]{color:var(--navy-ink);border-bottom-color:var(--lime)}
-.tabs a:hover{color:var(--navy-ink)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar .in{display:grid;grid-template-columns:repeat(3,1fr);max-width:760px;margin:0 auto}
+.tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:60px;padding:9px 0 7px;color:var(--muted);text-decoration:none;font-size:12px;font-weight:700}
+.tabbar svg{width:24px;height:24px}
+.tabbar a[aria-current="page"]{color:var(--pink-t)}
+.tabbar a[aria-current="page"]::before{content:"";position:absolute;top:-1px;left:22%;right:22%;height:3px;background:var(--pink)}
+@media (min-width:900px){
+  body{padding-bottom:0}
+  .tabbar{position:sticky;top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);margin-top:24px}
+  .tabbar a{flex-direction:row;justify-content:center;gap:8px;font-size:15px;min-height:56px}
+  .tabbar svg{width:20px;height:20px}
+  .tabbar a[aria-current="page"]::before{top:auto;bottom:-1px}
+}
 
-/* ---------- 共通パーツ ---------- */
-main{padding-block:8px 24px}
-.panel > section{padding-top:32px}
-.kicker{font-family:var(--font-num);font-weight:700;letter-spacing:.16em;color:var(--pink-text);font-size:13px}
-.h2{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900}
-.h2::before{content:"";width:6px;height:1.1em;border-radius:3px;background:var(--pink)}
-.lead{color:var(--ink-2);margin-top:6px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-top:14px}
-.card h3{font-size:16px;font-weight:900}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
-.grid2 > .card{margin-top:0}
-.note{background:var(--amber-soft);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:14px;font-weight:700}
-ul.dots{margin:8px 0 0;padding-left:1.2em;color:var(--ink-2);font-size:14px}
-ul.dots li+li{margin-top:3px}
-.small{font-size:13px;color:var(--muted)}
+/* ---------- 共通 ---------- */
+main{padding-bottom:24px}
+section{scroll-margin-top:72px}
+h2{display:flex;align-items:center;gap:10px;margin:40px 0 14px;font-size:22px;font-weight:900}
+h2::before{content:"";flex:none;width:14px;height:22px;background:var(--pink);transform:skewX(-20deg)}
+h3{font-size:17px;font-weight:900}
+.lead{color:var(--ink2);margin:-4px 0 12px}
+.small{font-size:14px;color:var(--ink2)}
+ul.dots{margin:10px 0 0;padding-left:1.2em;color:var(--ink2);font-size:15px}
+ul.dots li+li{margin-top:4px}
+.box{background:var(--soft);padding:16px}
+.box + .box{margin-top:10px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duo > div{background:var(--soft);padding:16px}
+.duo p{margin-top:4px;font-size:15px;color:var(--ink2)}
+.duo .k{display:block;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border:1.5px solid currentColor;white-space:nowrap;line-height:1.5;text-decoration:none}
+.tag.p{color:var(--pink-t)}
+.tag.f{background:var(--pink);border-color:var(--pink);color:var(--on-pink)}
+.alert{border-left:4px solid var(--pink);background:var(--pink-soft);padding:12px 14px;margin-top:12px;font-size:15px}
+.btn{display:flex;justify-content:center;align-items:center;gap:8px;min-height:56px;margin-top:12px;padding:0 16px;background:var(--pink);color:var(--on-pink);font-weight:900;font-size:17px;text-decoration:none;text-align:center}
+.btn.o{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn small{font-weight:500;font-size:13px;opacity:.9}
+
+/* いま・つぎ */
+.now{border:2px solid var(--ink);padding:14px 16px}
+.now .lbl{font-size:13px;font-weight:700;color:var(--pink-t)}
+.now .row{display:flex;align-items:baseline;gap:14px;margin-top:2px;flex-wrap:wrap}
+.now .t{font-size:44px;line-height:1}
+.now b{font-size:19px}
+.now .sub{margin-top:6px;font-size:14px;color:var(--ink2)}
 
 /* タイムテーブル */
-.tt{width:100%;border-collapse:collapse;font-size:15px}
-.tt caption{text-align:left;font-weight:700;font-size:13px;color:var(--ink-2);background:var(--surface-2);padding:8px 12px}
-.tt td{padding:9px 12px;border-bottom:1px solid var(--line)}
-.tt tr:last-child td{border-bottom:0}
-.tt td:first-child{width:5em;font-family:var(--font-num);font-weight:700;font-size:18px}
-.tt tr.hl td{background:var(--lime-soft)}
-.tt tr.hl td:first-child{color:var(--pink-text)}
-.tt tr.end td{background:var(--pink-soft)}
-.ttbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.tt{list-style:none;margin:0;padding:0}
+.tt li{display:grid;grid-template-columns:4.3em 1fr auto;gap:10px;align-items:center;min-height:54px;border-bottom:1px solid var(--line)}
+.tt li:first-child{border-top:1px solid var(--line)}
+.tt .t{font-size:25px}
+.tt .g{font-size:13px;color:var(--muted);margin-left:4px}
+.tt li.sp .e{font-weight:700}
+.tt li.cur{background:var(--pink-soft);box-shadow:-16px 0 0 var(--pink-soft),16px 0 0 var(--pink-soft)}
+.tt li.cur .t{color:var(--pink-t)}
 
-/* 参加部門 */
-.div{border-top:4px solid var(--lime-line)}
-.div.open{border-top-color:var(--pink)}
-.div .no{font-family:var(--font-num);font-weight:800;font-size:20px;margin-right:8px}
-.div p{color:var(--ink-2);font-size:14px;margin-top:6px}
-.awards{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.awards span{background:var(--surface-2);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
-.evtable{width:100%;border-collapse:collapse;font-size:14px}
-.evtable th,.evtable td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.evtable tr:last-child th,.evtable tr:last-child td{border-bottom:0}
-.evtable th{width:42%;background:var(--surface-2);font-weight:700}
-.evtable th small{display:block;font-weight:400;color:var(--muted)}
+/* 表彰・種目 */
+.awards{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.awards span{background:var(--pink-soft);color:var(--pink-t);font-weight:700;font-size:14px;padding:5px 12px}
+.evrow{display:grid;grid-template-columns:7.5em 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.evrow:first-child{border-top:1px solid var(--line)}
+.evrow b{font-size:15px;line-height:1.5}
+.evrow b small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.evrow span{font-weight:700}
 
-/* 練習会場・ルール */
-.venue h3 small{display:block;font-weight:400;color:var(--muted);font-size:13px}
-.venue p{font-weight:700;margin-top:8px}
-.vs{background:var(--lime-soft);border:1px solid var(--lime-line)}
-.vs .tag{display:inline-block;background:var(--navy);color:var(--lime);font-weight:900;font-size:13px;padding:2px 10px;border-radius:6px;margin-right:8px}
-.vs h3{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:20px}
+/* VS */
+.vs{background:var(--pink);color:var(--on-pink);padding:22px 16px;margin:0 -16px;clip-path:polygon(0 10px,100% 0,100% calc(100% - 10px),0 100%)}
+.vs .num{display:block;font-size:46px;line-height:1}
 .vs p{margin-top:8px}
-.vs b.pink{color:var(--pink-text)}
+.vs small{display:block;margin-top:6px;opacity:.92}
 
 /* 申し込み */
-.apply{background:var(--navy);color:var(--navy-ink);border-radius:16px;padding:20px;margin-top:14px}
-.apply .head{color:var(--lime);font-weight:900}
-.apply .step{background:var(--navy-2);border-radius:12px;padding:16px}
-.apply .step b{display:block;font-size:16px}
-.apply .step p{color:var(--navy-muted);font-size:14px;margin-top:4px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;padding:11px 18px;border-radius:999px;font-weight:900;text-decoration:none;font-size:15px}
-.btn.lime{background:var(--lime);color:var(--lime-ink)}
-.btn.line{border:1.5px solid currentColor}
-.apply .foot{color:var(--navy-muted);font-size:13px;margin-top:14px;border-top:1px solid var(--navy-2);padding-top:12px}
+.steps{counter-reset:s;display:grid;gap:10px}
+.step{background:var(--soft);padding:16px;counter-increment:s}
+.step h3::before{content:counter(s);display:inline-grid;place-items:center;width:28px;height:28px;margin-right:8px;background:var(--ink);color:var(--bg);font-family:var(--font-num);font-style:italic;font-weight:800;font-size:18px}
+.step p{margin-top:6px;font-size:15px;color:var(--ink2)}
 
 /* ---------- スタートリスト＆結果 ---------- */
-.seg{display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px;margin-top:14px}
-.seg button{border:0;background:none;padding:6px 18px;border-radius:999px;cursor:pointer;color:var(--ink-2);font-weight:700}
-.seg button[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink)}
-.status{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--muted);font-size:13px}
-.status .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink)}
+.seg button{min-height:48px;border:0;background:transparent;font-weight:900;font-size:16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.status{display:flex;align-items:center;gap:8px;margin:14px 0 10px;color:var(--muted);font-size:14px}
+.status .dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
 .status.live .dot{background:var(--pink)}
-.evlist{display:grid;gap:10px;margin-top:12px}
-.ev{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.ev > summary{list-style:none;display:grid;grid-template-columns:4em 1fr auto;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.ev{border-bottom:1px solid var(--line)}
+.ev:first-child{border-top:1px solid var(--line)}
+.ev > summary{list-style:none;display:grid;grid-template-columns:4.3em 1fr auto 18px;gap:10px;align-items:center;min-height:62px;cursor:pointer}
 .ev > summary::-webkit-details-marker{display:none}
-.ev .t{font-family:var(--font-num);font-weight:700;font-size:20px}
-.ev .nm{font-weight:900}
-.ev .nm small{display:block;font-weight:400;color:var(--muted);font-size:12px}
-.pill{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
-.pill.ready{background:var(--lime-soft);color:var(--ink)}
-.pill.fin{background:var(--navy);color:var(--lime)}
-.ev .body{border-top:1px solid var(--line);padding:12px 14px}
-.empty{color:var(--muted);font-size:14px;text-align:center;padding:12px 0}
-.heat + .heat{margin-top:14px}
-.heat h4{margin:0 0 6px;font-size:13px;color:var(--ink-2)}
-table.list{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
-table.list th:first-child{width:48%}
-table.list th:last-child{width:26%}
-table.list th,table.list td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-table.list th{font-size:12px;color:var(--muted);font-weight:700}
-table.list td.r,table.list th.r{text-align:right}
-table.list td.num{font-size:17px}
-.pb{display:inline-block;margin-left:4px;font-size:11px;font-weight:900;color:#fff;background:var(--pink);border-radius:4px;padding:0 5px;vertical-align:2px}
-.team-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.ev > summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-3px,-3px)}
+.ev[open] > summary::after{transform:rotate(-135deg)}
+.ev .t{font-size:24px}
+.ev .nm{font-weight:900;line-height:1.35}
+.ev .nm small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.ev .body{padding:4px 0 16px}
+.empty{color:var(--muted);font-size:15px;text-align:center;padding:16px 0;background:var(--soft)}
+.heat + .heat{margin-top:16px}
+.heat h4{margin:0 0 4px;font-size:14px;font-weight:900;color:var(--ink2)}
+table.list{width:100%;border-collapse:collapse;font-size:16px;table-layout:fixed}
+table.list th{font-size:12px;color:var(--muted);font-weight:700;text-align:left;padding:6px 0;border-bottom:2px solid var(--ink)}
+table.list th:first-child{width:46%}
+table.list th:last-child{width:30%}
+table.list td{padding:11px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+table.list .r{text-align:right}
+table.list td.num{font-size:24px;line-height:1}
+.pb{display:inline-block;margin-left:6px;background:var(--pink);color:var(--on-pink);font-family:var(--font-num);font-style:italic;font-weight:800;font-size:13px;padding:0 6px;vertical-align:4px;line-height:1.5}
+.team-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
 
 /* ---------- 得点表 ---------- */
-.formula{background:var(--surface-2);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px}
-.formula b{display:block;font-size:12px;color:var(--muted)}
-table.std{border-collapse:collapse;width:100%;font-size:14px}
-table.std th,table.std td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-table.std th{font-size:12px;color:var(--muted);font-weight:700}
-table.std th:first-child,table.std td:first-child{text-align:left}
-table.std td.num{font-size:17px}
-.scroll{overflow-x:auto;margin-inline:-16px;padding-inline:16px}
+.formula{background:var(--soft);padding:14px 16px;font-size:15px}
+.formula + .formula{margin-top:8px}
+.formula b{display:block;font-size:13px;color:var(--pink-t)}
+table.std{width:100%;border-collapse:collapse;font-size:15px}
+table.std th,table.std td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.std thead th{font-size:12px;color:var(--muted);border-bottom:2px solid var(--ink)}
+table.std th:first-child,table.std td:first-child{text-align:left;padding-left:0}
+table.std td.num{font-size:20px}
+.scroll{overflow-x:auto;margin:0 -16px;padding:0 16px}
+.sexseg{display:inline-grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);margin-bottom:10px}
+.sexseg button{min-width:88px;min-height:42px;border:0;background:transparent;font-weight:900;cursor:pointer}
+.sexseg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .calc{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.calc label{display:flex;flex-direction:column;min-width:0;font-size:12px;color:var(--muted);gap:4px}
-.calc select,.calc input{width:100%;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:16px}
-.result{display:flex;align-items:baseline;gap:12px;margin-top:14px;flex-wrap:wrap}
-.result .pts{font-family:var(--font-num);font-size:52px;font-weight:800;line-height:1;color:var(--pink-text)}
-.result .pts small{font-size:18px;margin-left:2px}
-.result .hint{color:var(--ink-2);font-size:14px}
+.calc label{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:13px;font-weight:700;color:var(--ink2)}
+.calc select,.calc input{width:100%;min-width:0;min-height:48px;padding:8px 10px;border:2px solid var(--line);background:var(--bg);font-size:17px;border-radius:0}
+.calc input:focus,.calc select:focus{border-color:var(--ink);outline:0}
+.result{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:16px}
+.result .pts{font-size:60px;line-height:1;color:var(--pink-t)}
+.result .pts small{font-size:20px;margin-left:2px}
+.result .hint{color:var(--ink2);font-size:15px}
 
-footer{background:var(--navy);color:var(--navy-muted);font-size:13px;margin-top:32px}
-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-block:20px 28px}
-footer a{color:var(--navy-muted)}
+footer{border-top:1px solid var(--line);margin-top:40px}
+footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-block:18px 24px;color:var(--muted);font-size:13px}
 
-@media (max-width:720px){
-  .hero-in{grid-template-columns:1fr;gap:18px;padding-block:0 24px}
-  .hero-in .kv{border-radius:0;margin-inline:-16px;width:calc(100% + 32px)}
-  .grid2{grid-template-columns:1fr}
+@media (max-width:560px){
+  .duo{grid-template-columns:1fr}
   .calc{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="wrap hero-in">
-    <img class="kv" src="assets/hero.jpg" width="1254" height="1254" alt="YEAR-END TEAM RECORD MEET 2026 年末チーム内記録会">
-    <div class="hero-text">
-      <p class="eyebrow">2026 HAPPINESS AC</p>
-      <h1>2026 年末チーム内記録会</h1>
-      <ul class="facts">
-        <li><span class="k">開催日</span><span class="v"><span class="big">12.20</span> 日曜日<small>雨天予備日 12月27日（日）</small></span></li>
-        <li><span class="k">会場</span><span class="v">秦野カルチャーパーク 陸上競技場</span></li>
-        <li><span class="k">参加費</span><span class="v">1名 1,000円<small>チーム対抗・オープン共通／当日の出席確認時に現金で集金</small></span></li>
-      </ul>
-      <p class="cd" id="countdown" hidden></p>
-    </div>
+<header class="wrap">
+  <div class="brand"><i></i>HAPPINESS AC</div>
+  <div class="kv"><img src="assets/hero.jpg" width="1254" height="1254" alt="YEAR-END TEAM RECORD MEET 2026 年末チーム内記録会"></div>
+  <h1 class="title">年末チーム内記録会 <span class="num">2026</span></h1>
+  <div class="meta">
+    <div class="d num">12.20<small>SUN</small></div>
+    <b>秦野カルチャーパーク 陸上競技場</b>
+    <span>参加費 1,000円（当日現金）・雨天予備日 12/27</span>
   </div>
+  <div class="count" id="countdown" hidden></div>
 </header>
 
-<nav class="tabs" aria-label="画面の切り替え">
-  <div class="wrap">
-    <a href="#info" data-tab="info">大会案内</a>
-    <a href="#results" data-tab="results">スタートリスト＆結果</a>
-    <a href="#scoring" data-tab="scoring">得点表</a>
+<nav class="tabbar" aria-label="画面の切り替え">
+  <div class="in">
+    <a href="#info" data-tab="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/></svg>大会案内</a>
+    <a href="#results" data-tab="results"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>スタート＆結果</a>
+    <a href="#scoring" data-tab="scoring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>得点表</a>
   </div>
 </nav>
 
@@ -230,285 +228,181 @@ footer a{color:var(--navy-muted)}
 <!-- ===================== 大会案内 ===================== -->
 <div class="panel" id="p-info">
 
-  <section>
-    <p class="kicker">TIME TABLE</p>
-    <h2 class="h2">当日のタイムテーブル</h2>
-    <div class="grid2">
-      <div class="ttbox">
-        <table class="tt">
-          <caption>午前・昼休み</caption>
-          <tbody>
-            <tr><td>8:00</td><td>全体ウォーミングアップ開始</td></tr>
-            <tr><td>10:00</td><td>小学3年生以下　50m</td></tr>
-            <tr><td>10:20</td><td>小学4年生以上　100m</td></tr>
-            <tr><td>11:00</td><td>走り幅跳び</td></tr>
-            <tr class="hl"><td>12:00</td><td>VSタクちゃん（1000m）</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="ttbox">
-        <table class="tt">
-          <caption>午後</caption>
-          <tbody>
-            <tr><td>13:30</td><td>小学3年生以下　100m</td></tr>
-            <tr><td>13:50</td><td>小学4年生以上　200m</td></tr>
-            <tr><td>14:30</td><td>走り高跳び</td></tr>
-            <tr class="hl"><td>16:00</td><td>チーム対抗＆保護者リレー</td></tr>
-            <tr><td>16:30</td><td>結果発表</td></tr>
-            <tr class="end"><td>16:45</td><td>解散</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <p class="note">午後のみ参加する方は、12:30ごろからウォーミングアップを開始できるように集合してください。</p>
+  <section id="now" hidden>
+    <h2>いま・つぎ</h2>
+    <div class="now" id="nowBox"></div>
   </section>
 
   <section>
-    <p class="kicker">DIVISIONS</p>
-    <h2 class="h2">参加部門</h2>
-    <div class="grid2">
-      <div class="card div">
-        <h3><span class="no">01</span>チーム対抗の部</h3>
-        <p>事前にチーム分けを行い、全員が該当学年の<b>4種目すべて</b>に出場。記録を得点化し、チーム・個人で競います。</p>
-        <p class="small">※事前練習に1回以上の参加が必要</p>
-      </div>
-      <div class="card div open">
-        <h3><span class="no">02</span>オープン参加の部</h3>
-        <p>希望する種目のみ出場できます。<b>記録計測のみ</b>となり、すべての表彰の対象外です。</p>
-        <p class="small">※事前練習は不要／参加費1,000円</p>
-      </div>
+    <h2>タイムテーブル</h2>
+    <ul class="tt" id="tt"></ul>
+    <p class="alert">午後のみ参加する方は、12:30ごろからウォーミングアップを始められるように集合してください。</p>
+  </section>
+
+  <section>
+    <h2>参加部門</h2>
+    <div class="duo">
+      <div><span class="k">01</span><h3>チーム対抗の部</h3><p>事前にチーム分けを行い、全員が該当学年の<b>4種目すべて</b>に出場。記録を得点化し、チーム・個人で競います。</p><p class="small">※事前練習に1回以上の参加が必要</p></div>
+      <div><span class="k">02</span><h3>オープン参加の部</h3><p>希望する種目のみ出場できます。<b>記録計測のみ</b>となり、すべての表彰の対象外です。</p><p class="small">※事前練習は不要</p></div>
     </div>
-    <div class="card">
-      <h3>チーム対抗の表彰</h3>
-      <div class="awards"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
+    <h3 style="margin-top:18px">チーム対抗の表彰</h3>
+    <div class="awards"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
+  </section>
+
+  <section>
+    <h2>学年別の実施種目</h2>
+    <div class="evrow"><b>小学1〜3年生</b><span>50m ／ 100m ／ 走り幅跳び ／ 走り高跳び</span></div>
+    <div class="evrow"><b>小学4年生以上<small>中学生・高校生・大学生を含む</small></b><span>100m ／ 200m ／ 走り幅跳び ／ 走り高跳び</span></div>
+  </section>
+
+  <section>
+    <h2>昼休み特別企画</h2>
+    <div class="vs">
+      <span class="num">VS タクちゃん 1000m</span>
+      <p>現役長距離選手の大学生コーチ「タクちゃん」とガチンコレース！ 選手・保護者を当日募集、参加無料。</p>
+      <small>※VSタクちゃんは、参加者0人でもタクちゃんは出走します（笑）</small>
     </div>
   </section>
 
   <section>
-    <p class="kicker">EVENTS</p>
-    <h2 class="h2">学年別の実施種目</h2>
-    <div class="card" style="padding:0;overflow:hidden">
-      <table class="evtable">
-        <tbody>
-          <tr><th>小学1〜3年生</th><td>50m ／ 100m ／ 走り幅跳び ／ 走り高跳び</td></tr>
-          <tr><th>小学4年生以上<small>中学生・高校生・大学生を含む</small></th><td>100m ／ 200m ／ 走り幅跳び ／ 走り高跳び</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h2>参加資格</h2>
+    <p><b>小学1年生から大学生まで</b>のHappinessAC・VIRDS会員、および会員の兄弟姉妹、会員・兄弟姉妹のお友達。</p>
+    <p class="small" style="margin-top:6px">会員以外も両部門に参加できます。保護者はチーム対抗リレー・「VSタクちゃん」に参加できます（どちらも参加無料・当日募集）。</p>
   </section>
 
   <section>
-    <p class="kicker">ENTRY</p>
-    <h2 class="h2">参加資格</h2>
-    <div class="card">
-      <p><b>小学1年生から大学生まで</b>（小学生・中学生・高校生・大学生）のHappinessAC・VIRDS会員、および会員の兄弟姉妹、会員・兄弟姉妹のお友達。</p>
-      <p class="small" style="margin-top:6px">会員以外も両部門に参加可能。保護者はチーム対抗リレー・「VSタクちゃん」に参加できます。両企画とも参加無料・当日募集です。</p>
-    </div>
-  </section>
-
-  <section>
-    <p class="kicker">PRACTICE</p>
-    <h2 class="h2">チーム対抗の部への参加条件</h2>
-    <p class="lead">記録会までに、下記いずれかの会場で行われるHappinessACの練習へ<b>最低1回</b>参加してください。両会場に参加する必要はありません。会員・非会員共通の条件です。</p>
-    <div class="grid2">
-      <div class="card venue">
-        <h3>秦野会場<small>秦野カルチャーパーク陸上競技場</small></h3>
-        <p>火曜・水曜　17:30〜<br>木曜・土曜　17:00〜</p>
-      </div>
-      <div class="card venue">
-        <h3>大和会場<small>大和スポーツセンター陸上競技場</small></h3>
-        <p>日曜日　17:30〜</p>
-      </div>
+    <h2>チーム対抗の部の参加条件</h2>
+    <p class="lead" style="margin-top:0">記録会までに、どちらかの会場のHappinessACの練習へ<b>最低1回</b>参加してください（会員・非会員共通）。</p>
+    <div class="duo">
+      <div><h3>秦野会場</h3><span class="small">秦野カルチャーパーク陸上競技場</span><p><b>火・水 17:30〜</b><br><b>木・土 17:00〜</b></p></div>
+      <div><h3>大和会場</h3><span class="small">大和スポーツセンター陸上競技場</span><p><b>日 17:30〜</b></p></div>
     </div>
     <ul class="dots">
-      <li>事前練習参加費：1回 2,200円（複数回参加可）。参加希望日は申込フォームでご回答ください。</li>
+      <li>事前練習参加費：1回 2,200円（複数回参加可）。参加希望日は申込フォームで回答してください。</li>
       <li>オープン参加の部は事前練習不要。記録会参加費は両部門とも1,000円、練習費は別料金です。</li>
     </ul>
   </section>
 
   <section>
-    <p class="kicker">RULES</p>
-    <h2 class="h2">フィールド種目の競技ルール</h2>
-    <div class="grid2">
-      <div class="card">
-        <h3>走り幅跳び</h3>
-        <ul class="dots">
-          <li>試技は<b>1名3回</b>。3回すべてファールの場合のみ4回目を認め、4回目もファールなら終了します。</li>
-          <li>踏切板から砂場に届かない方は、砂場の手前から記録を計測します。</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>走り高跳び</h3>
-        <ul class="dots">
-          <li><b>60cmから開始</b>します。</li>
-          <li>60cmを跳べなかった方に限り、50cmの試技を行います。</li>
-        </ul>
-      </div>
+    <h2>フィールド種目のルール</h2>
+    <div class="duo">
+      <div><h3>走り幅跳び</h3><p>試技は<b>1人3回</b>。3回ともファールのときだけ4回目があり、4回目もファールなら終了。</p><p>踏切板から砂場に届かない人は、砂場の手前から計測します。</p></div>
+      <div><h3>走り高跳び</h3><p><b>60cmから開始</b>します。</p><p>60cmを跳べなかった人だけ、50cmの試技を行います。</p></div>
     </div>
   </section>
 
   <section>
-    <p class="kicker">SPECIAL</p>
-    <h2 class="h2">昼休みの特別企画（12:00ごろ）</h2>
-    <div class="card vs">
-      <h3><span class="tag">1000m 真剣勝負</span>VS タクちゃん！</h3>
-      <p>現役長距離選手の大学生コーチ<b>「タクちゃん」</b>と、1000mでガチンコレース！ <b class="pink">選手・保護者を当日募集！ 参加費無料！</b></p>
-      <p class="small">※VSタクちゃんは、参加者0人でもタクちゃんは出走します（笑）</p>
-    </div>
+    <h2>雨天時の対応</h2>
+    <p><b>12月20日（日）が雨天の場合は、12月27日（日）の午前中に規模を縮小して実施</b>します。予備日は<b>200mを中止</b>し、その他の種目（50m・100m・走り幅跳び・走り高跳び）を学年に応じて行います。</p>
   </section>
 
   <section>
-    <p class="kicker">RAIN</p>
-    <h2 class="h2">雨天時の対応</h2>
-    <div class="note" style="font-weight:400">
-      <b>12月20日（日）が雨天の場合は、12月27日（日）の午前中に規模を縮小して実施</b>します。予備日では<b>200mを中止</b>し、その他の種目（50m・100m・走り幅跳び・走り高跳び）を学年に応じて実施します。
+    <h2>お申し込み</h2>
+    <p class="lead" style="margin-top:0">必ず ① → ② の順に進んでください。</p>
+    <div class="steps">
+      <div class="step"><h3>BANDに加入申請</h3><p>記録会専用のBANDに加入申請します。</p><a class="btn" href="https://band.us/n/a8aabbq8b4v04" target="_blank" rel="noopener">BANDをひらく</a></div>
+      <div class="step"><h3>申込フォームに回答</h3><p>参加部門と必要事項を入力します。</p><a class="btn" href="https://forms.gle/2nJKEp6rCt1GiEhv5" target="_blank" rel="noopener">申込フォームをひらく</a></div>
     </div>
-  </section>
-
-  <section>
-    <p class="kicker">APPLY</p>
-    <h2 class="h2">お申し込み手順</h2>
-    <div class="apply">
-      <p class="head">必ず ① BAND加入申請 → ② Googleフォーム回答 の順にお進みください。</p>
-      <div class="grid2">
-        <div class="step">
-          <b>① BANDの招待リンクから加入申請</b>
-          <p>記録会専用BANDに加入申請してください。</p>
-          <a class="btn lime" href="https://band.us/n/a8aabbq8b4v04" target="_blank" rel="noopener">BANDをひらく</a>
-        </div>
-        <div class="step">
-          <b>② Googleフォームから回答</b>
-          <p>参加部門・必要事項をご入力ください。</p>
-          <a class="btn lime" href="https://forms.gle/2nJKEp6rCt1GiEhv5" target="_blank" rel="noopener">申込フォームをひらく</a>
-        </div>
-      </div>
-      <p class="foot">記録会はリンクから事前申込。保護者リレー・VSタクちゃんは無料で当日募集します。</p>
-    </div>
-    <a class="btn line" href="assets/guide2026.pdf" target="_blank" rel="noopener">開催要項（PDF）をひらく</a>
+    <p class="small" style="margin-top:10px">保護者リレー・VSタクちゃんは申し込み不要（当日募集・無料）です。</p>
+    <a class="btn o" href="assets/guide2026.pdf" target="_blank" rel="noopener">開催要項（PDF）</a>
   </section>
 </div>
 
 <!-- ===================== スタートリスト＆結果 ===================== -->
 <div class="panel" id="p-results" hidden>
   <section>
-    <p class="kicker">START LIST &amp; RESULTS</p>
-    <h2 class="h2">スタートリスト＆結果</h2>
-    <p class="lead">種目ごとの組と記録をここに掲載します（名前はひらがなで表示します）。チーム順位と個人の合計得点は、結果発表まで非公開です。掲載した名前と記録は大会後に削除します。</p>
+    <h2>スタートリスト＆結果</h2>
+    <p class="lead">種目ごとの組と記録を掲載します。名前はひらがなで表示し、大会後に削除します。チーム順位と個人の合計得点は結果発表まで非公開です。</p>
     <div class="seg" role="group" aria-label="表示の切り替え">
       <button type="button" data-view="start" aria-pressed="true">スタートリスト</button>
       <button type="button" data-view="result" aria-pressed="false">結果</button>
     </div>
     <p class="status" id="srStatus"><span class="dot"></span><span>まだ掲載していません</span></p>
-    <div class="evlist" id="evList"></div>
+    <div id="evList"></div>
   </section>
 </div>
 
 <!-- ===================== 得点表 ===================== -->
 <div class="panel" id="p-scoring" hidden>
   <section>
-    <p class="kicker">SCORING</p>
-    <h2 class="h2">得点のしくみ</h2>
+    <h2>得点のしくみ</h2>
     <p class="lead">学年・性別ごとの「基準記録」を500点として、基準をどれだけ上回ったかで点数が決まります。小学1年生も大学生も、同じものさしで比べられます。</p>
-    <div class="card">
-      <div class="formula"><b>走る種目（50m・100m・200m）</b>得点 = 500 + 1000 × 種目係数 × (基準タイム ÷ 記録 − 1)</div>
-      <div class="formula"><b>跳ぶ種目（走り高跳び・走り幅跳び）</b>得点 = 500 + 1000 × 種目係数 × (記録 ÷ 基準記録 − 1)</div>
-      <ul class="dots">
-        <li>小数点以下は切り捨て。マイナスになるときは0点。</li>
-        <li>記録なし（NM・ファウルなど）は、その種目0点。</li>
-        <li>個人の総合得点は4種目の合計（基準どおりなら 500点 × 4 = 2,000点）。小学1〜3年生は 50m・100m・走り高跳び・走り幅跳び、小学4年生以上は 100m・200m・走り高跳び・走り幅跳び の4種目です。</li>
-      </ul>
-    </div>
+    <div class="formula"><b>走る種目（50m・100m・200m）</b>得点 = 500 + 1000 × 種目係数 × (基準タイム ÷ 記録 − 1)</div>
+    <div class="formula"><b>跳ぶ種目（走り高跳び・走り幅跳び）</b>得点 = 500 + 1000 × 種目係数 × (記録 ÷ 基準記録 − 1)</div>
+    <ul class="dots">
+      <li>小数点以下は切り捨て。マイナスになるときは0点。</li>
+      <li>記録なし（NM・ファウルなど）は、その種目0点。</li>
+      <li>個人の総合得点は4種目の合計（基準どおりなら 500点 × 4 = 2,000点）。</li>
+      <li>小学1〜3年生は 50m・100m・走り高跳び・走り幅跳び、小学4年生以上は 100m・200m・走り高跳び・走り幅跳び。</li>
+    </ul>
+  </section>
 
-    <div class="card">
-      <h3>種目係数</h3>
-      <p class="small">記録の差の出やすさは種目でちがうので、その差をそろえるための数字です。</p>
-      <table class="std" style="margin-top:8px">
-        <thead><tr><th>種目</th><th>係数</th><th>基準を1%上回ると</th></tr></thead>
-        <tbody id="coefBody"></tbody>
+  <section>
+    <h2>種目係数</h2>
+    <p class="lead">記録の差の出やすさは種目でちがうので、その差をそろえる数字です。</p>
+    <table class="std">
+      <thead><tr><th>種目</th><th>係数</th><th>基準を1%上回ると</th></tr></thead>
+      <tbody id="coefBody"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>基準記録（＝500点）</h2>
+    <p class="lead">走る種目は秒、跳ぶ種目はm。小学生の走る種目は男女共通です。</p>
+    <div class="sexseg" role="group" aria-label="性別" id="stdSex">
+      <button type="button" data-sex="m" aria-pressed="true">男子</button>
+      <button type="button" data-sex="f" aria-pressed="false">女子</button>
+    </div>
+    <div class="scroll">
+      <table class="std">
+        <thead><tr><th>学年</th><th>50m</th><th>100m</th><th>200m</th><th>走高跳</th><th>走幅跳</th></tr></thead>
+        <tbody id="stdBody"></tbody>
       </table>
     </div>
-
-    <div class="card">
-      <h3>基準記録（＝500点）</h3>
-      <p class="small">クラブで練習している子の平均くらいが目安です。走る種目は秒、跳ぶ種目はm。50mは小学1〜3年生、200mは小学4年生以上の種目です。</p>
-      <div class="seg" role="group" aria-label="性別" id="stdSex">
-        <button type="button" data-sex="m" aria-pressed="true">男子</button>
-        <button type="button" data-sex="f" aria-pressed="false">女子</button>
-      </div>
-      <div class="scroll" style="margin-top:10px">
-        <table class="std">
-          <thead><tr><th>学年</th><th>50m</th><th>100m</th><th>200m</th><th>走高跳</th><th>走幅跳</th></tr></thead>
-          <tbody id="stdBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>計算例</h3>
-      <ul class="dots">
-        <li>小6男子・100m（基準14.1秒）で13.5秒 → 500 + 1000 × 1.4 × (14.1 ÷ 13.5 − 1) = <b>562点</b></li>
-        <li>小5女子・走幅跳（基準3.15m）で3.50m → 500 + 1000 × 0.8 × (3.50 ÷ 3.15 − 1) = <b>588点</b></li>
-      </ul>
-    </div>
+    <p class="small" style="margin-top:10px">例：小6男子・100m（基準14.1秒）で13.5秒 → 500 + 1000 × 1.4 × (14.1 ÷ 13.5 − 1) = <b>562点</b></p>
   </section>
 
   <section>
-    <p class="kicker">CALCULATOR</p>
-    <h2 class="h2">得点を計算してみよう</h2>
+    <h2>得点を計算してみよう</h2>
     <p class="lead">自己ベストを入れると、今の力で何点くらいになるかがわかります。</p>
-    <div class="card">
-      <div class="calc">
-        <label>性別<select id="cSex"><option value="m">男子</option><option value="f">女子</option></select></label>
-        <label>学年<select id="cGrade"></select></label>
-        <label>種目<select id="cEv"></select></label>
-        <label><span id="cUnit">記録（秒）</span><input id="cVal" inputmode="decimal" autocomplete="off"></label>
-      </div>
-      <div class="result" aria-live="polite">
-        <span class="pts" id="cPts">—</span>
-        <span class="hint" id="cHint"></span>
-      </div>
+    <div class="calc">
+      <label>性別<select id="cSex"><option value="m">男子</option><option value="f">女子</option></select></label>
+      <label>学年<select id="cGrade"></select></label>
+      <label>種目<select id="cEv"></select></label>
+      <label><span id="cUnit">記録（秒）</span><input id="cVal" inputmode="decimal" autocomplete="off"></label>
     </div>
+    <div class="result" aria-live="polite"><span class="pts num" id="cPts">—</span><span class="hint" id="cHint"></span></div>
   </section>
 
   <section>
-    <p class="kicker">PERSONAL BEST</p>
-    <h2 class="h2">自己ベスト更新率</h2>
-    <p class="lead">記録の速い・遅いではなく、自分をどれだけ超えられたか。始めたばかりの子も「自己ベスト優勝」「種目別自己ベスト更新率優勝」をねらえます。</p>
-    <div class="card">
-      <div class="formula"><b>更新率（%）</b>走る種目 = (自己ベスト ÷ 記録 − 1) × 100<br>跳ぶ種目 = (記録 ÷ 自己ベスト − 1) × 100</div>
-      <div class="formula"><b>自己ベスト優勝</b>自己ベストを上回った種目の (更新率 × 種目係数) の合計で決めます</div>
-      <div class="formula"><b>種目別自己ベスト更新率優勝</b>種目ごとに、更新率がいちばん大きい人</div>
-      <ul class="dots">
-        <li>足すのは自己ベストを上回った種目だけ。下回ってもマイナスにはなりません。</li>
-        <li>自己ベストがない種目は「初記録」として更新率の対象外（得点はつきます）。</li>
-        <li>同点のときは、自己ベストを更新した種目数が多い人が上位。</li>
-        <li>個人優勝の3位までに入った人は、自己ベスト優勝の対象から外れます（W受賞なし）。</li>
-        <li>例：自己ベスト16.00秒の子が100mで15.60秒 → 更新率2.56%、換算 2.56 × 1.4 = <b>3.59</b></li>
-      </ul>
-    </div>
+    <h2>自己ベスト更新率</h2>
+    <p class="lead">記録の速い・遅いではなく、自分をどれだけ超えられたか。始めたばかりの子も表彰をねらえます。</p>
+    <div class="formula"><b>更新率（%）</b>走る種目 = (自己ベスト ÷ 記録 − 1) × 100<br>跳ぶ種目 = (記録 ÷ 自己ベスト − 1) × 100</div>
+    <div class="formula"><b>自己ベスト優勝</b>自己ベストを上回った種目の (更新率 × 種目係数) の合計で決めます</div>
+    <div class="formula"><b>種目別自己ベスト更新率優勝</b>種目ごとに、更新率がいちばん大きい人</div>
+    <ul class="dots">
+      <li>足すのは自己ベストを上回った種目だけ。下回ってもマイナスにはなりません。</li>
+      <li>自己ベストがない種目は「初記録」として更新率の対象外（得点はつきます）。</li>
+      <li>同点のときは、自己ベストを更新した種目数が多い人が上位。</li>
+      <li>個人優勝の3位までに入った人は、自己ベスト優勝の対象から外れます（W受賞なし）。</li>
+    </ul>
   </section>
 
   <section>
-    <p class="kicker">TEAM</p>
-    <h2 class="h2">チーム得点</h2>
-    <div class="card">
-      <div class="formula"><b>チーム得点</b>出場メンバーの総合得点の合計</div>
-      <ul class="dots">
-        <li>チームの人数がちがうときは「1人平均 × 一番多いチームの人数」で比べます。</li>
-        <li>欠席の人は、チーム得点にも個人の順位にも入りません。</li>
-        <li>チームは、自己ベストから出した予想得点と男女の割合がそろうように分けています。</li>
-      </ul>
-    </div>
+    <h2>チーム得点</h2>
+    <div class="formula"><b>チーム得点</b>出場メンバーの総合得点の合計</div>
+    <ul class="dots">
+      <li>チームの人数がちがうときは「1人平均 × 一番多いチームの人数」で比べます。</li>
+      <li>欠席の人は、チーム得点にも個人の順位にも入りません。</li>
+      <li>チームは、自己ベストから出した予想得点と男女の割合がそろうように分けています。</li>
+    </ul>
   </section>
 </div>
 
 </main>
 
 <footer>
-  <div class="wrap">
-    <span>HAPPINESS AC YEAR-END TEAM RECORD MEET 2026</span>
-    <a href="admin/">管理者</a>
-  </div>
+  <div class="wrap"><span>HAPPINESS AC YEAR-END TEAM RECORD MEET 2026</span><a href="admin/">管理者</a></div>
 </footer>
 
 <script>
@@ -518,57 +412,98 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 
 /* ---------- タブ（#info / #results / #scoring） ---------- */
 const TABS=['info','results','scoring'];
-function showTab(){
+function showTab(scroll){
   const h=location.hash.slice(1), t=TABS.includes(h)?h:'info';
   TABS.forEach(k=>$('p-'+k).hidden=k!==t);
-  document.querySelectorAll('.tabs a').forEach(a=>{
+  document.querySelectorAll('.tabbar a').forEach(a=>{
     if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
   });
+  if(scroll)$('p-'+t).scrollIntoView({block:'start'});
 }
-window.addEventListener('hashchange',()=>{showTab();document.querySelector('.tabs').scrollIntoView({block:'start'});});
-showTab();
+window.addEventListener('hashchange',()=>showTab(true));
+showTab(false);
 
-/* ---------- カウントダウン（日本時間で数える） ---------- */
+/* ---------- 日付（日本時間） ---------- */
+const MEET={y:2026,m:11,d:20};
+const jstNow=()=>new Date(Date.now()+9*3600e3);
+const jstDays=()=>{const j=jstNow();return Math.round((Date.UTC(MEET.y,MEET.m,MEET.d)-Date.UTC(j.getUTCFullYear(),j.getUTCMonth(),j.getUTCDate()))/864e5);};
 (()=>{
-  const jst=new Date(Date.now()+9*3600e3);
-  const today=Date.UTC(jst.getUTCFullYear(),jst.getUTCMonth(),jst.getUTCDate());
-  const days=Math.round((Date.UTC(2026,11,20)-today)/864e5);
-  const el=$('countdown');
-  if(days>0)el.innerHTML=`記録会まで あと<span class="num">${days}</span>日`;
-  else if(days===0)el.textContent='本日開催！';
+  const days=jstDays(), el=$('countdown');
+  if(days>0)el.innerHTML=`<span>記録会まで あと</span><span class="num">${days}</span><span>日</span>`;
+  else if(days===0)el.innerHTML='<span>本日開催！</span>';
   else return;
   el.hidden=false;
 })();
 
+/* ---------- タイムテーブルと「いま・つぎ」 ----------
+   id は スタートリスト＆結果（data/*.json）の種目ID。データが出たら行に印を付ける */
+const TIMETABLE=[
+  {time:'8:00', name:'全体ウォーミングアップ'},
+  {time:'10:00',name:'50m', group:'小3以下',id:'u3-50'},
+  {time:'10:20',name:'100m',group:'小4以上',id:'o4-100'},
+  {time:'11:00',name:'走り幅跳び',id:'lj'},
+  {time:'12:00',name:'VSタクちゃん 1000m',sp:true},
+  {time:'13:30',name:'100m',group:'小3以下',id:'u3-100'},
+  {time:'13:50',name:'200m',group:'小4以上',id:'o4-200'},
+  {time:'14:30',name:'走り高跳び',id:'hj'},
+  {time:'16:00',name:'チーム対抗＆保護者リレー',sp:true,id:'relay'},
+  {time:'16:30',name:'結果発表'},
+  {time:'16:45',name:'解散'}
+];
+const mins=t=>{const [h,m]=t.split(':');return +h*60+ +m;};
+function nowIndex(){
+  if(jstDays()!==0)return -2;
+  const j=jstNow(), n=j.getUTCHours()*60+j.getUTCMinutes();
+  let cur=-1;TIMETABLE.forEach((r,i)=>{if(mins(r.time)<=n)cur=i;});
+  return cur;
+}
+function renderTT(){
+  const ci=nowIndex();
+  $('tt').innerHTML=TIMETABLE.map((r,i)=>{
+    const tag=r.id&&hasResult(r.id)?'<a class="tag f" href="#results" data-go="result">結果</a>'
+      :r.id&&hasStart(r.id)?'<a class="tag p" href="#results" data-go="start">組</a>'
+      :r.sp?'<span class="tag p">特別</span>':'';
+    return`<li class="${r.sp?'sp':''}${i===ci?' cur':''}"><span class="t num">${r.time}</span><span class="e">${esc(r.name)}${r.group?`<span class="g">${esc(r.group)}</span>`:''}</span>${tag}</li>`;
+  }).join('');
+  // いま・つぎ：開催日の前は「当日はここに出ます」、当日は時刻に合わせて、終わったら案内だけ
+  const days=jstDays(), box=$('nowBox'), sec=$('now');
+  if(days<0){sec.hidden=true;return;}
+  sec.hidden=false;
+  if(days>0){
+    const f=TIMETABLE[1];
+    box.innerHTML=`<span class="lbl">当日はここに「いま・つぎ」の種目が出ます</span><div class="row"><span class="t num">${f.time}</span><b>${esc(f.name)}　${esc(f.group)}</b></div><p class="sub">最初の種目</p>`;
+    return;
+  }
+  const next=TIMETABLE[ci+1];
+  if(!next){box.innerHTML='<span class="lbl">本日の競技はすべて終わりました</span><div class="row"><b>ご参加ありがとうございました！</b></div><p class="sub">記録は「スタート＆結果」で見られます。</p>';return;}
+  const cur=TIMETABLE[ci];
+  box.innerHTML=`<span class="lbl">つぎ</span><div class="row"><span class="t num">${next.time}</span><b>${esc(next.name)}${next.group?'　'+esc(next.group):''}</b></div>${cur?`<p class="sub">いま：${cur.time} ${esc(cur.name)}${cur.group?' '+esc(cur.group):''}</p>`:''}`;
+}
+
 /* ---------- スタートリスト＆結果 ----------
    data/startlist.json と data/results.json を読む。events が空のうちは「準備中」を出す。
    公開するのは種目ごとの記録だけで、チーム順位・個人の合計得点は載せない */
-const SCHEDULE=[
-  {id:'u3-50',  time:'10:00',name:'50m', group:'小学3年生以下'},
-  {id:'o4-100', time:'10:20',name:'100m',group:'小学4年生以上'},
-  {id:'lj',     time:'11:00',name:'走り幅跳び',group:'全学年'},
-  {id:'u3-100', time:'13:30',name:'100m',group:'小学3年生以下'},
-  {id:'o4-200', time:'13:50',name:'200m',group:'小学4年生以上'},
-  {id:'hj',     time:'14:30',name:'走り高跳び',group:'全学年'},
-  {id:'relay',  time:'16:00',name:'チーム対抗＆保護者リレー',group:'チーム対抗'}
-];
+const SCHEDULE=TIMETABLE.filter(r=>r.id).map(r=>({id:r.id,time:r.time,name:r.name,group:{'小3以下':'小学3年生以下','小4以上':'小学4年生以上'}[r.group]||(r.id==='relay'?'チーム対抗':'全学年')}));
 const DATA={start:{events:[]},result:{events:[]}};
 let view='start';
 async function loadJSON(path){
   try{const r=await fetch(path,{cache:'no-store'});if(!r.ok)throw 0;return await r.json();}catch(e){return null;}
 }
+const evById=(src,id)=>(DATA[src].events||[]).find(e=>e.id===id);
+const hasStart=id=>{const e=evById('start',id);return!!(e&&e.heats&&e.heats.length);};
+const hasResult=id=>resultGroups(evById('result',id)).length>0;
 const teamDot=c=>/^#[0-9a-f]{3,8}$/i.test(c||'')?`<span class="team-dot" style="background:${c}"></span>`:'';
 function startBody(ev){
   if(!ev||!ev.heats||!ev.heats.length)return'<p class="empty">スタートリストは準備中です</p>';
   return ev.heats.map(h=>{
     const es=h.entries||[], lane=es.some(e=>e.lane!=null);
     return`<div class="heat"><h4>${esc(h.name||'')}</h4><table class="list">
-    <thead><tr><th>${lane?'レーン':'順'}</th><th>名前</th><th>チーム</th></tr></thead>
-    <tbody>${es.map((e,i)=>`<tr><td class="num">${esc(lane?e.lane:i+1)}</td><td>${esc(e.name)}</td><td>${teamDot(e.color)}${esc(e.team||'')}</td></tr>`).join('')}</tbody></table></div>`;
+    <thead><tr><th>名前</th><th>チーム</th><th class="r">${lane?'レーン':'順'}</th></tr></thead>
+    <tbody>${es.map((e,i)=>`<tr><td>${esc(e.name)}</td><td>${teamDot(e.color)}${esc(e.team||'')}</td><td class="r num">${esc(lane?e.lane:i+1)}</td></tr>`).join('')}</tbody></table></div>`;
   }).join('');
 }
 // 結果は学年・性別の組ごと（groups）。組なしの rows だけでも表示できる
-const resultGroups=ev=>ev?(ev.groups||(ev.rows?[{name:'',rows:ev.rows}]:[])).filter(g=>g.rows&&g.rows.length):[];
+function resultGroups(ev){return ev?(ev.groups||(ev.rows?[{name:'',rows:ev.rows}]:[])).filter(g=>g.rows&&g.rows.length):[];}
 function resultBody(ev){
   const gs=resultGroups(ev);
   if(!gs.length)return'<p class="empty">結果は競技が終わりしだい掲載します</p>';
@@ -576,27 +511,30 @@ function resultBody(ev){
     <tbody>${g.rows.map(r=>`<tr><td>${esc(r.name)}</td><td>${teamDot(r.color)}${esc(r.team||'')}</td><td class="r num">${esc(r.mark??'')}${r.pb?'<span class="pb">PB</span>':''}</td></tr>`).join('')}</tbody></table></div>`).join('');
 }
 function renderSR(){
-  const src=DATA[view], byId=Object.fromEntries((src.events||[]).map(e=>[e.id,e]));
-  const has=ev=>view==='start'?!!(ev&&ev.heats&&ev.heats.length):resultGroups(ev).length>0;
+  const src=view==='start'?'start':'result';
+  const has=id=>view==='start'?hasStart(id):hasResult(id);
   $('evList').innerHTML=SCHEDULE.map(s=>{
-    const ev=byId[s.id], ok=has(ev);
-    const pill=!ok?'<span class="pill">準備中</span>'
-      :view==='start'?'<span class="pill ready">掲載中</span>'
-      :ev.final?'<span class="pill fin">確定</span>':'<span class="pill ready">速報</span>';
-    return`<details class="ev"${ok?' open':''}><summary><span class="t">${s.time}</span><span class="nm">${esc(s.name)}<small>${esc(s.group)}</small></span>${pill}</summary>
+    const ev=evById(src,s.id), ok=has(s.id);
+    const tag=!ok?'<span class="tag" style="color:var(--muted)">準備中</span>'
+      :view==='start'?'<span class="tag p">掲載中</span>'
+      :ev.final?'<span class="tag f">確定</span>':'<span class="tag p">速報</span>';
+    return`<details class="ev"${ok?' open':''}><summary><span class="t num">${s.time}</span><span class="nm">${esc(s.name)}<small>${esc(s.group)}</small></span>${tag}</summary>
       <div class="body">${view==='start'?startBody(ev):resultBody(ev)}</div></details>`;
   }).join('');
-  const st=$('srStatus'), any=SCHEDULE.some(s=>has(byId[s.id]));
+  const st=$('srStatus'), any=SCHEDULE.some(s=>has(s.id)), upd=DATA[src].updated;
   st.classList.toggle('live',any);
-  st.lastElementChild.textContent=any?(src.updated?`最終更新 ${src.updated}`:'掲載中'):'まだ掲載していません';
+  st.lastElementChild.textContent=any?(upd?`最終更新 ${upd}`:'掲載中'):'まだ掲載していません';
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===view));
 }
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;renderSR();}));
-renderSR();
+// タイムテーブルの「結果」「組」から開いたときは、その表示にする
+document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(a){view=a.dataset.go;renderSR();}});
+renderTT();renderSR();
+setInterval(renderTT,60e3);
 Promise.all([loadJSON('data/startlist.json'),loadJSON('data/results.json')]).then(([s,r])=>{
   if(s&&Array.isArray(s.events))DATA.start=s;
   if(r&&Array.isArray(r.events))DATA.result=r;
-  renderSR();
+  renderTT();renderSR();
 });
 
 /* ---------- 得点表：記録会アプリ（admin/）の初期値と同じ基準・係数・計算式 ---------- */

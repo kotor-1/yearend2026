@@ -12,8 +12,8 @@
 /* レイアウト：1カラムの作業画面。上部に電光掲示板ふうのチーム得点とタブを固定し、その下にタブごとの作業面を置く */
 :root{
   --bg:#f2f4f6; --surface:#ffffff; --surface-2:#e9edf1; --ink:#16202a; --ink-2:#465462; --muted:#6f7d8a; --line:#d7dde3;
-  --accent:#1f4f8f; --accent-ink:#ffffff; --accent-soft:#e2ebf7;
-  --board:#122030; --board-2:#1b2c3f; --board-ink:#f3f7fb; --board-muted:#93a6ba;
+  --accent:#d4006f; --accent-ink:#ffffff; --accent-soft:#ffe6f2;
+  --board:#0d0d0f; --board-2:#1d1d23; --board-ink:#ffffff; --board-muted:#a2a2ad;
   --pb:#c2410c; --pb-soft:#fdede4;
   --gold:#b88a14; --silver:#7d8a97; --bronze:#a5653a; --medal-ink:#ffffff;
   --danger:#b42318; --danger-soft:#fdeceb; --ok:#1b7a43;
@@ -24,8 +24,8 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0d1319; --surface:#151e27; --surface-2:#1c2731; --ink:#e5ebf0; --ink-2:#b3bfca; --muted:#8594a2; --line:#283541;
-    --accent:#8db4ec; --accent-ink:#0d1319; --accent-soft:#1b2a3c;
-    --board:#09111a; --board-2:#132131; --board-ink:#f3f7fb; --board-muted:#8fa3b8;
+    --accent:#ff6db6; --accent-ink:#0c0c0f; --accent-soft:#3a1028;
+    --board:#050507; --board-2:#18181d; --board-ink:#ffffff; --board-muted:#9a9aa6;
     --pb:#fb8b57; --pb-soft:#3a2317;
     --gold:#d9ae3f; --silver:#a3b0bd; --bronze:#cf8a59; --medal-ink:#0d1319;
     --danger:#f97066; --danger-soft:#3a1d1b; --ok:#4cc38a;
@@ -34,8 +34,8 @@
 }
 :root[data-theme="dark"]{
   --bg:#0d1319; --surface:#151e27; --surface-2:#1c2731; --ink:#e5ebf0; --ink-2:#b3bfca; --muted:#8594a2; --line:#283541;
-  --accent:#8db4ec; --accent-ink:#0d1319; --accent-soft:#1b2a3c;
-  --board:#09111a; --board-2:#132131; --board-ink:#f3f7fb; --board-muted:#8fa3b8;
+  --accent:#ff6db6; --accent-ink:#0c0c0f; --accent-soft:#3a1028;
+  --board:#050507; --board-2:#18181d; --board-ink:#ffffff; --board-muted:#9a9aa6;
   --pb:#fb8b57; --pb-soft:#3a2317;
   --gold:#d9ae3f; --silver:#a3b0bd; --bronze:#cf8a59; --medal-ink:#0d1319;
   --danger:#f97066; --danger-soft:#3a1d1b; --ok:#4cc38a;
@@ -251,8 +251,9 @@ html.locked #gate{display:grid;place-items:center;min-height:100vh;min-height:10
 .gate-card .eyebrow{font-family:var(--font-num);letter-spacing:.2em;color:var(--board-muted);font-size:13px}
 .gate-card h1{font-size:22px;margin:6px 0 20px}
 .gate-card input{width:100%;font-family:var(--font-num);font-size:32px;letter-spacing:.4em;text-align:center;padding:10px;border-radius:10px;border:1px solid var(--board-muted);background:var(--board-2);color:var(--board-ink)}
-.gate-card button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;background:#d4ff2a;color:#0b1420;font-weight:700;font-size:16px;cursor:pointer}
+.gate-card button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;background:#ff1a8c;color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .gate-card .err{min-height:1.6em;margin-top:10px;color:#ff8fb8;font-size:14px}
+.gate-card .eyebrow{color:#ff6db6}
 .gate-card a{display:inline-block;margin-top:18px;color:var(--board-muted);font-size:13px}
 .admin-bar{display:flex;gap:12px;align-items:center;margin-left:auto;font-size:13px}
 .admin-bar a,.admin-bar button{color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
