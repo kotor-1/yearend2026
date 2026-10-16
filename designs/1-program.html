@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>案1 競技会プログラム</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* 案1：陸上競技会の紙のプログラム。白い紙に墨と朱。罫線で区切り、角丸・影・カードは使わない */
+:root{--paper:#f7f4ec;--ink:#1a1a1a;--ink2:#555;--rule:#1a1a1a;--thin:#bdb6a6;--red:#c8102e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;font-size:15px;line-height:1.8}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+.mast{border-bottom:3px double var(--rule);padding:18px 0 14px;text-align:center}
+.mast .org{font-family:Oswald,sans-serif;letter-spacing:.3em;font-size:12px}
+.mast h1{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:34px;line-height:1.25;margin:8px 0 4px;letter-spacing:.06em}
+.mast h1 small{display:block;font-size:15px;font-weight:500;letter-spacing:.3em;margin-top:4px}
+.mast .no{display:inline-block;border:1px solid var(--ink);padding:0 10px;font-size:12px;letter-spacing:.2em}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--rule)}
+.facts div{padding:12px 8px;text-align:center;border-right:1px solid var(--thin)}
+.facts div:last-child{border-right:0}
+.facts dt{font-size:11px;color:var(--ink2);letter-spacing:.2em}
+.facts dd{margin:2px 0 0;font-family:"Shippori Mincho B1",serif;font-weight:700;font-size:17px;line-height:1.4}
+.facts .date{font-family:Oswald,sans-serif;font-size:26px;font-weight:600;color:var(--red)}
+nav{display:flex;justify-content:center;gap:0;border-bottom:1px solid var(--rule)}
+nav a{padding:10px 14px;color:var(--ink);text-decoration:none;font-size:14px;border-right:1px solid var(--thin)}
+nav a:last-child{border-right:0}
+nav a.on{font-weight:700;text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:6px}
+h2{font-family:"Shippori Mincho B1",serif;font-size:20px;font-weight:800;margin:30px 0 8px;display:flex;align-items:baseline;gap:12px}
+h2::after{content:"";flex:1;border-bottom:1px solid var(--rule);transform:translateY(-5px)}
+h2 .n{font-family:Oswald,sans-serif;color:var(--red);font-size:16px}
+table{width:100%;border-collapse:collapse}
+.tt th,.tt td{border-bottom:1px dotted var(--thin);padding:7px 4px;text-align:left;vertical-align:top}
+.tt th{width:4.5em;font-family:Oswald,sans-serif;font-weight:500;font-size:17px}
+.tt tr.mark td{font-weight:700}
+.tt tr.mark td::after{content:" ◎";color:var(--red)}
+.tt .sub{font-size:12px;color:var(--ink2);padding:10px 0 2px;border-bottom:1px solid var(--rule);letter-spacing:.2em}
+.two{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.two > div{padding:12px 14px 14px}
+.two > div + div{border-left:1px solid var(--rule)}
+.two h3{font-family:"Shippori Mincho B1",serif;margin:0 0 4px;font-size:17px}
+.two p{margin:0;font-size:14px}
+.note{font-size:13px;color:var(--ink2);margin-top:8px}
+.prize{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:10px;font-family:"Shippori Mincho B1",serif;font-weight:700}
+.prize span::before{content:"■ ";color:var(--red);font-size:10px;vertical-align:2px}
+.box{border:1.5px solid var(--ink);padding:12px 14px;margin-top:10px}
+.box b{color:var(--red)}
+.res th,.res td{padding:6px 4px;border-bottom:1px dotted var(--thin);text-align:left;font-size:14px}
+.res thead th{border-bottom:1px solid var(--rule);font-size:11px;color:var(--ink2);letter-spacing:.15em;font-weight:400}
+.res .r{text-align:right;font-family:Oswald,sans-serif;font-size:16px}
+.pb{font-size:10px;border:1px solid var(--red);color:var(--red);padding:0 3px;margin-left:4px;font-family:Oswald,sans-serif;vertical-align:2px}
+.cta{display:block;text-align:center;margin:18px 0 0;padding:12px;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:700;letter-spacing:.1em}
+.cta.red{background:var(--red);border-color:var(--red);color:#fff}
+footer{margin-top:34px;border-top:3px double var(--rule);padding:14px 0 40px;text-align:center;font-size:12px;color:var(--ink2);letter-spacing:.15em}
+@media(max-width:520px){.two{grid-template-columns:1fr}.two > div + div{border-left:0;border-top:1px solid var(--rule)}.facts dd{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="org">HAPPINESS ATHLETIC CLUB</div>
+    <h1>年末チーム内記録会<small>二〇二六　競技会プログラム</small></h1>
+    <span class="no">第 1 回</span>
+  </header>
+  <dl class="facts">
+    <div><dt>期日</dt><dd><span class="date">12.20</span><br>日曜日</dd></div>
+    <div><dt>会場</dt><dd>秦野カルチャーパーク<br>陸上競技場</dd></div>
+    <div><dt>参加費</dt><dd>1,000円<br><small style="font-size:11px;font-weight:500">当日現金</small></dd></div>
+  </dl>
+  <nav><a class="on" href="#">大会案内</a><a href="#">スタートリスト・結果</a><a href="#">得点表</a></nav>
+
+  <h2><span class="n">壱</span>競技日程</h2>
+  <table class="tt">
+    <tr><td class="sub" colspan="2">午前の部</td></tr>
+    <tr><th>8:00</th><td>全体ウォーミングアップ開始</td></tr>
+    <tr><th>10:00</th><td>50m　小学3年生以下</td></tr>
+    <tr><th>10:20</th><td>100m　小学4年生以上</td></tr>
+    <tr><th>11:00</th><td>走幅跳</td></tr>
+    <tr class="mark"><th>12:00</th><td>VSタクちゃん（1000m）</td></tr>
+    <tr><td class="sub" colspan="2">午後の部</td></tr>
+    <tr><th>13:30</th><td>100m　小学3年生以下</td></tr>
+    <tr><th>13:50</th><td>200m　小学4年生以上</td></tr>
+    <tr><th>14:30</th><td>走高跳</td></tr>
+    <tr class="mark"><th>16:00</th><td>チーム対抗＆保護者リレー</td></tr>
+    <tr><th>16:30</th><td>結果発表</td></tr>
+  </table>
+  <p class="note">※午後のみ参加の方は 12:30 ごろまでに集合してください。</p>
+
+  <h2><span class="n">弐</span>参加部門</h2>
+  <div class="two">
+    <div><h3>チーム対抗の部</h3><p>全員が該当学年の4種目に出場。記録を得点化し、チーム・個人で競う。</p><p class="note">事前練習に1回以上の参加が必要</p></div>
+    <div><h3>オープン参加の部</h3><p>希望種目のみ出場。記録計測のみで表彰の対象外。</p><p class="note">事前練習不要</p></div>
+  </div>
+  <div class="prize"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
+
+  <h2><span class="n">参</span>昼休み特別企画</h2>
+  <div class="box"><b>VS タクちゃん！</b>　1000m 真剣勝負。現役長距離選手の大学生コーチと走ろう。選手・保護者を当日募集、参加無料。<p class="note" style="margin:6px 0 0">※参加者0人でもタクちゃんは出走します（笑）</p></div>
+
+  <h2><span class="n">四</span>競技結果　<small style="font-size:12px;font-weight:500">（例）</small></h2>
+  <table class="res">
+    <thead><tr><th>小1 男子　50m</th><th>チーム</th><th class="r">記録</th></tr></thead>
+    <tr><td>いしい みなと</td><td>黄</td><td class="r">10.75<span class="pb">PB</span></td></tr>
+    <tr><td>あおき れい</td><td>紫</td><td class="r">10.92</td></tr>
+  </table>
+
+  <a class="cta red" href="#">参加申込（BAND → フォーム）</a>
+  <a class="cta" href="#">開催要項 PDF</a>
+  <footer>HAPPINESS AC ／ 2026</footer>
+</div>
+</body>
+</html>
