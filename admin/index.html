@@ -860,11 +860,12 @@ function teamCardHTML(C){
 function viewTable(){
   const u=state.ui, sx=u.tblSex, ek=u.tblEv, e=EV[ek], coef=state.coef[ek];
   const pts=[];for(let p=900;p>=200;p-=50)pts.push(p);
+  const gis=GRADES.map((g,i)=>i).filter(i=>evsForGrade(i).includes(ek)); // その種目に出る学年だけ
   const segSex=['m','f'].map(k=>`<button type="button" class="chip all${sx===k?' on':''}" data-act="tblSex" data-v="${k}" aria-pressed="${sx===k}">${SEX[k]}</button>`).join('');
   const segEv=EVENTS.map(x=>`<button type="button" class="chip all${ek===x.key?' on':''}" data-act="tblEv" data-v="${x.key}" aria-pressed="${ek===x.key}">${x.name}</button>`).join('');
   const sel=(id,ch,opts,v)=>`<select id="${id}" data-ch="${ch}">${opts.map(([k,l])=>`<option value="${k}"${String(v)===String(k)?' selected':''}>${l}</option>`).join('')}</select>`;
   const stdTable=sx2=>`<table class="std-tbl"><thead><tr><th>${SEX[sx2]}</th>${EVENTS.map(x=>`<th class="r">${x.name}<br><small>${unitOf(x.key)}</small></th>`).join('')}</tr></thead><tbody>
-    ${GRADES.map((g,gi)=>`<tr><th>${g}</th>${EVENTS.map(x=>`<td class="r"><input type="text" id="std-${sx2}-${x.key}-${gi}" data-ch="std" data-sx="${sx2}" data-ev="${x.key}" data-g="${gi}" value="${fmtMark(x.key,state.std[sx2][x.key][gi])}" inputmode="decimal" aria-label="${g}${SEX[sx2]} ${x.name}の基準記録"></td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    ${GRADES.map((g,gi)=>`<tr><th>${g}</th>${EVENTS.map(x=>!evsForGrade(gi).includes(x.key)?'<td></td>':`<td class="r"><input type="text" id="std-${sx2}-${x.key}-${gi}" data-ch="std" data-sx="${sx2}" data-ev="${x.key}" data-g="${gi}" value="${fmtMark(x.key,state.std[sx2][x.key][gi])}" inputmode="decimal" aria-label="${g}${SEX[sx2]} ${x.name}の基準記録"></td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return`<section class="stack">
     <div class="card">
       <h2>得点のしくみ</h2>
@@ -891,8 +892,8 @@ function viewTable(){
       <div class="card-head"><h2>得点表（早見表）</h2></div>
       <div class="toolbar" style="margin-bottom:10px"><div class="chips">${segSex}</div><div class="chips">${segEv}</div></div>
       <p class="hint" style="margin-bottom:8px">${SEX[sx]}・${e.name}：表の記録${e.type==='run'?'より速ければ（以内なら）':'以上なら'}その得点。色のついた行が基準記録（500点）です。</p>
-      <div class="tscroll"><table class="score-tbl"><thead><tr><th>得点</th>${GRADES.map(g=>`<th>${g}</th>`).join('')}</tr></thead>
-        <tbody>${pts.map(p=>`<tr class="${p===500?'base':''}"><th>${p}</th>${GRADES.map((g,gi)=>{const v=needFor(ek,p,state.std[sx][ek][gi],coef);return`<td>${v==null||v<e.min||v>e.max?'—':fmtMark(ek,v)}</td>`;}).join('')}</tr>`).join('')}</tbody></table></div>
+      <div class="tscroll"><table class="score-tbl"><thead><tr><th>得点</th>${gis.map(gi=>`<th>${GRADES[gi]}</th>`).join('')}</tr></thead>
+        <tbody>${pts.map(p=>`<tr class="${p===500?'base':''}"><th>${p}</th>${gis.map(gi=>{const v=needFor(ek,p,state.std[sx][ek][gi],coef);return`<td>${v==null||v<e.min||v>e.max?'—':fmtMark(ek,v)}</td>`;}).join('')}</tr>`).join('')}</tbody></table></div>
     </div>
 
     <div class="card">
@@ -900,7 +901,7 @@ function viewTable(){
       <div class="calc" style="margin-top:10px">
         <label class="field" for="calcSex">性別${sel('calcSex','calc',[['m','男子'],['f','女子']],u.calcSex)}</label>
         <label class="field" for="calcGrade">学年${sel('calcGrade','calc',GRADES.map((g,i)=>[i,g]),u.calcGrade)}</label>
-        <label class="field" for="calcEv">種目${sel('calcEv','calc',EVENTS.map(x=>[x.key,x.name]),u.calcEv)}</label>
+        <label class="field" for="calcEv">種目${sel('calcEv','calc',evsForGrade(u.calcGrade).map(k=>[k,EV[k].name]),u.calcEv)}</label>
         <label class="field" for="calcVal">記録<input type="text" id="calcVal" data-in="calcVal" value="${esc(u.calcVal)}" inputmode="decimal" autocomplete="off" style="width:7em" placeholder="${EV[u.calcEv].type==='run'?'15.32':'3.85'}"></label>
       </div>
       <div class="calc-out" id="calcOut">${calcOutHTML()}</div>
@@ -1256,6 +1257,11 @@ document.addEventListener('change',e=>{
     case'meet':if(/^\d{4}-\d{2}-\d{2}$/.test(t.value)){state.meet.date=t.value;save();$('#meetDate').textContent=fmtDate(t.value);}break;
     case'calc':{
       state.ui[{calcSex:'calcSex',calcGrade:'calcGrade',calcEv:'calcEv'}[t.id]]=t.id==='calcGrade'?+t.value:t.value;
+      if(t.id==='calcGrade'){
+        // 学年で種目の選択肢が変わる。その種目がなくなったら（50m⇔200m）100mに寄せる
+        if(!evsForGrade(state.ui.calcGrade).includes(state.ui.calcEv))state.ui.calcEv='m100';
+        save();render();break;
+      }
       save();$('#calcOut').innerHTML=calcOutHTML();
       if(t.id==='calcEv')$('#calcVal').placeholder=EV[t.value].type==='run'?'15.32':'3.85';
       break;}

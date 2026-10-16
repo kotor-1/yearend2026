@@ -621,6 +621,8 @@ const STD={
      hj:  [0.68,0.77,0.85,0.92,0.99,1.05,1.12,1.18,1.22,1.30],
      lj:  [2.10,2.40,2.65,2.90,3.15,3.40,3.65,3.85,4.00,4.30]}
 };
+// 小学1〜3年生は 50m・100m・走高跳・走幅跳、小学4年生以上は 100m・200m・走高跳・走幅跳
+const evsForGrade=g=>g<=2?['m50','m100','hj','lj']:['m100','m200','hj','lj'];
 const COEF={m50:1.5,m100:1.4,m200:1.2,hj:1.0,lj:0.8};
 const isRun=ek=>EVK[ek].type==='run';
 const fmt=(ek,v)=>isRun(ek)?v.toFixed(1):v.toFixed(2);
@@ -631,7 +633,7 @@ function scoreOf(ek,v,std){
 }
 $('coefBody').innerHTML=EVENTS.map(e=>`<tr><td>${e.name}</td><td class="num">${COEF[e.key].toFixed(1)}</td><td class="num">+${Math.round(COEF[e.key]*10)}点</td></tr>`).join('');
 function renderStd(sex){
-  $('stdBody').innerHTML=GRADES.map((g,i)=>`<tr><td>${g}</td>${EVENTS.map(e=>`<td class="num">${fmt(e.key,STD[sex][e.key][i])}</td>`).join('')}</tr>`).join('');
+  $('stdBody').innerHTML=GRADES.map((g,i)=>`<tr><td>${g}</td>${EVENTS.map(e=>evsForGrade(i).includes(e.key)?`<td class="num">${fmt(e.key,STD[sex][e.key][i])}</td>`:'<td></td>').join('')}</tr>`).join('');
   document.querySelectorAll('#stdSex button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sex===sex));
 }
 document.querySelectorAll('#stdSex button').forEach(b=>b.addEventListener('click',()=>renderStd(b.dataset.sex)));
@@ -639,8 +641,6 @@ renderStd('m');
 
 // 電卓：全角数字、「1:02.5」「15秒32」「385cm」「3m85」なども受け付ける
 $('cGrade').innerHTML=GRADES.map((g,i)=>`<option value="${i}"${i===5?' selected':''}>${g}</option>`).join('');
-// 小学1〜3年生は 50m・100m・走高跳・走幅跳、小学4年生以上は 100m・200m・走高跳・走幅跳
-const evsForGrade=g=>g<=2?['m50','m100','hj','lj']:['m100','m200','hj','lj'];
 function fillEv(){
   const cur=$('cEv').value, ks=evsForGrade(+$('cGrade').value);
   $('cEv').innerHTML=ks.map(k=>`<option value="${k}"${k===cur?' selected':''}>${EVK[k].name}</option>`).join('');
