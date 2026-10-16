@@ -37,10 +37,12 @@
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:16px;line-height:1.7;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:16px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;line-break:strict;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--pink);outline-offset:2px}
 [hidden]{display:none!important}
+.nw{display:inline-block} /* ひとまとまりで改行する語句 */
+#tt,#nowBox,#evList,#stdBody,#coefBody,.result,#countdown{word-break:normal}
 a{color:inherit}
 p{margin:0}
 h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
@@ -54,11 +56,13 @@ h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
 .kv img{display:block;width:100%;height:100%;object-fit:cover;object-position:60% 30%}
 .title{margin-top:18px;font-size:clamp(26px,7.4vw,36px);font-weight:900}
 .title .num{color:var(--pink-t);font-size:1.15em}
-.meta{display:grid;grid-template-columns:auto 1fr;gap:2px 16px;margin-top:14px;align-items:center}
-.meta .d{grid-row:span 2;font-size:60px;line-height:.9}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin-top:14px;align-items:center}
+.meta .d{font-size:60px;line-height:.9}
 .meta .d small{display:block;font-size:21px}
 .meta b{font-size:16px;line-height:1.45}
-.meta span{font-size:14px;color:var(--ink2);line-height:1.5}
+.facts{list-style:none;margin:12px 0 0;padding:0;font-size:15px}
+.facts li{display:flex;gap:12px;padding:6px 0;border-top:1px solid var(--line)}
+.facts li span:first-child{flex:none;width:6.2em;color:var(--muted)}
 .count{display:flex;align-items:center;gap:10px;margin-top:16px;background:var(--bar);color:var(--on-bar);padding:10px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
 .count .num{font-size:36px;line-height:1;color:var(--pink)}
 
@@ -127,6 +131,8 @@ ul.dots li+li{margin-top:4px}
 .evrow b{font-size:15px;line-height:1.5}
 .evrow b small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .evrow span{font-weight:700}
+.evs > span{white-space:nowrap}
+.evs > span:not(:last-child)::after{content:"／";margin:0 .3em;color:var(--muted);font-weight:400}
 
 /* VS */
 .vs{background:var(--pink);color:var(--on-pink);padding:22px 16px;margin:0 -16px;clip-path:polygon(0 10px,100% 0,100% calc(100% - 10px),0 100%)}
@@ -189,6 +195,7 @@ table.std td.num{font-size:20px}
 .calc input:focus,.calc select:focus{border-color:var(--ink);outline:0}
 .result{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:16px}
 .result .pts{font-size:60px;line-height:1;color:var(--pink-t)}
+.result .pts:empty{display:none}
 .result .pts small{font-size:20px;margin-left:2px}
 .result .hint{color:var(--ink2);font-size:15px}
 
@@ -209,9 +216,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
   <h1 class="title">年末チーム内記録会 <span class="num">2026</span></h1>
   <div class="meta">
     <div class="d num">12.20<small>SUN</small></div>
-    <b>秦野カルチャーパーク 陸上競技場</b>
-    <span>参加費 1,000円（当日現金）・雨天予備日 12/27</span>
+    <b>秦野カルチャーパーク<br>陸上競技場</b>
   </div>
+  <ul class="facts">
+    <li><span>参加費</span><span class="nw">1,000円<wbr>（当日現金）</span></li>
+    <li><span>雨天予備日</span><span class="nw">12月27日（日）</span></li>
+  </ul>
   <div class="count" id="countdown" hidden></div>
 </header>
 
@@ -236,75 +246,76 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
   <section>
     <h2>タイムテーブル</h2>
     <ul class="tt" id="tt"></ul>
-    <p class="alert">午後のみ参加する方は、12:30ごろからウォーミングアップを始められるように集合してください。</p>
+    <p class="alert">午後のみ<wbr>参加する方は、<wbr>12:30ごろから<wbr>ウォーミングアップを<wbr>始められるように<wbr>集合してください。</p>
   </section>
 
   <section>
     <h2>参加部門</h2>
     <div class="duo">
-      <div><span class="k">01</span><h3>チーム対抗の部</h3><p>事前にチーム分けを行い、全員が該当学年の<b>4種目すべて</b>に出場。記録を得点化し、チーム・個人で競います。</p><p class="small">※事前練習に1回以上の参加が必要</p></div>
-      <div><span class="k">02</span><h3>オープン参加の部</h3><p>希望する種目のみ出場できます。<b>記録計測のみ</b>となり、すべての表彰の対象外です。</p><p class="small">※事前練習は不要</p></div>
+      <div><span class="k">01</span><h3>チーム対抗の<wbr>部</h3><p>事前に<wbr>チーム分けを<wbr>行い、<wbr>全員が<wbr>該当学年の<b><wbr>4種目すべて</b>に<wbr>出場。<wbr>記録を<wbr>得点化し、<wbr>チーム・個人で<wbr>競います。</p><p class="small">※事前練習に<wbr>1回以上の<wbr>参加が<wbr>必要</p></div>
+      <div><span class="k">02</span><h3>オープン参加の<wbr>部</h3><p>希望する<wbr>種目のみ<wbr>出場できます。<b><wbr>記録計測のみ</b>と<wbr>なり、<wbr>すべての<wbr>表彰の<wbr>対象外です。</p><p class="small">※事前練習は<wbr>不要</p></div>
     </div>
-    <h3 style="margin-top:18px">チーム対抗の表彰</h3>
+    <h3 style="margin-top:18px">チーム対抗の<wbr>表彰</h3>
     <div class="awards"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
   </section>
 
   <section>
-    <h2>学年別の実施種目</h2>
-    <div class="evrow"><b>小学1〜3年生</b><span>50m ／ 100m ／ 走り幅跳び ／ 走り高跳び</span></div>
-    <div class="evrow"><b>小学4年生以上<small>中学生・高校生・大学生を含む</small></b><span>100m ／ 200m ／ 走り幅跳び ／ 走り高跳び</span></div>
+    <h2>学年別の<wbr>実施種目</h2>
+    <div class="evrow"><b>小学1〜<wbr>3年生</b><span class="evs"><span>50m</span> <span>100m</span> <span>走り幅跳び</span> <span>走り高跳び</span></span></div>
+    <div class="evrow"><b>小学4年生以上<small><wbr>中学生・高校生・<wbr>大学生を<wbr>含む</small></b><span class="evs"><span>100m</span> <span>200m</span> <span>走り幅跳び</span> <span>走り高跳び</span></span></div>
   </section>
 
   <section>
     <h2>昼休み特別企画</h2>
     <div class="vs">
       <span class="num">VS タクちゃん 1000m</span>
-      <p>現役長距離選手の大学生コーチ「タクちゃん」とガチンコレース！ 選手・保護者を当日募集、参加無料。</p>
-      <small>※VSタクちゃんは、参加者0人でもタクちゃんは出走します（笑）</small>
+      <p>現役長距離選手の<wbr>大学生コーチ<wbr>「タクちゃん」と<wbr>ガチンコレース！ 選手・<wbr>保護者を<wbr>当日募集、<wbr>参加無料。</p>
+      <small>※VSタクちゃんは、<wbr>参加者0人でも<wbr>タクちゃんは<wbr>出走します<wbr>（笑）</small>
     </div>
   </section>
 
   <section>
     <h2>参加資格</h2>
-    <p><b>小学1年生から大学生まで</b>のHappinessAC・VIRDS会員、および会員の兄弟姉妹、会員・兄弟姉妹のお友達。</p>
-    <p class="small" style="margin-top:6px">会員以外も両部門に参加できます。保護者はチーム対抗リレー・「VSタクちゃん」に参加できます（どちらも参加無料・当日募集）。</p>
+    <p><b>小学1年生から<wbr>大学生まで</b>の<wbr>HappinessAC・VIRDS会員、<wbr>および会員の<wbr>兄弟姉妹、<wbr>会員・兄弟姉妹の<wbr>お友達。</p>
+    <p class="small" style="margin-top:6px">会員以外も<wbr>両部門に<wbr>参加できます。<wbr>保護者は<wbr>チーム対抗リレーと<wbr>「VSタクちゃん」に<wbr>参加できます。<wbr>どちらも<wbr>参加無料・<wbr>当日募集です。</p>
   </section>
 
   <section>
-    <h2>チーム対抗の部の参加条件</h2>
-    <p class="lead" style="margin-top:0">記録会までに、どちらかの会場のHappinessACの練習へ<b>最低1回</b>参加してください（会員・非会員共通）。</p>
+    <h2>チーム対抗の<wbr>部の<wbr>参加条件</h2>
+    <p class="lead" style="margin-top:0">記録会までに、<wbr>どちらかの<wbr>会場で HappinessAC の<wbr>練習に<b><wbr>最低1回</b>参加してください。<span class="nw"><wbr>会員・非会員</span>共通の<wbr>条件です。</p>
     <div class="duo">
       <div><h3>秦野会場</h3><span class="small">秦野カルチャーパーク陸上競技場</span><p><b>火・水 17:30〜</b><br><b>木・土 17:00〜</b></p></div>
       <div><h3>大和会場</h3><span class="small">大和スポーツセンター陸上競技場</span><p><b>日 17:30〜</b></p></div>
     </div>
     <ul class="dots">
-      <li>事前練習参加費：1回 2,200円（複数回参加可）。参加希望日は申込フォームで回答してください。</li>
-      <li>オープン参加の部は事前練習不要。記録会参加費は両部門とも1,000円、練習費は別料金です。</li>
+      <li>事前練習参加費は<wbr>1回 2,200円<span class="nw"><wbr>（何回でも<wbr>参加できます）</span>。<wbr>参加希望日は<wbr>申込フォームで<wbr>回答してください。</li>
+      <li>オープン参加の<wbr>部は<wbr>事前練習不要。<wbr>記録会参加費は<wbr>両部門とも<wbr>1,000円、<wbr>練習費は<wbr>別料金です。</li>
     </ul>
   </section>
 
   <section>
-    <h2>フィールド種目のルール</h2>
+    <h2>フィールド種目の<wbr>ルール</h2>
     <div class="duo">
-      <div><h3>走り幅跳び</h3><p>試技は<b>1人3回</b>。3回ともファールのときだけ4回目があり、4回目もファールなら終了。</p><p>踏切板から砂場に届かない人は、砂場の手前から計測します。</p></div>
-      <div><h3>走り高跳び</h3><p><b>60cmから開始</b>します。</p><p>60cmを跳べなかった人だけ、50cmの試技を行います。</p></div>
+      <div><h3>走り幅跳び</h3><p>試技は<b><wbr>1人3回</b>。<wbr>3回とも<wbr>ファールの<wbr>ときだけ4回目が<wbr>あり、<wbr>4回目も<wbr>ファールなら<wbr>終了。</p><p>踏切板から<wbr>砂場に<wbr>届かない<wbr>人は、<wbr>砂場の<wbr>手前から<wbr>計測します。</p></div>
+      <div><h3>走り高跳び</h3><p><b>60cmから<wbr>開始</b>します。</p><p>60cmを<wbr>跳べなかった<wbr>人だけ、<wbr>50cmの<wbr>試技を<wbr>行います。</p></div>
     </div>
   </section>
 
   <section>
-    <h2>雨天時の対応</h2>
-    <p><b>12月20日（日）が雨天の場合は、12月27日（日）の午前中に規模を縮小して実施</b>します。予備日は<b>200mを中止</b>し、その他の種目（50m・100m・走り幅跳び・走り高跳び）を学年に応じて行います。</p>
+    <h2>雨天時の<wbr>対応</h2>
+    <p><b><span class="nw">12月20日（日）</span>が<wbr>雨天の<wbr>場合は、<span class="nw"><wbr>12月27日（日）</span>の<wbr>午前中に<wbr>規模を<wbr>縮小して<wbr>実施</b>します。</p>
+    <p style="margin-top:8px">予備日は<b><wbr>200mを<wbr>中止</b>し、<span class="nw"><wbr>50m・100m・</span><span class="nw">走り幅跳び・走り高跳び</span>を<wbr>学年に<wbr>応じて<wbr>行います。</p>
   </section>
 
   <section>
     <h2>お申し込み</h2>
-    <p class="lead" style="margin-top:0">必ず ① → ② の順に進んでください。</p>
+    <p class="lead" style="margin-top:0">必ず ① → ② の<wbr>順に<wbr>進んでください。</p>
     <div class="steps">
-      <div class="step"><h3>BANDに加入申請</h3><p>記録会専用のBANDに加入申請します。</p><a class="btn" href="https://band.us/n/a8aabbq8b4v04" target="_blank" rel="noopener">BANDをひらく</a></div>
-      <div class="step"><h3>申込フォームに回答</h3><p>参加部門と必要事項を入力します。</p><a class="btn" href="https://forms.gle/2nJKEp6rCt1GiEhv5" target="_blank" rel="noopener">申込フォームをひらく</a></div>
+      <div class="step"><h3>BANDに<wbr>加入申請</h3><p>記録会専用の<wbr>BANDに<wbr>加入申請します。</p><a class="btn" href="https://band.us/n/a8aabbq8b4v04" target="_blank" rel="noopener">BANDを<wbr>ひらく</a></div>
+      <div class="step"><h3>申込フォームに<wbr>回答</h3><p>参加部門と<wbr>必要事項を<wbr>入力します。</p><a class="btn" href="https://forms.gle/2nJKEp6rCt1GiEhv5" target="_blank" rel="noopener">申込フォームを<wbr>ひらく</a></div>
     </div>
-    <p class="small" style="margin-top:10px">保護者リレー・VSタクちゃんは申し込み不要（当日募集・無料）です。</p>
-    <a class="btn o" href="assets/guide2026.pdf" target="_blank" rel="noopener">開催要項（PDF）</a>
+    <p class="small" style="margin-top:10px">保護者リレー・VSタクちゃんは<wbr>申し込み不要です。<wbr>当日募集・参加無料。</p>
+    <a class="btn o" href="assets/guide2026.pdf" target="_blank" rel="noopener">開催要項<wbr>（PDF）</a>
   </section>
 </div>
 
@@ -312,12 +323,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
 <div class="panel" id="p-results" hidden>
   <section>
     <h2>スタートリスト＆結果</h2>
-    <p class="lead">種目ごとの組と記録を掲載します。名前はひらがなで表示し、大会後に削除します。チーム順位と個人の合計得点は結果発表まで非公開です。</p>
+    <p class="lead">種目ごとの<wbr>組と<wbr>記録を<wbr>掲載します。<wbr>名前は<wbr>ひらがなで<wbr>表示し、<wbr>大会後に<wbr>削除します。<wbr>チーム順位と<wbr>個人の<wbr>合計得点は<wbr>結果<wbr>発表まで<wbr>非公開です。</p>
     <div class="seg" role="group" aria-label="表示の切り替え">
       <button type="button" data-view="start" aria-pressed="true">スタートリスト</button>
       <button type="button" data-view="result" aria-pressed="false">結果</button>
     </div>
-    <p class="status" id="srStatus"><span class="dot"></span><span>まだ掲載していません</span></p>
+    <p class="status" id="srStatus"><span class="dot"></span><span>まだ<wbr>掲載していません</span></p>
     <div id="evList"></div>
   </section>
 </div>
@@ -325,30 +336,30 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
 <!-- ===================== 得点表 ===================== -->
 <div class="panel" id="p-scoring" hidden>
   <section>
-    <h2>得点のしくみ</h2>
-    <p class="lead">学年・性別ごとの「基準記録」を500点として、基準をどれだけ上回ったかで点数が決まります。小学1年生も大学生も、同じものさしで比べられます。</p>
-    <div class="formula"><b>走る種目（50m・100m・200m）</b>得点 = 500 + 1000 × 種目係数 × (基準タイム ÷ 記録 − 1)</div>
-    <div class="formula"><b>跳ぶ種目（走り高跳び・走り幅跳び）</b>得点 = 500 + 1000 × 種目係数 × (記録 ÷ 基準記録 − 1)</div>
+    <h2>得点の<wbr>しく<wbr>み</h2>
+    <p class="lead">学年・性別ごとの<wbr>「基準記録」を<wbr>500点と<wbr>して、<wbr>基準を<wbr>どれだけ<wbr>上回ったかで<wbr>点数が<wbr>決まります。<wbr>小学1年生も<wbr>大学生も、<wbr>同じ<wbr>ものさしで<wbr>比べられます。</p>
+    <div class="formula"><b>走る<wbr>種目<wbr>（50m・100m・200m）</b><span class="nw"><wbr>得点 = 500 + 1000 × 種目係数 ×</span> <span class="nw">(基準タイム ÷ 記録 − 1)</span></div>
+    <div class="formula"><b>跳ぶ種目<wbr>（走り高跳び・走り幅跳び）</b><span class="nw"><wbr>得点 = 500 + 1000 × 種目係数 ×</span> <span class="nw">(記録 ÷ 基準記録 − 1)</span></div>
     <ul class="dots">
-      <li>小数点以下は切り捨て。マイナスになるときは0点。</li>
-      <li>記録なし（NM・ファウルなど）は、その種目0点。</li>
-      <li>個人の総合得点は4種目の合計（基準どおりなら 500点 × 4 = 2,000点）。</li>
-      <li>小学1〜3年生は 50m・100m・走り高跳び・走り幅跳び、小学4年生以上は 100m・200m・走り高跳び・走り幅跳び。</li>
+      <li>小数点以下は<wbr>切り捨て。<wbr>マイナスに<wbr>なる<wbr>ときは<wbr>0点。</li>
+      <li>記録なし<wbr>（NM・ファウルなど）の<wbr>種目は<wbr>0点。</li>
+      <li>個人の<wbr>総合得点は<wbr>4種目の<wbr>合計です。<span class="nw"><wbr>基準ど<wbr>おりなら</span> <span class="nw">500点 × 4 = 2,000点</span>。</li>
+      <li>小学1〜<wbr>3年生は <span class="nw">50m・100m・</span><span class="nw">走り高跳び・走り幅跳び</span>、<wbr>小学4年生以上は <span class="nw">100m・200m・</span><span class="nw">走り高跳び・走り幅跳び</span>。</li>
     </ul>
   </section>
 
   <section>
     <h2>種目係数</h2>
-    <p class="lead">記録の差の出やすさは種目でちがうので、その差をそろえる数字です。</p>
+    <p class="lead">記録の<wbr>差の<wbr>出やすさは<wbr>種目で<wbr>ちがうので、<wbr>その<wbr>差を<wbr>そろえる<wbr>数字です。</p>
     <table class="std">
-      <thead><tr><th>種目</th><th>係数</th><th>基準を1%上回ると</th></tr></thead>
+      <thead><tr><th>種目</th><th>係数</th><th>基準を<wbr>1%上回ると</th></tr></thead>
       <tbody id="coefBody"></tbody>
     </table>
   </section>
 
   <section>
-    <h2>基準記録（＝500点）</h2>
-    <p class="lead">走る種目は秒、跳ぶ種目はm。小学生の走る種目は男女共通です。</p>
+    <h2>基準記録<wbr>（＝500点）</h2>
+    <p class="lead">走る<wbr>種目は<wbr>秒、<wbr>跳ぶ種目は<wbr>m。<wbr>小学生の<wbr>走る<wbr>種目は<wbr>男女共通です。</p>
     <div class="sexseg" role="group" aria-label="性別" id="stdSex">
       <button type="button" data-sex="m" aria-pressed="true">男子</button>
       <button type="button" data-sex="f" aria-pressed="false">女子</button>
@@ -359,42 +370,42 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
         <tbody id="stdBody"></tbody>
       </table>
     </div>
-    <p class="small" style="margin-top:10px">例：小6男子・100m（基準14.1秒）で13.5秒 → 500 + 1000 × 1.4 × (14.1 ÷ 13.5 − 1) = <b>562点</b></p>
+    <p class="small" style="margin-top:10px">例：小6男子・100m<wbr>（基準14.1秒）で<wbr>13.5秒なら<br><span class="nw">500 + 1000 × 1.4 ×</span> <span class="nw">(14.1 ÷ 13.5 − 1)</span> <span class="nw">= <b>562点</b></span></p>
   </section>
 
   <section>
-    <h2>得点を計算してみよう</h2>
-    <p class="lead">自己ベストを入れると、今の力で何点くらいになるかがわかります。</p>
+    <h2>得点を<wbr>計算してみよう</h2>
+    <p class="lead">自己ベストを<wbr>入れると、<wbr>今の<wbr>力で<wbr>何点くらいに<wbr>なるかが<wbr>わかります。</p>
     <div class="calc">
       <label>性別<select id="cSex"><option value="m">男子</option><option value="f">女子</option></select></label>
       <label>学年<select id="cGrade"></select></label>
       <label>種目<select id="cEv"></select></label>
-      <label><span id="cUnit">記録（秒）</span><input id="cVal" inputmode="decimal" autocomplete="off"></label>
+      <label><span id="cUnit">記録<wbr>（秒）</span><input id="cVal" inputmode="decimal" autocomplete="off"></label>
     </div>
-    <div class="result" aria-live="polite"><span class="pts num" id="cPts">—</span><span class="hint" id="cHint"></span></div>
+    <div class="result" aria-live="polite"><span class="pts num" id="cPts"></span><span class="hint" id="cHint"></span></div>
   </section>
 
   <section>
     <h2>自己ベスト更新率</h2>
-    <p class="lead">記録の速い・遅いではなく、自分をどれだけ超えられたか。始めたばかりの子も表彰をねらえます。</p>
-    <div class="formula"><b>更新率（%）</b>走る種目 = (自己ベスト ÷ 記録 − 1) × 100<br>跳ぶ種目 = (記録 ÷ 自己ベスト − 1) × 100</div>
-    <div class="formula"><b>自己ベスト優勝</b>自己ベストを上回った種目の (更新率 × 種目係数) の合計で決めます</div>
-    <div class="formula"><b>種目別自己ベスト更新率優勝</b>種目ごとに、更新率がいちばん大きい人</div>
+    <p class="lead">記録の<wbr>速い・遅いではなく、<wbr>自分を<wbr>どれだけ<wbr>超えられたか。<wbr>始めたばかりの<wbr>子も<wbr>表彰を<wbr>ねらえます。</p>
+    <div class="formula"><b>更新率<wbr>（%）</b><span class="nw"><wbr>走る<wbr>種目 = (自己ベスト ÷ 記録 − 1) × 100</span><br><span class="nw">跳ぶ種目 = (記録 ÷ 自己ベスト − 1) × 100</span></div>
+    <div class="formula"><b>自己ベスト優勝</b>自己ベストを<wbr>上回った<wbr>種目の <span class="nw">(更新率 × 種目係数)</span> の<wbr>合計で<wbr>決めます</div>
+    <div class="formula"><b>種目別自己ベスト更新率優勝</b>種目ごとに、<wbr>更新率が<wbr>いちばん<wbr>大きい<wbr>人</div>
     <ul class="dots">
-      <li>足すのは自己ベストを上回った種目だけ。下回ってもマイナスにはなりません。</li>
-      <li>自己ベストがない種目は「初記録」として更新率の対象外（得点はつきます）。</li>
-      <li>同点のときは、自己ベストを更新した種目数が多い人が上位。</li>
-      <li>個人優勝の3位までに入った人は、自己ベスト優勝の対象から外れます（W受賞なし）。</li>
+      <li>足すのは<wbr>自己ベストを<wbr>上回った<wbr>種目だけ。<wbr>下回っても<wbr>マイナスには<wbr>なりません。</li>
+      <li>自己ベストが<wbr>ない<wbr>種目は<wbr>「初記録」と<wbr>して<wbr>更新率の<wbr>対象外<wbr>（得点は<wbr>つきます）。</li>
+      <li>同点の<wbr>ときは、<wbr>自己ベストを<wbr>更新した<wbr>種目数が<wbr>多い<wbr>人が<wbr>上位。</li>
+      <li>個人優勝の<wbr>3位までに<wbr>入った<wbr>人は、<wbr>自己ベスト優勝の<wbr>対象から<wbr>外れます<wbr>（W受賞なし）。</li>
     </ul>
   </section>
 
   <section>
     <h2>チーム得点</h2>
-    <div class="formula"><b>チーム得点</b>出場メンバーの総合得点の合計</div>
+    <div class="formula"><b>チーム得点</b>出場メンバーの<wbr>総合得点の<wbr>合計</div>
     <ul class="dots">
-      <li>チームの人数がちがうときは「1人平均 × 一番多いチームの人数」で比べます。</li>
-      <li>欠席の人は、チーム得点にも個人の順位にも入りません。</li>
-      <li>チームは、自己ベストから出した予想得点と男女の割合がそろうように分けています。</li>
+      <li>チームの<wbr>人数が<wbr>ちがう<wbr>ときは<wbr>「1人平均 × 一番<wbr>多い<wbr>チームの<wbr>人数」で<wbr>比べます。</li>
+      <li>欠席の<wbr>人は、<wbr>チーム得点にも<wbr>個人の<wbr>順位にも<wbr>入りません。</li>
+      <li>チームは、<wbr>自己ベストから<wbr>出した<wbr>予想得点と<wbr>男女の<wbr>割合が<wbr>そろうように<wbr>分けています。</li>
     </ul>
   </section>
 </div>
@@ -606,8 +617,8 @@ function calc(){
   $('cUnit').textContent=`記録（${unit(ek)}）`;
   $('cVal').placeholder='例 '+fmt(ek,std);
   const v=parse(ek,$('cVal').value);
-  if(v===null){$('cPts').textContent='—';$('cHint').textContent=`基準記録 ${fmt(ek,std)}${unit(ek)} で500点`;return;}
-  if(!(v>0)){$('cPts').textContent='—';$('cHint').textContent='数字で入れてください';return;}
+  if(v===null){$('cPts').textContent='';$('cHint').textContent=`基準記録 ${fmt(ek,std)}${unit(ek)} で500点`;return;}
+  if(!(v>0)){$('cPts').textContent='';$('cHint').textContent='数字で入れてください';return;}
   const p=scoreOf(ek,v,std);
   $('cPts').innerHTML=`${p}<small>点</small>`;
   $('cHint').textContent=`基準 ${fmt(ek,std)}${unit(ek)}（500点）と比べて ${p>=500?'+':''}${p-500}点`;
