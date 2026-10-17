@@ -827,6 +827,16 @@ function viewRoster(C){
     <td style="text-align:center"><input type="checkbox" id="ab-${a.id}" data-ch="absent" aria-label="欠席"${a.absent?' checked':''}></td>
     <td><button type="button" class="del" data-act="del">削除</button></td></tr>`).join('');
   return`<section class="stack">
+    <div class="card"><div class="card-head"><h2>申込フォームから取り込む</h2></div>
+      <p class="hint" style="margin-bottom:10px">Googleフォームで申し込んだ<b>チーム対抗の部</b>の選手を、選手一覧に追加します。すでに登録している人（よみが同じ人）は追加しないので、何度押しても大丈夫です。オープン参加の人は入りません。</p>
+      <div class="btn-row"><button type="button" class="btn primary" data-act="importFetch">申し込みを取り込む</button></div>
+      <p class="hint" style="margin-top:6px">名前はひらがなで入ります。漢字の名前も入れたいときは、下の「回答シートを貼り付けて取り込む」を使ってください。</p>
+      <details style="margin-top:10px"><summary>回答シートを貼り付けて取り込む（漢字の名前も入る）</summary>
+        <p class="hint">申込スプレッドシートの「フォームの回答 1」で、見出しの行ごと全体を選んでコピーし、ここに貼り付けます。</p>
+        <textarea id="importText" rows="4" placeholder="タイムスタンプ	参加者本人の氏名…	フリガナ…	学年・性別…"></textarea>
+        <div class="btn-row" style="margin-top:8px"><button type="button" class="btn" data-act="importPaste">貼り付けた内容で取り込む</button></div>
+      </details>
+      <div id="importMsg">${importMsg}</div></div>
     <div class="card" id="teamCard">${teamCardHTML(C)}</div>
     <div class="card">
       <div class="card-head"><h2>選手一覧 <small>${n}人</small></h2><button type="button" class="btn" data-act="add">＋ 選手を追加</button></div>
@@ -1115,6 +1125,13 @@ const CLICK={
     }
     const id=b.closest('tr').dataset.id;state.athletes=state.athletes.filter(a=>a.id!==id);save();render();toast('削除しました');
   },
+  importFetch:async b=>{
+    b.disabled=true;b.textContent='読み込み中…';
+    try{const r=await fetch(ENTRY_CSV,{cache:'no-store'});if(!r.ok)throw 0;await importEntries(formEntries(parseTable(await r.text())));}
+    catch(e){toast('申し込みを読み込めませんでした。通信を確認してください');}
+    if(b.isConnected){b.disabled=false;b.textContent='申し込みを取り込む';}
+  },
+  importPaste:()=>{const t=$('#importText').value;if(!t.trim()){toast('貼り付ける内容がありません');return;}importEntries(formEntries(parseTable(t)));},
   bulk:()=>{
     const {ok,errors}=parseBulk($('#bulkText').value);
     if(ok.length){state.athletes.push(...ok);save();render();toast(ok.length+'人を追加しました');}
@@ -1168,6 +1185,99 @@ async function restoreFrom(text){
   if(!await ask(`バックアップ（選手 ${s.athletes.length}人）で、いまのデータを置きかえます。`,'復元する',true))return;
   state=s;state.sample=false;recErr.clear();save();render();toast('復元しました');
 }
+/* ---------- 申込フォームからの取り込み ----------
+   公開用シートのCSV（フリガナ・学年性別・部門）か、回答シートを貼り付けたもの（氏名も入る）を読む。
+   兄弟まとめての申し込みは、学年・性別の欄に書かれた人数分に分ける（特設サイトのエントリー一覧と同じ読み方） */
+const ENTRY_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRJQ7bex5lWBaRuniOvmB0rqnzjz-noAru7rH_9tkJ-pqw4OKU0UHV3jqJWoCpFp6DAIsEhAbwZAt1S/pub?gid=2107468575&single=true&output=csv';
+let importMsg='';
+function parseTable(text){
+  const d=/\t/.test(String(text).split(/\r?\n/)[0])?'\t':',';  // 貼り付けはタブ区切り、CSVはカンマ区切り
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else if(c==='"'&&f==='')q=true;
+    else if(c===d){row.push(f);f='';}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f='';}
+    else f+=c;
+  }
+  if(f||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(x=>x.trim()));
+}
+const toHira=s=>String(s||'').replace(/[\u30a1-\u30f6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
+const GRADE_RE=/(高校生?|大学生?|社会人|大人)|(小学?校?|中学?校?)\s*([1-6])\s*(?:年生?)?|([1-6])\s*年生?/g;
+function readGrades(t){
+  t=normalizeText(t);  // 全角数字・空白をそろえる
+  const ms=[...t.matchAll(GRADE_RE)];
+  return ms.map((m,i)=>{
+    const seg=t.slice(m.index,i+1<ms.length?ms[i+1].index:t.length);
+    let g=m[1]?9:m[2]&&m[2][0]==='中'?5+ +m[3]:+(m[3]||m[4])-1;
+    if(!(g>=0&&g<=9))g=null;
+    return{g,sex:/女/.test(seg)?'f':/男/.test(seg)?'m':''};
+  });
+}
+function splitNames(t,n){
+  const clean=v=>v.map(x=>x.trim()).filter(Boolean);
+  let a=clean(String(t||'').split(/[、,，・\/／\n]+/));
+  if(n>1&&a.length<n){const b=clean(String(t||'').split(/[\s　、,，・\/／]+/));if(b.length===n)a=b;}
+  return a;
+}
+function formEntries(rows){
+  const h=rows[0]||[], col=re=>h.findIndex(x=>re.test(x));
+  const cKana=col(/フリガナ|ふりがな|よみ/), cGrade=col(/学年/), cDiv=col(/部門/);
+  const cName=h.findIndex((x,i)=>i!==cKana&&/氏名|名前/.test(x));
+  if(cKana<0)return null;
+  const out=[];
+  rows.slice(1).forEach(r=>{
+    // 列ずれ（貼り付けの崩れ）に備えて、部門は行のどこかに「オープン」があるかでも見る
+    const grades=readGrades(cGrade>=0?r[cGrade]:'');
+    const kanas=splitNames(r[cKana],grades.length);
+    const names=cName>=0?splitNames(r[cName],kanas.length):[];
+    const open=/オープン/.test(cDiv>=0?r[cDiv]:'');
+    kanas.forEach((k,i)=>{
+      const gr=grades.length===kanas.length?grades[i]:grades.length===1?grades[0]:{g:null,sex:''};
+      const kana=toHira(k).replace(/[\s　]+/g,' ').trim();
+      out.push({kana,name:names.length===kanas.length?names[i].replace(/[\s　]+/g,' ').trim():kana,g:gr.g,sex:gr.sex,open});
+    });
+  });
+  return out;
+}
+async function importEntries(list){
+  if(!list){toast('フリガナの列が見つかりません。見出しの行ごと貼り付けてください');return;}
+  if(!list.length){toast('申し込みがまだありません');return;}
+  if(state.sample){
+    if(!await ask('いまは仮データが入っています。仮データの選手を消して、申し込みの選手を取り込みます。','取り込む'))return;
+    state.athletes=[];state.sample=false;state.ui.filter='all';recErr.clear();
+  }
+  const key=s=>toHira(s).replace(/[\s　]/g,'');
+  const have=new Set(state.athletes.flatMap(a=>[key(a.kana),key(a.name)]).filter(Boolean));
+  const added=[];let dup=0,open=0,named=0;const check=[];
+  for(const e of list){
+    if(e.open){open++;continue;}
+    const k=key(e.kana);if(!k)continue;
+    if(have.has(k)){
+      dup++;
+      // ひらがなで取り込んだ人に、貼り付けで漢字の名前が来たら名前だけ入れる
+      const a=state.athletes.find(x=>key(x.kana)===k);
+      if(a&&e.name!==e.kana&&(!a.name||key(a.name)===k)){a.name=e.name.slice(0,30);named++;}
+      continue;
+    }
+    have.add(k);
+    const a=blankAthlete();
+    a.name=e.name.slice(0,30);a.kana=e.kana.slice(0,30);
+    if(e.g!=null)a.grade=e.g;
+    if(e.sex)a.sex=e.sex;
+    if(e.g==null||!e.sex)check.push(`${a.name}（${e.g==null?'学年':''}${e.g==null&&!e.sex?'・':''}${!e.sex?'性別':''}が読めませんでした）`);
+    added.push(a);
+  }
+  state.athletes.push(...added);save();
+  importMsg=`<ul class="errs" style="color:var(--ink)"><li><b>${added.length}人</b>を追加しました。${dup?`登録ずみ ${dup}人はそのままです${named?`（うち ${named}人に漢字の名前を入れました）`:''}。`:''}${open?`オープン参加 ${open}人は入れていません。`:''}</li>${
+    check.length?`<li>次の人は学年・性別を確認して、一覧で直してください：${check.map(esc).join('、')}</li>`:''}${
+    added.length?'<li>チーム分けは上の「バランスよく自動で分ける」でできます。</li>':''}</ul>`;
+  state.ui.tab='roster';render();
+  toast(added.length?`${added.length}人を追加しました`:'新しい申し込みはありませんでした');
+}
+
 function parseBulk(text){
   const ok=[],errors=[];
   String(text||'').split(/\r?\n/).forEach((line,i)=>{
