@@ -97,10 +97,16 @@ ul.dots li+li{margin-top:4px}
 .duo > div{background:var(--soft);padding:16px}
 .duo p{margin-top:4px;font-size:15px;color:var(--ink2)}
 .duo .k{display:block;font-size:13px;color:var(--muted)}
+.openpm{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.openpm p{color:var(--ink);font-size:15px}
 .tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border:1.5px solid currentColor;white-space:nowrap;line-height:1.5;text-decoration:none}
 .tag.p{color:var(--pink-t)}
 .tag.f{background:var(--pink);border-color:var(--pink);color:var(--on-pink)}
 .alert{border-left:4px solid var(--pink);background:var(--pink-soft);padding:12px 14px;margin-top:12px;font-size:15px}
+.alert.pm{border-left-color:var(--ink);background:var(--soft)}
+.alert.pm p{margin-top:6px}
+.tt .note{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px;font-size:13px;font-weight:700;color:var(--ink2)}
+.tt li.pm{padding:8px 0}
 .btn{display:flex;justify-content:center;align-items:center;gap:8px;min-height:56px;margin-top:12px;padding:0 16px;background:var(--pink);color:var(--on-pink);font-weight:900;font-size:17px;text-decoration:none;text-align:center}
 .btn.o{background:transparent;color:var(--ink);border:2px solid var(--ink)}
 .btn small{font-weight:500;font-size:13px;opacity:.9}
@@ -250,13 +256,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
     <h2>タイムテーブル</h2>
     <ul class="tt" id="tt"></ul>
     <p class="alert">午後のみ<wbr>参加する方は、<wbr>12:30ごろから<wbr>ウォーミングアップを<wbr>始められるように<wbr>集合してください。</p>
+    <div class="alert pm"><span class="tag f">オープン参加限定</span><p><b>50m・100mは<wbr>午後13:30からも<wbr>計測できます。</b><wbr>午前の<wbr>50m<span class="nw"><wbr>（小学3年生以下）</span>・100m<span class="nw"><wbr>（小学4年生以上）</span>を、<wbr>13:30の<wbr>時間帯でも<wbr>計測します。<wbr>午前の<wbr>競技も<wbr>予定どおり行います。</p><p class="small">走り幅跳び・200m・走り高跳びは<wbr>タイムテーブルど<wbr>おりの<wbr>時間です。<wbr>チーム対抗の<wbr>部は<wbr>変更ありません。</p></div>
   </section>
 
   <section>
     <h2>参加部門</h2>
     <div class="duo">
       <div><span class="k">01</span><h3>チーム対抗の<wbr>部</h3><p>事前に<wbr>チーム分けを<wbr>行い、<wbr>全員が<wbr>該当学年の<b><wbr>4種目すべて</b>に<wbr>出場。<wbr>記録を<wbr>得点化し、<wbr>チーム・個人で<wbr>競います。</p><p class="small">※事前練習に<wbr>1回以上の<wbr>参加が<wbr>必要</p></div>
-      <div><span class="k">02</span><h3>オープン参加の<wbr>部</h3><p>希望する<wbr>種目のみ<wbr>出場できます。<b><wbr>記録計測のみ</b>と<wbr>なり、<wbr>すべての<wbr>表彰の<wbr>対象外です。</p><p class="small">※事前練習は<wbr>不要</p></div>
+      <div><span class="k">02</span><h3>オープン参加の<wbr>部</h3><p>希望する<wbr>種目のみ<wbr>出場できます。<b><wbr>記録計測のみ</b>と<wbr>なり、<wbr>すべての<wbr>表彰の<wbr>対象外です。</p><p class="small">※事前練習は<wbr>不要</p>
+        <div class="openpm"><span class="tag f">オープン参加限定</span><p>オープン参加の<wbr>部では、<wbr>50m・100mに<wbr>限り、<wbr>午後13:30からの<wbr>記録計測も<wbr>可能です。<wbr>午前中に<wbr>参加できない<wbr>方も、<wbr>午後から<wbr>ご参加いただけます。<wbr>午後のみ<wbr>参加する方は、<wbr>12:30ごろから<wbr>ウォーミングアップを<wbr>開始できるように<wbr>集合してください。</p></div></div>
     </div>
     <h3 style="margin-top:18px">チーム対抗の<wbr>表彰</h3>
     <div class="awards"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
@@ -460,7 +468,7 @@ const TIMETABLE=[
   {time:'10:20',name:'100m',group:'小4以上',id:'o4-100'},
   {time:'11:00',name:'走り幅跳び',id:'lj'},
   {time:'12:00',name:'VSタクちゃん 1000m',sp:true},
-  {time:'13:30',name:'100m',group:'小3以下',id:'u3-100'},
+  {time:'13:30',name:'100m',group:'小3以下',id:'u3-100',note:'50m・100m 午後計測'},  // note はオープン参加限定の補足
   {time:'13:50',name:'200m',group:'小4以上',id:'o4-200'},
   {time:'14:30',name:'走り高跳び',id:'hj'},
   {time:'16:00',name:'チーム対抗＆保護者リレー',sp:true,id:'relay'},
@@ -480,7 +488,7 @@ function renderTT(){
     const tag=r.id&&hasResult(r.id)?'<a class="tag f" href="#results" data-go="result">結果</a>'
       :r.id&&hasStart(r.id)?'<a class="tag p" href="#results" data-go="start">組</a>'
       :r.sp?'<span class="tag p">特別</span>':'';
-    return`<li class="${r.sp?'sp':''}${i===ci?' cur':''}"><span class="t num">${r.time}</span><span class="e">${esc(r.name)}${r.group?`<span class="g">${esc(r.group)}</span>`:''}</span>${tag}</li>`;
+    return`<li class="${r.sp?'sp':''}${r.note?' pm':''}${i===ci?' cur':''}"><span class="t num">${r.time}</span><span class="e">${esc(r.name)}${r.group?`<span class="g">${esc(r.group)}</span>`:''}${r.note?`<span class="note"><span class="tag f">オープン参加限定</span>${esc(r.note)}</span>`:''}</span>${tag}</li>`;
   }).join('');
   // いま・つぎ：開催日の前は「当日はここに出ます」、当日は時刻に合わせて、終わったら案内だけ
   const days=jstDays(), box=$('nowBox'), sec=$('now');
@@ -494,7 +502,7 @@ function renderTT(){
   const next=TIMETABLE[ci+1];
   if(!next){box.innerHTML='<span class="lbl">本日の競技はすべて終わりました</span><div class="row"><b>ご参加ありがとうございました！</b></div><p class="sub">記録は「スタート＆結果」で見られます。</p>';return;}
   const cur=TIMETABLE[ci];
-  box.innerHTML=`<span class="lbl">つぎ</span><div class="row"><span class="t num">${next.time}</span><b>${esc(next.name)}${next.group?'　'+esc(next.group):''}</b></div>${cur?`<p class="sub">いま：${cur.time} ${esc(cur.name)}${cur.group?' '+esc(cur.group):''}</p>`:''}`;
+  box.innerHTML=`<span class="lbl">つぎ</span><div class="row"><span class="t num">${next.time}</span><b>${esc(next.name)}${next.group?'　'+esc(next.group):''}</b></div>${next.note?`<p class="sub">オープン参加限定：${esc(next.note)}もこの時間に行います</p>`:''}${cur?`<p class="sub">いま：${cur.time} ${esc(cur.name)}${cur.group?' '+esc(cur.group):''}${cur.note?`（オープン参加限定：${esc(cur.note)}）`:''}</p>`:''}`;
 }
 
 /* ---------- エントリー（Googleフォームの申し込み） ----------
