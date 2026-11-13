@@ -65,6 +65,10 @@ h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
 .facts li span:first-child{flex:none;width:6.2em;color:var(--muted)}
 .count{display:flex;align-items:center;gap:10px;margin-top:16px;background:var(--bar);color:var(--on-bar);padding:10px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
 .count .num{font-size:36px;line-height:1;color:var(--pink)}
+.openlink{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border:2px solid var(--ink);text-decoration:none;font-weight:700;font-size:15px;line-height:1.5}
+.openlink{flex-wrap:wrap}
+.openlink .ol-t{flex:1 1 13em;min-width:0}
+.openlink .tag{flex:none}
 
 /* ---------- タブ ---------- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
@@ -232,6 +236,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
     <li><span>雨天予備日</span><span class="nw">12月27日（日）</span></li>
   </ul>
   <div class="count" id="countdown" hidden></div>
+  <a class="openlink" href="open/"><span class="tag f">オープン参加の<wbr>部</span><span class="ol-t">希望する<wbr>種目だけ<wbr>出たい<wbr>方は、<wbr>専用ページを<wbr>ご覧ください</span><span aria-hidden="true"><wbr>→</span></a>
 </header>
 
 <nav class="tabbar" aria-label="画面の切り替え">
@@ -255,8 +260,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
   <section>
     <h2>タイムテーブル</h2>
     <ul class="tt" id="tt"></ul>
-    <p class="alert">午後のみ<wbr>参加する方は、<wbr>12:30ごろから<wbr>ウォーミングアップを<wbr>始められるように<wbr>集合してください。</p>
-    <div class="alert pm"><span class="tag f">オープン参加限定</span><p><b>50m・100mは<wbr>午後13:30からも<wbr>計測できます。</b><wbr>午前の<wbr>50m<span class="nw"><wbr>（小学3年生以下）・</span>100m<span class="nw"><wbr>（小学4年生以上）を、</span><wbr>13:30の<wbr>時間帯でも<wbr>計測します。<wbr>午前の<wbr>競技も<wbr>予定どおり行います。</p><p class="small">走り幅跳び・200m・走り高跳びは<wbr><span class="nw">タイムテーブルど<wbr>おりの</span><wbr>時間です。<wbr><span class="nw">チーム対抗の<wbr>部は</span><wbr>変更ありません。</p></div>
+    <div class="alert pm"><span class="tag f">オープン参加の<wbr>方へ</span><p><b>参加する<wbr>種目の<wbr>開始30分前までに、<wbr>会場へ<wbr>お越しください。</b><wbr>ウォーミングアップは<wbr>各自で<wbr>行います。<wbr>50m・100mは<wbr>午後13:30からも<wbr>計測できます。</p><a class="btn o" href="open/#schedule">オープン参加の<wbr>部の<wbr>種目・時間</a></div>
   </section>
 
   <section>
@@ -264,7 +268,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
     <div class="duo">
       <div><span class="k">01</span><h3>チーム対抗の<wbr>部</h3><p>事前に<wbr>チーム分けを<wbr>行い、<wbr>全員が<wbr>該当学年の<b><wbr>4種目すべて</b>に<wbr>出場。<wbr>記録を<wbr>得点化し、<wbr>チーム・個人で<wbr>競います。</p><p class="small">※事前練習に<wbr>1回以上の<wbr>参加が<wbr>必要</p></div>
       <div><span class="k">02</span><h3>オープン参加の<wbr>部</h3><p>希望する<wbr>種目のみ<wbr>出場できます。<b><wbr>記録計測のみ</b>と<wbr>なり、<wbr>すべての<wbr>表彰の<wbr>対象外です。</p><p class="small">※事前練習は<wbr>不要</p>
-        <div class="openpm"><span class="tag f">オープン参加限定</span><p>オープン参加の<wbr>部では、<wbr>50m・100mに<wbr>限り、<wbr>午後13:30からの<wbr>記録計測も<wbr>可能です。<wbr>午前中に<wbr>参加できない<wbr>方も、<wbr>午後から<wbr>ご参加いただけます。<wbr>午後のみ<wbr>参加する方は、<wbr>12:30ごろから<wbr>ウォーミングアップを<wbr>開始できるように<wbr>集合してください。</p></div></div>
+        <div class="openpm"><p>50m・100mは<wbr>午後13:30からも<wbr>計測できます。<wbr>集合は<wbr>参加する<wbr>種目の<wbr>開始30分前まで、<wbr>ウォーミングアップは<wbr>各自です。</p><a class="btn o" href="open/">オープン参加の<wbr>部の<wbr>詳細</a></div></div>
     </div>
     <h3 style="margin-top:18px">チーム対抗の<wbr>表彰</h3>
     <div class="awards"><span>チーム優勝</span><span>個人優勝</span><span>自己ベスト優勝</span><span>種目別自己ベスト更新率優勝</span></div>
@@ -326,6 +330,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
       <div class="step"><h3>申込フォームに<wbr>回答</h3><p>参加部門と<wbr>必要事項を<wbr>入力します。</p><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSde_SCBAi3STUejOSyz6h4g6SbVSl3Z1KWzpgtJfOc6grwrww/viewform" target="_blank" rel="noopener">申込フォームを<wbr>ひらく</a></div>
     </div>
     <p class="small" style="margin-top:10px">保護者リレー・VSタクちゃんは<wbr>申し込み不要です。<wbr>当日募集・参加無料。</p>
+    <p class="small" style="margin-top:6px">オープン参加の<wbr>方は、<a href="open/#entry"><wbr>専用ページ</a>で<wbr>フォームの<wbr>入力の<wbr>しかたを<wbr>確認できます。</p>
     <a class="btn o" href="#results" data-go="entry">エントリー一覧を<wbr>見る</a>
     <a class="btn o" href="assets/guide2026.pdf" target="_blank" rel="noopener">開催要項<wbr>（PDF）</a>
   </section>
