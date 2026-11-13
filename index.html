@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>年末チーム内記録会2026</title>
-<meta name="description" content="HappinessAC 2026 年末チーム内記録会。12月20日（日）秦野カルチャーパーク陸上競技場。開催要項・スタートリスト＆結果・得点表。">
+<meta name="description" content="VIRDS・HappinessAC 2026 年末チーム内記録会。12月20日（日）秦野カルチャーパーク陸上競技場。開催要項・スタートリスト＆結果・得点表。">
 <meta name="robots" content="noindex,nofollow">
 <meta property="og:title" content="YEAR-END TEAM RECORD MEET 2026｜年末チーム内記録会">
 <meta property="og:description" content="12月20日（日）秦野カルチャーパーク陸上競技場">
@@ -52,6 +52,7 @@ h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
 /* ---------- ヘッダー ---------- */
 .brand{display:flex;align-items:center;gap:8px;padding:14px 0;font-weight:900;font-size:14px}
 .brand i{width:22px;height:14px;background:var(--pink);transform:skewX(-20deg)}
+.brand i.v{width:12px;background:#2fdc85;margin-right:-4px} /* VIRDS グリーン */
 .kv{margin:0 -16px;aspect-ratio:16/10;overflow:hidden;background:#0b1626}
 .kv img{display:block;width:100%;height:100%;object-fit:cover;object-position:60% 30%}
 .title{margin-top:18px;font-size:clamp(26px,7.4vw,36px);font-weight:900}
@@ -65,10 +66,8 @@ h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
 .facts li span:first-child{flex:none;width:6.2em;color:var(--muted)}
 .count{display:flex;align-items:center;gap:10px;margin-top:16px;background:var(--bar);color:var(--on-bar);padding:10px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
 .count .num{font-size:36px;line-height:1;color:var(--pink)}
-.openlink{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border:2px solid var(--ink);text-decoration:none;font-weight:700;font-size:15px;line-height:1.5}
-.openlink{flex-wrap:wrap}
-.openlink .ol-t{flex:1 1 13em;min-width:0}
-.openlink .tag{flex:none}
+.openlink{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 12px;margin-top:12px;padding:12px 14px;border:2px solid var(--ink);text-decoration:none;font-weight:700;font-size:15px;line-height:1.5}
+.openlink .tag{grid-column:1 / -1;justify-self:start}
 
 /* ---------- タブ ---------- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
@@ -224,8 +223,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
 <body>
 
 <header class="wrap">
-  <div class="brand"><i></i>HAPPINESS AC</div>
-  <div class="kv"><img src="assets/hero.jpg" width="1254" height="1254" alt="YEAR-END TEAM RECORD MEET 2026 年末チーム内記録会"></div>
+  <div class="brand"><i class="v"></i><i></i>VIRDS × HAPPINESS AC</div>
+  <div class="kv"><img src="assets/hero.jpg" width="1254" height="1254" alt="VIRDS / HAPPINESS AC　YEAR-END TEAM RECORD MEET 2026 年末チーム内記録会"></div>
   <h1 class="title">年末チーム内記録会 <span class="num">2026</span></h1>
   <div class="meta">
     <div class="d num">12.20<small>SUN</small></div>
@@ -236,7 +235,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
     <li><span>雨天予備日</span><span class="nw">12月27日（日）</span></li>
   </ul>
   <div class="count" id="countdown" hidden></div>
-  <a class="openlink" href="open/"><span class="tag f">オープン参加の<wbr>部</span><span class="ol-t">希望する<wbr>種目だけ<wbr>出たい<wbr>方は、<wbr>専用ページを<wbr>ご覧ください</span><span aria-hidden="true"><wbr>→</span></a>
+  <a class="openlink" href="open/"><span class="tag f">オープン参加の<wbr>部</span><span class="ol-t">VIRDS会員も<wbr>参加しやすい、<wbr>希望する<wbr>種目だけの<wbr>部門です。<wbr>専用ページを<wbr>ご覧ください</span><span aria-hidden="true"><wbr>→</span></a>
 </header>
 
 <nav class="tabbar" aria-label="画面の切り替え">
@@ -432,7 +431,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;p
 </main>
 
 <footer>
-  <div class="wrap"><span>HAPPINESS AC YEAR-END TEAM RECORD MEET 2026</span><a href="admin/">管理者</a></div>
+  <div class="wrap"><span>VIRDS × HAPPINESS AC YEAR-END TEAM RECORD MEET 2026</span><a href="admin/">管理者</a></div>
 </footer>
 
 <script>
