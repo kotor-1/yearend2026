@@ -1205,21 +1205,31 @@ function parseTable(text){
   return rows.filter(r=>r.some(x=>x.trim()));
 }
 const toHira=s=>String(s||'').replace(/[\u30a1-\u30f6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
-const GRADE_RE=/(高校生?|大学生?|社会人|大人)|(小学?校?|中学?校?)\s*([1-6])\s*(?:年生?)?|([1-6])\s*年生?/g;
+// 「中一」「五年生」の漢数字も読む。「高校2年」の「2年」は高校の学年なので、小2とは数えない
+const KANNUM={一:1,二:2,三:3,四:4,五:5,六:6};
+const GRADE_RE=/(社会人|大人|(?:高校|大学)生?\s*(?:[1-6]\s*年生?)?|[高大]\s*[1-6]\s*(?:年生?)?)|(小学?校?|中学?校?)\s*([1-6])\s*(?:年生?)?|([1-6])\s*年生?/g;
+const sexOf=s=>/女/.test(s)?'f':/男/.test(s)?'m':'';
 function readGrades(t){
-  t=normalizeText(t);  // 全角数字・空白をそろえる
+  t=normalizeText(t).replace(/([小中高大][学校]*\s*)([一二三四五六])|([一二三四五六])(?=\s*年)/g,(m,p,k,k2)=>p?p+KANNUM[k]:KANNUM[k2]);  // 全角数字・空白・漢数字をそろえる
   const ms=[...t.matchAll(GRADE_RE)];
   return ms.map((m,i)=>{
     const seg=t.slice(m.index,i+1<ms.length?ms[i+1].index:t.length);
     let g=m[1]?9:m[2]&&m[2][0]==='中'?5+ +m[3]:+(m[3]||m[4])-1;
     if(!(g>=0&&g<=9))g=null;
-    return{g,sex:/女/.test(seg)?'f':/男/.test(seg)?'m':''};
+    return{g,sex:sexOf(seg)};
   });
 }
+// 名前の欄を人ごとに分ける。区切りは「、」「,」「・」「/」改行。学年の人数と合わなければ空白でも分ける
+// （「ヨシムラフウカ　ユウキ」→空白ごと、「オオイシ キイチ   オオイシ レイ」→2つ以上続く空白、「姓 名 姓 名」→2語ずつ）
 function splitNames(t,n){
-  const clean=v=>v.map(x=>x.trim()).filter(Boolean);
-  let a=clean(String(t||'').split(/[、,，・\/／\n]+/));
-  if(n>1&&a.length<n){const b=clean(String(t||'').split(/[\s　、,，・\/／]+/));if(b.length===n)a=b;}
+  const s=String(t||''), clean=v=>v.map(x=>x.trim()).filter(Boolean);
+  let a=clean(s.split(/[、,，・\/／\n]+/));
+  if(n>1&&a.length<n){
+    const b=clean(s.split(/[\s　、,，・\/／]+/)), w=clean(s.split(/[、,，・\/／\n]+|\s{2,}/));
+    if(b.length===n)a=b;
+    else if(w.length===n)a=w;
+    else if(b.length===2*n)a=Array.from({length:n},(_,i)=>b[2*i]+' '+b[2*i+1]);
+  }
   return a;
 }
 function formEntries(rows){
@@ -1230,12 +1240,13 @@ function formEntries(rows){
   const out=[];
   rows.slice(1).forEach(r=>{
     // 列ずれ（貼り付けの崩れ）に備えて、部門は行のどこかに「オープン」があるかでも見る
-    const grades=readGrades(cGrade>=0?r[cGrade]:'');
+    const gText=cGrade>=0?r[cGrade]:'', grades=readGrades(gText);
     const kanas=splitNames(r[cKana],grades.length);
     const names=cName>=0?splitNames(r[cName],kanas.length):[];
     const open=/オープン/.test(cDiv>=0?r[cDiv]:'');
     kanas.forEach((k,i)=>{
-      const gr=grades.length===kanas.length?grades[i]:grades.length===1?grades[0]:{g:null,sex:''};
+      // 学年が書かれていない1人の申し込みでも、性別が書いてあれば性別は入れる
+      const gr=grades.length===kanas.length?grades[i]:grades.length===1?grades[0]:{g:null,sex:kanas.length===1?sexOf(normalizeText(gText)):''};
       const kana=toHira(k).replace(/[\s　]+/g,' ').trim();
       out.push({kana,name:names.length===kanas.length?names[i].replace(/[\s　]+/g,' ').trim():kana,g:gr.g,sex:gr.sex,open});
     });
